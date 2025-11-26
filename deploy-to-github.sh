@@ -68,14 +68,15 @@ ROOT_DIR=$(pwd)
 TEMP_DIR=$(mktemp -d)
 echo ""
 echo "Copying files to temporary directory..."
-cp -R public/* "$TEMP_DIR/"
+# Copy all files from public/ including hidden files
+cp -R public/. "$TEMP_DIR/"
 
 # Navigate to temp directory
 cd "$TEMP_DIR"
 
 # Initialize git in temp directory
 git init
-git add .
+git add -f .  # Force add all files including HTML
 git commit -m "Deploy dashboard to GitHub Pages"
 
 # Push to gh-pages branch (force push to overwrite)
