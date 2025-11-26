@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Inventory - Woods Lab Dashboard</title>
+    <link rel="stylesheet" href="css/main.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">Woods Lab Dashboard</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="studies.html">Studies</a></li>
+                <li><a href="data-inventory.html">Data Inventory</a></li>
+                <li><a href="samples.html">Sample Inventory</a></li>
+                <li><a href="publications.html">Publications</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <h1>Data Inventory</h1>
+        <p style="font-size: 1.1rem; color: var(--graphite); margin-bottom: 2rem;">
+            Comprehensive catalog of molecular data, assays, and data storage locations across all challenge studies
+        </p>
+
+        <div class="alert alert-info" style="margin-bottom: 2rem;">
+            <strong>Most Important Resource:</strong> This page provides a complete overview of all available molecular data,
+            assay types, and where the data is currently stored. Use the interactive tables and visualizations to explore
+            data provenance and availability.
+        </div>
+
+        <!-- Statistics -->
+        <div class="grid grid-4" style="margin-bottom: 2rem;">
+            <div class="stat-card">
+                <span class="stat-number" id="stat-records">-</span>
+                <span class="stat-label">Data Records</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="stat-assay-types">-</span>
+                <span class="stat-label">Assay Types</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="stat-samples">-</span>
+                <span class="stat-label">Samples Analyzed</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="stat-studies">-</span>
+                <span class="stat-label">Studies with Data</span>
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loading" class="text-center" style="margin: 3rem 0;">
+            <div class="loading"></div>
+            <p>Loading data inventory...</p>
+        </div>
+
+        <!-- Data Provenance Visualization -->
+        <section id="sankey-section" class="hidden" style="margin-bottom: 3rem;">
+            <h2>Data Provenance Flow</h2>
+            <p style="color: var(--graphite); margin-bottom: 1rem;">
+                Interactive Sankey diagram showing how samples flow through different assay types to generate molecular data
+            </p>
+            <div class="card">
+                <div id="sankey-diagram" style="width: 100%; height: 600px; overflow-x: auto;"></div>
+            </div>
+        </section>
+
+        <!-- Pivot Table Controls -->
+        <section id="pivot-controls" class="hidden" style="margin-bottom: 2rem;">
+            <h2>Interactive Data Table</h2>
+            <div class="filters">
+                <div class="grid grid-3">
+                    <div class="filter-group">
+                        <label for="filter-study">Filter by Study</label>
+                        <select id="filter-study" onchange="applyFilters()">
+                            <option value="">All Studies</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-assay">Filter by Assay Type</label>
+                        <select id="filter-assay" onchange="applyFilters()">
+                            <option value="">All Assay Types</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-storage">Filter by Storage Location</label>
+                        <select id="filter-storage" onchange="applyFilters()">
+                            <option value="">All Locations</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem;">
+                    <button class="btn btn-secondary" onclick="resetFilters()">Reset Filters</button>
+                    <button class="btn" onclick="exportToCSV()">Export to CSV</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Table -->
+        <section id="data-table-section" class="hidden">
+            <div class="card">
+                <div style="margin-bottom: 1rem;">
+                    <strong>Showing <span id="results-count">0</span> records</strong>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table id="data-table">
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable(0)">Study Code <span class="sort-arrow">↕</span></th>
+                                <th onclick="sortTable(1)">Study Name <span class="sort-arrow">↕</span></th>
+                                <th onclick="sortTable(2)">Assay Type <span class="sort-arrow">↕</span></th>
+                                <th onclick="sortTable(3)">Samples Analyzed <span class="sort-arrow">↕</span></th>
+                                <th onclick="sortTable(4)">Subject ID Range <span class="sort-arrow">↕</span></th>
+                                <th onclick="sortTable(5)">Timepoints <span class="sort-arrow">↕</span></th>
+                                <th onclick="sortTable(6)">Data Storage Location <span class="sort-arrow">↕</span></th>
+                                <th onclick="sortTable(7)">Notes <span class="sort-arrow">↕</span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pivot Summary by Study -->
+        <section id="pivot-by-study" class="hidden" style="margin-top: 3rem;">
+            <h2>Summary by Study</h2>
+            <div class="grid grid-2" id="study-summaries"></div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <p><strong>Woods Lab Influenza Challenge Studies Dashboard</strong></p>
+            <p style="font-size: 0.875rem;">Last Updated: <span id="footer-last-updated">Loading...</span></p>
+            <p style="font-size: 0.875rem; margin-top: 0.5rem;">
+                © 2025 Woods Lab. Released under the <a href="https://opensource.org/licenses/MIT" target="_blank" style="color: var(--royal-blue); text-decoration: underline;">MIT License</a>.
+            </p>
+            <p style="margin-top: 1rem; font-size: 0.875rem; color: var(--hatteras);">
+                For sample requests or collaboration inquiries, please contact the lab.
+            </p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/main.js"></script>
+    <script>
+        let allData = [];
+        let filteredData = [];
+        let sortColumn = 0;
+        let sortAscending = true;
+
+        // Storage location mapping (placeholder - will be actual locations)
+        const storageLocations = {
+            'DU08-04': 'Duke Compute Cluster - /data/studies/DU08-04',
+            'DU09-06': 'Duke Compute Cluster - /data/studies/DU09-06',
+            'DU09-07': 'External Hard Drive - HD_001',
+            'DU11-02': 'Duke Compute Cluster - /data/studies/DU11-02',
+            'DU17-04': 'Duke Compute Cluster - /data/studies/DU17-04',
+            'DU20-01': 'Local Server - Woods Lab NAS',
+            'DU24-01': 'Duke Compute Cluster - /data/studies/DU24-01'
+        };
+
+        // Load data
+        async function loadData() {
+            try {
+                const [assaysResponse, studiesResponse, configResponse] = await Promise.all([
+                    fetch('data/assays.json'),
+                    fetch('data/studies.json'),
+                    fetch('data/config.json')
+                ]);
+
+                const assays = await assaysResponse.json();
+                const studies = await studiesResponse.json();
+                const config = await configResponse.json();
+
+                // Update footer
+                const lastUpdated = new Date(config.last_updated);
+                document.getElementById('footer-last-updated').textContent = lastUpdated.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                // Enrich assay data with study names and storage locations
+                allData = assays.map(assay => {
+                    const studyCode = assay.biobank_study_code || 'Unknown';
+                    const study = studies[studyCode];
+                    return {
+                        ...assay,
+                        study_name: study ? study.name : assay.Study,
+                        storage_location: storageLocations[studyCode] || 'Location pending documentation'
+                    };
+                });
+
+                filteredData = [...allData];
+
+                // Update statistics
+                updateStatistics();
+
+                // Populate filters
+                populateFilters();
+
+                // Display data
+                displayData();
+
+                // Create Sankey diagram
+                createSankeyDiagram();
+
+                // Create study summaries
+                createStudySummaries();
+
+                // Show sections
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('sankey-section').classList.remove('hidden');
+                document.getElementById('pivot-controls').classList.remove('hidden');
+                document.getElementById('data-table-section').classList.remove('hidden');
+                document.getElementById('pivot-by-study').classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('loading').innerHTML = `
+                    <div class="alert alert-warning">
+                        <strong>Error loading data inventory.</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        function updateStatistics() {
+            const uniqueStudies = new Set(allData.filter(d => d.biobank_study_code).map(d => d.biobank_study_code)).size;
+            const uniqueAssays = new Set(allData.map(d => d.Assay)).size;
+            const totalSamples = allData.reduce((sum, d) => sum + (parseInt(d.Samples) || 0), 0);
+
+            document.getElementById('stat-records').textContent = allData.length;
+            document.getElementById('stat-assay-types').textContent = uniqueAssays;
+            document.getElementById('stat-samples').textContent = totalSamples.toLocaleString();
+            document.getElementById('stat-studies').textContent = uniqueStudies;
+        }
+
+        function populateFilters() {
+            // Study filter
+            const studies = getUniqueValues(allData, 'biobank_study_code').filter(s => s && s !== 'Unknown').sort();
+            document.getElementById('filter-study').innerHTML += studies.map(s =>
+                `<option value="${s}">${s}</option>`
+            ).join('');
+
+            // Assay filter
+            const assays = getUniqueValues(allData, 'Assay').sort();
+            document.getElementById('filter-assay').innerHTML += assays.map(a =>
+                `<option value="${a}">${a}</option>`
+            ).join('');
+
+            // Storage filter
+            const locations = getUniqueValues(allData, 'storage_location').sort();
+            document.getElementById('filter-storage').innerHTML += locations.map(l =>
+                `<option value="${l}">${l}</option>`
+            ).join('');
+        }
+
+        function applyFilters() {
+            const studyFilter = document.getElementById('filter-study').value;
+            const assayFilter = document.getElementById('filter-assay').value;
+            const storageFilter = document.getElementById('filter-storage').value;
+
+            filteredData = allData.filter(record => {
+                if (studyFilter && record.biobank_study_code !== studyFilter) return false;
+                if (assayFilter && record.Assay !== assayFilter) return false;
+                if (storageFilter && record.storage_location !== storageFilter) return false;
+                return true;
+            });
+
+            displayData();
+        }
+
+        function resetFilters() {
+            document.getElementById('filter-study').value = '';
+            document.getElementById('filter-assay').value = '';
+            document.getElementById('filter-storage').value = '';
+            filteredData = [...allData];
+            displayData();
+        }
+
+        function displayData() {
+            const tbody = document.getElementById('data-tbody');
+            const count = filteredData.length;
+
+            document.getElementById('results-count').textContent = count;
+
+            if (count === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem;">No records found</td></tr>';
+                return;
+            }
+
+            let html = '';
+            filteredData.forEach(record => {
+                html += `
+                    <tr>
+                        <td><strong>${record.biobank_study_code || 'N/A'}</strong></td>
+                        <td>${record.study_name || record.Study}</td>
+                        <td><span class="badge badge-primary">${record.Assay}</span></td>
+                        <td>${(record.Samples || 0).toLocaleString()}</td>
+                        <td>${record['Subject ID ranges'] || 'N/A'}</td>
+                        <td style="font-size: 0.875rem;">${record['Timepoint(s)'] || 'N/A'}</td>
+                        <td style="font-weight: 500; color: var(--primary-blue);">${record.storage_location}</td>
+                        <td style="font-size: 0.875rem;">${record.Comment || '-'}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        function sortTable(column) {
+            if (sortColumn === column) {
+                sortAscending = !sortAscending;
+            } else {
+                sortColumn = column;
+                sortAscending = true;
+            }
+
+            const columns = ['biobank_study_code', 'study_name', 'Assay', 'Samples', 'Subject ID ranges', 'Timepoint(s)', 'storage_location', 'Comment'];
+            const col = columns[column];
+
+            filteredData.sort((a, b) => {
+                let aVal = a[col] || '';
+                let bVal = b[col] || '';
+
+                if (col === 'Samples') {
+                    aVal = parseInt(aVal) || 0;
+                    bVal = parseInt(bVal) || 0;
+                }
+
+                if (aVal < bVal) return sortAscending ? -1 : 1;
+                if (aVal > bVal) return sortAscending ? 1 : -1;
+                return 0;
+            });
+
+            displayData();
+        }
+
+        function createSankeyDiagram() {
+            // Prepare data for Sankey: Sample Types -> Assays
+            const width = document.getElementById('sankey-diagram').offsetWidth;
+            const height = 600;
+
+            const svg = d3.select('#sankey-diagram')
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height);
+
+            // Create nodes and links for Sample Types -> Assays -> Storage
+            const sampleTypes = ['Whole Blood', 'Plasma', 'Serum', 'PBMC', 'Nasal Wash', 'RNA', 'DNA'];
+            const assayTypes = [...new Set(allData.map(d => d.Assay))].filter(a => a && !a.includes('NO SEQ') && !a.includes('Wearables'));
+            const storageNodes = [...new Set(allData.map(d => d.storage_location))].filter(s => s);
+
+            const nodes = [
+                ...sampleTypes.map(s => ({name: s, category: 'sample'})),
+                ...assayTypes.map(a => ({name: a, category: 'assay'})),
+                ...storageNodes.map(s => ({name: s, category: 'storage'}))
+            ];
+
+            // Create links (Sample -> Assay connections)
+            const links = [];
+
+            // Sample types to assays (estimated based on common patterns)
+            const sampleAssayMap = {
+                'Whole Blood': ['RNA', 'RNA Batch2', 'Cytokines'],
+                'Plasma': ['Cytokines', 'FIA P180', 'Oxylipin', 'P180'],
+                'PBMC': ['PBMC', 'RNA', 'RNA Batch2'],
+                'Nasal Wash': ['Cytokines', 'OPO'],
+                'RNA': ['RNA', 'RNA Batch2'],
+                'Serum': ['Cytokines', 'HSC']
+            };
+
+            sampleTypes.forEach(sample => {
+                const relatedAssays = sampleAssayMap[sample] || [];
+                relatedAssays.forEach(assay => {
+                    if (assayTypes.includes(assay)) {
+                        links.push({
+                            source: nodes.findIndex(n => n.name === sample),
+                            target: nodes.findIndex(n => n.name === assay),
+                            value: 100
+                        });
+                    }
+                });
+            });
+
+            // Assays to storage
+            allData.forEach(record => {
+                if (record.Assay && record.storage_location && (record.Samples || 0) > 0) {
+                    const sourceIdx = nodes.findIndex(n => n.name === record.Assay);
+                    const targetIdx = nodes.findIndex(n => n.name === record.storage_location);
+                    if (sourceIdx >= 0 && targetIdx >= 0) {
+                        links.push({
+                            source: sourceIdx,
+                            target: targetIdx,
+                            value: parseInt(record.Samples) || 50
+                        });
+                    }
+                }
+            });
+
+            // Create Sankey layout
+            const sankey = d3.sankey()
+                .nodeWidth(15)
+                .nodePadding(10)
+                .extent([[1, 1], [width - 1, height - 6]]);
+
+            const {nodes: sankeyNodes, links: sankeyLinks} = sankey({
+                nodes: nodes.map(d => Object.assign({}, d)),
+                links: links.map(d => Object.assign({}, d))
+            });
+
+            // Color scale
+            const color = d3.scaleOrdinal()
+                .domain(['sample', 'assay', 'storage'])
+                .range(['#00539B', '#E89923', '#339898']);
+
+            // Draw links
+            svg.append('g')
+                .selectAll('path')
+                .data(sankeyLinks)
+                .join('path')
+                .attr('d', d3.sankeyLinkHorizontal())
+                .attr('stroke-width', d => Math.max(1, d.width))
+                .attr('stroke', '#ccc')
+                .attr('fill', 'none')
+                .attr('opacity', 0.5)
+                .on('mouseover', function() {
+                    d3.select(this).attr('opacity', 0.8);
+                })
+                .on('mouseout', function() {
+                    d3.select(this).attr('opacity', 0.5);
+                });
+
+            // Draw nodes
+            const node = svg.append('g')
+                .selectAll('g')
+                .data(sankeyNodes)
+                .join('g');
+
+            node.append('rect')
+                .attr('x', d => d.x0)
+                .attr('y', d => d.y0)
+                .attr('height', d => d.y1 - d.y0)
+                .attr('width', d => d.x1 - d.x0)
+                .attr('fill', d => color(d.category));
+
+            node.append('text')
+                .attr('x', d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
+                .attr('y', d => (d.y1 + d.y0) / 2)
+                .attr('dy', '0.35em')
+                .attr('text-anchor', d => d.x0 < width / 2 ? 'start' : 'end')
+                .text(d => d.name)
+                .style('font-size', '12px')
+                .style('fill', '#333');
+        }
+
+        function createStudySummaries() {
+            const studySummaries = {};
+
+            allData.forEach(record => {
+                const study = record.biobank_study_code || 'Unknown';
+                if (!studySummaries[study]) {
+                    studySummaries[study] = {
+                        study: study,
+                        name: record.study_name || record.Study,
+                        assays: new Set(),
+                        samples: 0,
+                        storage: record.storage_location
+                    };
+                }
+                studySummaries[study].assays.add(record.Assay);
+                studySummaries[study].samples += parseInt(record.Samples) || 0;
+            });
+
+            const container = document.getElementById('study-summaries');
+            let html = '';
+
+            Object.values(studySummaries).forEach(summary => {
+                if (summary.study === 'Unknown') return;
+
+                html += `
+                    <div class="card">
+                        <h3 style="margin-bottom: 0.5rem;">${summary.name}</h3>
+                        <p style="color: var(--graphite); margin-bottom: 1rem;">
+                            <strong>${summary.study}</strong>
+                        </p>
+                        <div class="grid grid-2" style="gap: 1rem; margin-bottom: 1rem;">
+                            <div>
+                                <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary-blue);">
+                                    ${summary.assays.size}
+                                </div>
+                                <div style="font-size: 0.9rem; color: var(--graphite);">Assay Types</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 1.5rem; font-weight: bold; color: var(--persimmon);">
+                                    ${summary.samples.toLocaleString()}
+                                </div>
+                                <div style="font-size: 0.9rem; color: var(--graphite);">Samples Analyzed</div>
+                            </div>
+                        </div>
+                        <div style="padding: 0.75rem; background-color: #f8f9fa; border-radius: 4px;">
+                            <div style="font-size: 0.875rem; font-weight: 500; color: var(--graphite); margin-bottom: 0.25rem;">
+                                Data Storage:
+                            </div>
+                            <div style="font-size: 0.875rem; color: var(--primary-blue); font-weight: 500;">
+                                ${summary.storage}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function exportToCSV() {
+            const headers = ['Study Code', 'Study Name', 'Assay Type', 'Samples', 'Subject ID Range', 'Timepoints', 'Storage Location', 'Notes'];
+            const rows = filteredData.map(record => [
+                record.biobank_study_code || '',
+                record.study_name || record.Study || '',
+                record.Assay || '',
+                record.Samples || '0',
+                record['Subject ID ranges'] || '',
+                record['Timepoint(s)'] || '',
+                record.storage_location || '',
+                record.Comment || ''
+            ]);
+
+            let csv = headers.join(',') + '\n';
+            rows.forEach(row => {
+                csv += row.map(cell => `"${cell}"`).join(',') + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'data_inventory.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Load on page load
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>

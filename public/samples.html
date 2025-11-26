@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample Inventory - Woods Lab Dashboard</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">Woods Lab Dashboard</a>
+                        <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="studies.html">Studies</a></li>
+                <li><a href="data-inventory.html">Data Inventory</a></li>
+                <li><a href="samples.html">Sample Inventory</a></li>
+                <li><a href="publications.html">Publications</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <h1>Sample Inventory</h1>
+        <p style="font-size: 1.1rem; color: var(--graphite); margin-bottom: 2rem;">
+            Search and explore biological samples from influenza challenge studies
+        </p>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+            <div class="search-bar">
+                <input
+                    type="text"
+                    id="search-input"
+                    placeholder="Search by sample barcode, participant ID, or study code..."
+                    style="font-size: 1.1rem;">
+                <button class="btn" onclick="searchSamples()">Search</button>
+                <button class="btn btn-secondary" onclick="resetFilters()">Reset</button>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <h3 style="margin-bottom: 1rem;">Filters</h3>
+            <div class="grid grid-4">
+                <div class="filter-group">
+                    <label for="filter-study">Study</label>
+                    <select id="filter-study" onchange="applyFilters()">
+                        <option value="">All Studies</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-type">Sample Type</label>
+                    <select id="filter-type" onchange="applyFilters()">
+                        <option value="">All Types</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-status">Availability</label>
+                    <select id="filter-status" onchange="applyFilters()">
+                        <option value="">All</option>
+                        <option value="available">Available</option>
+                        <option value="transferred">Transferred</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-participant">Participant ID</label>
+                    <input type="text" id="filter-participant" placeholder="e.g., P001" onkeyup="debounceFilter()">
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Summary -->
+        <div class="card" id="results-summary">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong>Showing <span id="results-count">0</span> samples</strong>
+                    <span id="filter-info" style="color: var(--graphite); margin-left: 1rem;"></span>
+                </div>
+                <button class="btn btn-secondary" onclick="exportResults()">Export to CSV</button>
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loading" class="text-center" style="margin: 3rem 0;">
+            <div class="loading"></div>
+            <p>Loading sample inventory...</p>
+        </div>
+
+        <!-- Results Table -->
+        <div id="results-container" class="hidden">
+            <div style="overflow-x: auto;">
+                <table id="results-table">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable('sample_barcode_id')" style="cursor: pointer;">
+                                Sample Barcode <span id="sort-sample_barcode_id"></span>
+                            </th>
+                            <th onclick="sortTable('study_code')" style="cursor: pointer;">
+                                Study <span id="sort-study_code"></span>
+                            </th>
+                            <th onclick="sortTable('participant_id')" style="cursor: pointer;">
+                                Participant <span id="sort-participant_id"></span>
+                            </th>
+                            <th onclick="sortTable('timepoint_day')" style="cursor: pointer;">
+                                Timepoint (Day) <span id="sort-timepoint_day"></span>
+                            </th>
+                            <th onclick="sortTable('sample_type')" style="cursor: pointer;">
+                                Sample Type <span id="sort-sample_type"></span>
+                            </th>
+                            <th onclick="sortTable('is_available')" style="cursor: pointer;">
+                                Status <span id="sort-is_available"></span>
+                            </th>
+                            <th>Storage Location</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-tbody">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination-container"></div>
+        </div>
+
+        <!-- No Results -->
+        <div id="no-results" class="hidden">
+            <div class="alert alert-info">
+                <strong>No samples found matching your search criteria.</strong><br>
+                Try adjusting your filters or search terms.
+            </div>
+        </div>
+    </main>
+
+        <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <p><strong>Woods Lab Influenza Challenge Studies Dashboard</strong></p>
+            <p style="font-size: 0.875rem;">Last Updated: <span id="footer-last-updated">Loading...</span></p>
+            <p style="font-size: 0.875rem; margin-top: 0.5rem;">
+                © 2025 Woods Lab. Released under the <a href="https://opensource.org/licenses/MIT" target="_blank" style="color: var(--royal-blue); text-decoration: underline;">MIT License</a>.
+            </p>
+            <p style="margin-top: 1rem; font-size: 0.875rem; color: var(--hatteras);">
+                For sample requests or collaboration inquiries, please contact the lab.
+            </p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/main.js"></script>
+    <script>
+        // Global variables
+        let allSamples = [];
+        let filteredSamples = [];
+        let currentPage = 1;
+        const itemsPerPage = 50;
+        let currentSort = { field: null, ascending: true };
+
+        // Load samples
+        async function loadSamples() {
+            try {
+                const response = await fetch('data/samples.json');
+                allSamples = await response.json();
+                filteredSamples = [...allSamples];
+
+                // Populate filter dropdowns
+                populateFilters();
+
+                // Display initial results
+                displayResults();
+
+                // Hide loading, show results
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('results-container').classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Error loading samples:', error);
+                document.getElementById('loading').innerHTML = `
+                    <div class="alert alert-warning">
+                        <strong>Error loading sample inventory.</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Populate filter dropdowns with unique values
+        function populateFilters() {
+            const studies = getUniqueValues(allSamples, 'study_code');
+            const types = getUniqueValues(allSamples, 'sample_type');
+
+            document.getElementById('filter-study').innerHTML = createSelectOptions(studies);
+            document.getElementById('filter-type').innerHTML = createSelectOptions(types);
+        }
+
+        // Search samples
+        function searchSamples() {
+            applyFilters();
+        }
+
+        // Apply all filters
+        function applyFilters() {
+            const searchTerm = document.getElementById('search-input').value;
+            const studyFilter = document.getElementById('filter-study').value;
+            const typeFilter = document.getElementById('filter-type').value;
+            const statusFilter = document.getElementById('filter-status').value;
+            const participantFilter = document.getElementById('filter-participant').value;
+
+            // Start with all samples
+            filteredSamples = [...allSamples];
+
+            // Apply search term
+            if (searchTerm) {
+                filteredSamples = filterData(filteredSamples, searchTerm, [
+                    'sample_barcode_id', 'participant_id', 'study_code'
+                ]);
+            }
+
+            // Apply filters
+            if (studyFilter) {
+                filteredSamples = filteredSamples.filter(s => s.study_code === studyFilter);
+            }
+
+            if (typeFilter) {
+                filteredSamples = filteredSamples.filter(s => s.sample_type === typeFilter);
+            }
+
+            if (statusFilter) {
+                if (statusFilter === 'available') {
+                    filteredSamples = filteredSamples.filter(s => s.is_available === true);
+                } else if (statusFilter === 'transferred') {
+                    filteredSamples = filteredSamples.filter(s => s.is_transferred === true);
+                }
+            }
+
+            if (participantFilter) {
+                filteredSamples = filterData(filteredSamples, participantFilter, ['participant_id']);
+            }
+
+            // Reset to page 1
+            currentPage = 1;
+
+            // Update display
+            displayResults();
+        }
+
+        // Debounced filter for participant input
+        const debounceFilter = debounce(() => applyFilters(), 300);
+
+        // Reset all filters
+        function resetFilters() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('filter-study').value = '';
+            document.getElementById('filter-type').value = '';
+            document.getElementById('filter-status').value = '';
+            document.getElementById('filter-participant').value = '';
+
+            filteredSamples = [...allSamples];
+            currentSort = { field: null, ascending: true };
+            currentPage = 1;
+
+            displayResults();
+        }
+
+        // Sort table
+        function sortTable(field) {
+            // Toggle sort direction if clicking same field
+            if (currentSort.field === field) {
+                currentSort.ascending = !currentSort.ascending;
+            } else {
+                currentSort.field = field;
+                currentSort.ascending = true;
+            }
+
+            filteredSamples = sortData(filteredSamples, field, currentSort.ascending);
+
+            // Update sort indicators
+            document.querySelectorAll('[id^="sort-"]').forEach(el => el.textContent = '');
+            const indicator = currentSort.ascending ? '▲' : '▼';
+            document.getElementById(`sort-${field}`).textContent = indicator;
+
+            displayResults();
+        }
+
+        // Display results
+        function displayResults() {
+            const tbody = document.getElementById('results-tbody');
+            const totalResults = filteredSamples.length;
+
+            // Update results count
+            document.getElementById('results-count').textContent = totalResults.toLocaleString();
+
+            // Show/hide no results message
+            if (totalResults === 0) {
+                document.getElementById('results-container').classList.add('hidden');
+                document.getElementById('no-results').classList.remove('hidden');
+                return;
+            } else {
+                document.getElementById('results-container').classList.remove('hidden');
+                document.getElementById('no-results').classList.add('hidden');
+            }
+
+            // Calculate pagination
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, totalResults);
+            const pageResults = filteredSamples.slice(startIndex, endIndex);
+
+            // Build table rows
+            let html = '';
+            pageResults.forEach(sample => {
+                const statusBadge = sample.is_available
+                    ? '<span class="badge badge-available">Available</span>'
+                    : '<span class="badge badge-transferred">Transferred</span>';
+
+                const location = sample.storage_location_path || 'Not specified';
+
+                html += `
+                    <tr>
+                        <td><strong>${sample.sample_barcode_id || 'N/A'}</strong></td>
+                        <td><span class="badge badge-primary">${sample.study_code || 'N/A'}</span></td>
+                        <td>${sample.participant_id || 'N/A'}</td>
+                        <td>${sample.timepoint_day !== null && sample.timepoint_day !== undefined ? sample.timepoint_day : 'N/A'}</td>
+                        <td>${sample.sample_type || 'N/A'}</td>
+                        <td>${statusBadge}</td>
+                        <td style="font-size: 0.9rem;">${location}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+
+            // Update pagination
+            updatePagination();
+        }
+
+        // Update pagination controls
+        function updatePagination() {
+            const container = document.getElementById('pagination-container');
+            const totalResults = filteredSamples.length;
+            const totalPages = Math.ceil(totalResults / itemsPerPage);
+
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = createPagination(totalResults, itemsPerPage, currentPage, 'goToPage');
+        }
+
+        // Go to specific page
+        function goToPage(page) {
+            currentPage = page;
+            displayResults();
+            // Scroll to top of results
+            document.getElementById('results-container').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Export results to CSV
+        function exportResults() {
+            if (filteredSamples.length === 0) {
+                alert('No samples to export');
+                return;
+            }
+
+            // Prepare data for export
+            const exportData = filteredSamples.map(sample => ({
+                'Sample Barcode': sample.sample_barcode_id || '',
+                'Study Code': sample.study_code || '',
+                'Participant ID': sample.participant_id || '',
+                'Timepoint Day': sample.timepoint_day !== null ? sample.timepoint_day : '',
+                'Timepoint Hour': sample.timepoint_hour !== null ? sample.timepoint_hour : '',
+                'Sample Type': sample.sample_type || '',
+                'Available': sample.is_available ? 'Yes' : 'No',
+                'Transferred': sample.is_transferred ? 'Yes' : 'No',
+                'Storage Location': sample.storage_location_path || ''
+            }));
+
+            const timestamp = new Date().toISOString().split('T')[0];
+            const filename = `sample_inventory_${timestamp}.csv`;
+
+            exportTableToCSV(exportData, filename);
+        }
+
+        // Load on page load
+        document.addEventListener('DOMContentLoaded', loadSamples);
+    </script>
+</body>
+</html>
