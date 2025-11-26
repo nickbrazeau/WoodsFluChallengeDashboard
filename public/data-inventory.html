@@ -373,7 +373,7 @@
             ];
 
             // Create links (Sample -> Assay connections)
-            const links = [];
+            const linkMap = new Map();
 
             // Sample types to assays (estimated based on common patterns)
             const sampleAssayMap = {
@@ -389,29 +389,44 @@
                 const relatedAssays = sampleAssayMap[sample] || [];
                 relatedAssays.forEach(assay => {
                     if (assayTypes.includes(assay)) {
-                        links.push({
-                            source: nodes.findIndex(n => n.name === sample),
-                            target: nodes.findIndex(n => n.name === assay),
-                            value: 100
-                        });
+                        const sourceIdx = nodes.findIndex(n => n.name === sample);
+                        const targetIdx = nodes.findIndex(n => n.name === assay);
+
+                        // Skip if source === target or invalid indices
+                        if (sourceIdx >= 0 && targetIdx >= 0 && sourceIdx !== targetIdx) {
+                            const key = `${sourceIdx}-${targetIdx}`;
+                            if (linkMap.has(key)) {
+                                linkMap.get(key).value += 100;
+                            } else {
+                                linkMap.set(key, {source: sourceIdx, target: targetIdx, value: 100});
+                            }
+                        }
                     }
                 });
             });
 
-            // Assays to storage
+            // Assays to storage - aggregate by source-target pair
             allData.forEach(record => {
                 if (record.Assay && record.storage_location && (record.Samples || 0) > 0) {
                     const sourceIdx = nodes.findIndex(n => n.name === record.Assay);
                     const targetIdx = nodes.findIndex(n => n.name === record.storage_location);
-                    if (sourceIdx >= 0 && targetIdx >= 0) {
-                        links.push({
-                            source: sourceIdx,
-                            target: targetIdx,
-                            value: parseInt(record.Samples) || 50
-                        });
+
+                    // Skip if source === target or invalid indices
+                    if (sourceIdx >= 0 && targetIdx >= 0 && sourceIdx !== targetIdx) {
+                        const key = `${sourceIdx}-${targetIdx}`;
+                        const value = parseInt(record.Samples) || 50;
+
+                        if (linkMap.has(key)) {
+                            linkMap.get(key).value += value;
+                        } else {
+                            linkMap.set(key, {source: sourceIdx, target: targetIdx, value: value});
+                        }
                     }
                 }
             });
+
+            // Convert map to array
+            const links = Array.from(linkMap.values());
 
             // Create Sankey layout
             const sankey = d3.sankey()
