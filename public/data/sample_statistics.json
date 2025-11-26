@@ -1,0 +1,39 @@
+{
+  "total_samples": 82046,
+  "total_studies": 7,
+  "total_participants": 221,
+  "total_sample_types": 17,
+  "available_samples": 70646,
+  "transferred_samples": 11400,
+  "samples_by_study": {
+    "DU09-07": 20748,
+    "DU17-04": 13524,
+    "DU24-01": 12692,
+    "DU09-06": 10299,
+    "DU11-02": 9273,
+    "DU08-04": 8984,
+    "DU20-01": 6526
+  },
+  "samples_by_type": {
+    "Plasma": 29600,
+    "Lavage, Nasopharyngeal": 12583,
+    "Serum": 10309,
+    "Whole Blood": 10038,
+    "PBMCs": 8022,
+    "Saliva": 3897,
+    "Swab, Nasal": 1614,
+    "Swab, Nasopharyngeal": 1455,
+    "Buffy Coat": 840,
+    "Swab, Throat": 820
+  },
+  "participants_by_study": {
+    "DU08-04": 19,
+    "DU09-06": 31,
+    "DU09-07": 55,
+    "DU11-02": 21,
+    "DU17-04": 39,
+    "DU20-01": 20,
+    "DU24-01": 36
+  },
+  "date_generated": "2025-11-25T15:37:11.998920"
+}
