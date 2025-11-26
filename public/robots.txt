@@ -1,0 +1,15 @@
+# robots.txt for Woods Lab Influenza Challenge Studies Dashboard
+# Prevents search engine indexing of sensitive data
+
+User-agent: *
+Disallow: /data/
+Disallow: /samples.html
+Disallow: /data-inventory.html
+Disallow: /publications.html
+
+# Allow indexing of home and about pages
+Allow: /index.html
+Allow: /about.html
+
+# Sitemap (if generated in future)
+# Sitemap: https://nickbrazeau.github.io/WoodsFluChallengeDashboard/sitemap.xml

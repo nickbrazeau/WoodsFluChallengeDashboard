@@ -11,7 +11,7 @@
     <nav>
         <div class="nav-container">
             <a href="index.html" class="nav-brand">Woods Lab Dashboard</a>
-                        <ul class="nav-links">
+            <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="studies.html">Studies</a></li>
                 <li><a href="data-inventory.html">Data Inventory</a></li>
@@ -26,204 +26,17 @@
     <main>
         <h1>About This Dashboard</h1>
 
-        <!-- Project Overview -->
-        <section class="card">
-            <h2>Project Overview</h2>
-            <p>
-                This dashboard provides a comprehensive view of biological samples, molecular data, and
-                scientific publications from influenza challenge studies conducted over 20 years (2008-2024).
-                It serves as a central resource for researchers to discover available samples, explore data,
-                and facilitate collaboration.
-            </p>
-            <div class="grid grid-3" style="margin-top: 1.5rem;">
-                <div class="stat-card">
-                    <span class="stat-number" id="total-samples">82,046</span>
-                    <span class="stat-label">Biological Samples</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-number">7</span>
-                    <span class="stat-label">Challenge Studies</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-number" id="total-publications">31</span>
-                    <span class="stat-label">Publications</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- Studies Overview -->
-        <section>
-            <h2>Challenge Studies</h2>
-            <div class="card">
-                <p>The dashboard includes data from the following human influenza challenge studies:</p>
-
-                <table style="margin-top: 1rem;">
-                    <thead>
-                        <tr>
-                            <th>Study Code</th>
-                            <th>Name</th>
-                            <th>Year</th>
-                            <th>Virus</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>DU08-04</strong></td>
-                            <td>DEE2 H3N2 Flu Challenge</td>
-                            <td>2008</td>
-                            <td>H3N2 (A/Brisbane/10/2007)</td>
-                        </tr>
-                        <tr>
-                            <td><strong>DU09-06</strong></td>
-                            <td>DEE3 H1N1 Flu Challenge</td>
-                            <td>2009</td>
-                            <td>H1N1 (A/Brisbane/59/2007)</td>
-                        </tr>
-                        <tr>
-                            <td><strong>DU09-07</strong></td>
-                            <td>DEE4 H1N1 Flu Challenge</td>
-                            <td>2009</td>
-                            <td>H1N1 (A/Brisbane/59/2007)</td>
-                        </tr>
-                        <tr>
-                            <td><strong>DU11-02</strong></td>
-                            <td>DEE5 H3N2 Flu Challenge</td>
-                            <td>2011</td>
-                            <td>H3N2 (A/Victoria/361/2011)</td>
-                        </tr>
-                        <tr>
-                            <td><strong>DU17-04</strong></td>
-                            <td>PROMETHEUS H1N1 ICL Flu Challenge</td>
-                            <td>2017</td>
-                            <td>H1N1</td>
-                        </tr>
-                        <tr>
-                            <td><strong>DU20-01</strong></td>
-                            <td>SIGMA Plus H3N2 Flu Challenge</td>
-                            <td>2020</td>
-                            <td>H3N2</td>
-                        </tr>
-                        <tr>
-                            <td><strong>DU24-01</strong></td>
-                            <td>EXHALE H3N2 Flu Challenge</td>
-                            <td>2024</td>
-                            <td>H3N2</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- Data Documentation -->
-        <section>
-            <h2>Data Documentation</h2>
-
-            <div class="card">
-                <h3>Sample Fields</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Field</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Sample Barcode</strong></td>
-                            <td>Unique identifier for each biological sample</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Study Code</strong></td>
-                            <td>Challenge study identifier (e.g., DU08-04)</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Participant ID</strong></td>
-                            <td>De-identified participant identifier</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Timepoint Day</strong></td>
-                            <td>Days relative to inoculation (negative = pre-inoculation, positive = post-inoculation)</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Sample Type</strong></td>
-                            <td>Biological sample type (e.g., Whole Blood, Plasma, Serum, PBMC)</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Storage Location</strong></td>
-                            <td>Physical location in biorepository</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Availability Status</strong></td>
-                            <td>Available (in freezer) or Transferred (sent to collaborator)</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="card">
-                <h3>Timepoint Normalization</h3>
-                <p>
-                    Sample collection timepoints have been normalized relative to the day of viral inoculation
-                    (Day 0). This allows consistent comparison across studies:
-                </p>
-                <ul style="margin-top: 0.5rem; margin-left: 2rem;">
-                    <li><strong>Negative days</strong>: Pre-inoculation samples (screening, baseline)</li>
-                    <li><strong>Day 0</strong>: Day of viral inoculation</li>
-                    <li><strong>Positive days</strong>: Post-inoculation follow-up samples</li>
-                </ul>
-                <p style="margin-top: 1rem;">
-                    Most studies collected samples from approximately Day -7 through Day +28, though specific
-                    collection schedules varied by study protocol.
-                </p>
-            </div>
-
-            <div class="card">
-                <h3>Sample Types</h3>
-                <p>Common biological sample types in the repository include:</p>
-                <ul style="margin-top: 0.5rem; margin-left: 2rem;">
-                    <li><strong>Whole Blood</strong>: Complete blood samples</li>
-                    <li><strong>Plasma</strong>: Cell-free blood fraction</li>
-                    <li><strong>Serum</strong>: Plasma without clotting factors</li>
-                    <li><strong>PBMC</strong>: Peripheral blood mononuclear cells</li>
-                    <li><strong>Nasal Wash</strong>: Upper respiratory samples</li>
-                    <li><strong>Nasal Swab</strong>: Nasal epithelial samples</li>
-                    <li><strong>RNA/DNA</strong>: Extracted nucleic acids</li>
-                </ul>
-            </div>
-        </section>
-
-        <!-- Data Quality -->
-        <section>
-            <h2>Data Quality</h2>
-            <div class="card">
-                <h3>Validation & Quality Control</h3>
-                <p>
-                    All data in this dashboard has undergone comprehensive quality control and validation:
-                </p>
-                <ul style="margin-top: 0.5rem; margin-left: 2rem; margin-bottom: 1rem;">
-                    <li>Duplicate sample barcodes have been identified and resolved</li>
-                    <li>Timepoints normalized to consistent format across all studies</li>
-                    <li>Publications linked to specific studies and samples</li>
-                    <li>Assay data tracked with complete provenance chains</li>
-                    <li>Storage locations documented for 94.8% of samples</li>
-                </ul>
-
-                <h3 style="margin-top: 1.5rem;">Known Limitations</h3>
-                <div id="known-issues-list"></div>
-            </div>
-        </section>
-
-        <!-- How to Use -->
+        <!-- How to Use Section -->
         <section>
             <h2>How to Use This Dashboard</h2>
             <div class="grid grid-2">
                 <div class="card">
-                    <h3>Sample Search</h3>
+                    <h3>Sample Inventory</h3>
                     <p>
                         Navigate to the <a href="samples.html">Sample Inventory</a> page to search
-                        through all available samples. You can:
+                        through all available biological samples.
                     </p>
-                    <ul style="margin-left: 2rem;">
+                    <ul style="margin-left: 2rem; margin-top: 0.5rem;">
                         <li>Search by barcode, participant ID, or study code</li>
                         <li>Filter by study, sample type, timepoint, and availability</li>
                         <li>Sort results by any column</li>
@@ -232,100 +45,135 @@
                 </div>
 
                 <div class="card">
-                    <h3>Publications Browser</h3>
+                    <h3>Data Inventory</h3>
                     <p>
-                        The <a href="publications.html">Publications</a> page allows you to:
+                        The <a href="data-inventory.html">Data Inventory</a> page provides the most comprehensive view of molecular data.
                     </p>
-                    <ul style="margin-left: 2rem;">
-                        <li>Browse all publications using challenge study data</li>
-                        <li>Filter by study, year, or journal</li>
-                        <li>View full citation and abstract details</li>
+                    <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                        <li>Browse assays performed on samples</li>
+                        <li>View data storage locations</li>
+                        <li>Explore data provenance with Sankey diagrams</li>
+                        <li>Filter by study, assay type, or storage location</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Publications</h3>
+                    <p>
+                        The <a href="publications.html">Publications</a> page catalogs all scientific publications utilizing challenge study data.
+                    </p>
+                    <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                        <li>Browse publications by study, year, or journal</li>
+                        <li>View citation details and abstracts</li>
                         <li>Access PubMed links where available</li>
+                        <li>See which samples were used in each publication</li>
                     </ul>
                 </div>
 
                 <div class="card">
                     <h3>Study Overview</h3>
                     <p>
-                        The <a href="studies.html">Studies</a> page provides:
+                        The <a href="studies.html">Studies</a> page provides details on each challenge study.
                     </p>
-                    <ul style="margin-left: 2rem;">
+                    <ul style="margin-left: 2rem; margin-top: 0.5rem;">
                         <li>Overview of each challenge study</li>
                         <li>Sample counts and availability statistics</li>
-                        <li>Associated publications</li>
+                        <li>Associated publications and assays</li>
                         <li>Quick links to view study-specific data</li>
-                    </ul>
-                </div>
-
-                <div class="card">
-                    <h3>Assay Data</h3>
-                    <p>
-                        The <a href="assays.html">Assays</a> page shows:
-                    </p>
-                    <ul style="margin-left: 2rem;">
-                        <li>Types of molecular assays performed</li>
-                        <li>Number of samples assayed</li>
-                        <li>Studies with assay data available</li>
-                        <li>Publications using each assay type</li>
                     </ul>
                 </div>
             </div>
         </section>
 
-        <!-- Sample Requests -->
-        <section>
+        <!-- Sample Requests Section -->
+        <section style="margin-top: 3rem;">
             <h2>Sample Requests & Collaboration</h2>
             <div class="card">
                 <p>
-                    Samples from these challenge studies are available for collaborative research projects.
+                    Samples from these influenza challenge studies are available for collaborative research projects.
                     If you are interested in accessing samples or data, please contact the lab with:
                 </p>
-                <ul style="margin-left: 2rem; margin-top: 0.5rem;">
-                    <li>Your research question and study design</li>
-                    <li>Specific samples or studies of interest</li>
-                    <li>Proposed assays or analyses</li>
-                    <li>Timeline and funding information</li>
+                <ul style="margin-left: 2rem; margin-top: 1rem;">
+                    <li><strong>Your research question and study design</strong></li>
+                    <li><strong>Specific samples or studies of interest</strong></li>
+                    <li><strong>Proposed assays or analyses</strong></li>
+                    <li><strong>Timeline and funding information</strong></li>
                 </ul>
-                <p style="margin-top: 1rem;">
+                <p style="margin-top: 1.5rem;">
                     <strong>Contact:</strong> Woods Lab<br>
                     Please use the lab's official contact channels for collaboration inquiries.
                 </p>
             </div>
         </section>
 
-        <!-- Version Information -->
-        <section>
-            <h2>Dashboard Information</h2>
+        <!-- About This Website Section -->
+        <section style="margin-top: 3rem;">
+            <h2>About This Website</h2>
             <div class="card">
-                <table>
-                    <tbody>
-                        <tr>
-                            <td><strong>Version</strong></td>
-                            <td id="version">Loading...</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Data Version</strong></td>
-                            <td id="data-version">Loading...</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Last Updated</strong></td>
-                            <td id="last-updated">Loading...</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Total Samples</strong></td>
-                            <td id="sample-count">Loading...</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Total Publications</strong></td>
-                            <td id="pub-count">Loading...</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <h3 style="margin-bottom: 1rem;">Development & Generation</h3>
+                <p>
+                    This dashboard website was generated using <a href="https://claude.ai/code" target="_blank" style="color: var(--royal-blue); text-decoration: underline;"><strong>Claude Code</strong></a>,
+                    Anthropic's AI assistant for software development, with human oversight, validation, and minor code inputs.
+                </p>
+                <p style="margin-top: 1rem;">
+                    The development process involved:
+                </p>
+                <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                    <li><strong>Data processing and curation</strong>: Automated extraction and harmonization of sample inventory, assay tracking, and publication data across 20 years of studies</li>
+                    <li><strong>Interactive visualizations</strong>: D3.js Sankey diagrams, sortable tables, and dynamic filtering</li>
+                    <li><strong>Human validation</strong>: All automated extractions reviewed and validated by researchers</li>
+                    <li><strong>Quality control</strong>: Comprehensive data validation, provenance tracking, and consistency checks</li>
+                </ul>
+                <p style="margin-top: 1.5rem;">
+                    <strong>Technology Stack</strong>:
+                </p>
+                <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                    <li>Static HTML/CSS/JavaScript for performance and simplicity</li>
+                    <li>D3.js for data provenance visualizations</li>
+                    <li>Client-side data processing for fast, responsive interactions</li>
+                    <li>Python for data munging and standardization</li>
+                </ul>
+                <div style="margin-top: 1.5rem; padding: 1rem; background-color: #f8f9fa; border-radius: 4px; border-left: 4px solid var(--royal-blue);">
+                    <p style="margin: 0;">
+                        <strong>Generated with AI assistance</strong>: This website was built using Claude Code with human review and validation at every step.
+                        All data has been curated and verified by researchers.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Statistics Section -->
+        <section style="margin-top: 3rem;">
+            <h2>Dashboard Statistics</h2>
+            <div class="card">
+                <div class="grid grid-3" style="margin-bottom: 1.5rem;">
+                    <div>
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--primary-blue);">
+                            <span id="total-samples">82,046</span>
+                        </div>
+                        <div style="color: var(--graphite);">Biological Samples</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--royal-blue);">
+                            <span id="total-publications">39</span>
+                        </div>
+                        <div style="color: var(--graphite);">Publications</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--persimmon);">
+                            7
+                        </div>
+                        <div style="color: var(--graphite);">Challenge Studies</div>
+                    </div>
+                </div>
+                <p style="margin-top: 1rem;">
+                    Data spans human influenza challenge studies conducted from 2008 to 2024, encompassing H1N1 and H3N2 virus strains.
+                </p>
             </div>
         </section>
     </main>
 
-        <!-- Footer -->
+    <!-- Footer -->
     <footer>
         <div class="footer-container">
             <p><strong>Woods Lab Influenza Challenge Studies Dashboard</strong></p>
@@ -340,6 +188,7 @@
     </footer>
 
     <!-- JavaScript -->
+    <script src="js/auth.js"></script>
     <script src="js/main.js"></script>
     <script>
         async function loadAboutData() {
@@ -354,47 +203,21 @@
                 const sampleStats = await sampleStatsResponse.json();
                 const pubStats = await pubStatsResponse.json();
 
-                // Update version info
-                document.getElementById('version').textContent = config.version;
-                document.getElementById('data-version').textContent = config.data_version;
-
+                // Update footer last updated
                 const lastUpdated = new Date(config.last_updated);
-                document.getElementById('last-updated').textContent = lastUpdated.toLocaleDateString('en-US', {
+                document.getElementById('footer-last-updated').textContent = lastUpdated.toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'
                 });
 
-                document.getElementById('sample-count').textContent = sampleStats.total_samples.toLocaleString();
-                document.getElementById('pub-count').textContent = pubStats.total_publications;
-
                 // Update stats on page
                 document.getElementById('total-samples').textContent = sampleStats.total_samples.toLocaleString();
                 document.getElementById('total-publications').textContent = pubStats.total_publications;
 
-                // Display known issues
-                displayKnownIssues(config.known_issues || []);
-
             } catch (error) {
                 console.error('Error loading about data:', error);
             }
-        }
-
-        function displayKnownIssues(issues) {
-            const container = document.getElementById('known-issues-list');
-
-            if (issues.length === 0) {
-                container.innerHTML = '<p style="color: var(--eno);">No known issues at this time.</p>';
-                return;
-            }
-
-            let html = '<ul style="margin-left: 2rem;">';
-            issues.forEach(issue => {
-                html += `<li>${issue}</li>`;
-            });
-            html += '</ul>';
-
-            container.innerHTML = html;
         }
 
         document.addEventListener('DOMContentLoaded', loadAboutData);
