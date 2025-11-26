@@ -1,0 +1,33 @@
+{
+  "total_assay_records": 27,
+  "unique_assay_types": 25,
+  "total_samples_assayed": 1750,
+  "studies_with_assays": 1,
+  "assays_by_type": {
+    "*NO SEQ DATA": 0,
+    "Biovotion everion Wearables": 0,
+    "Bittium Faros Wearables": 0,
+    "Cough sensor": 0,
+    "Cytokines": 396,
+    "Empatica wearables": 0,
+    "FIA P180": 141,
+    "Faros Wearables": 68,
+    "Garmin Wearables": 61,
+    "Garmin wristband Wearables": 0,
+    "HSC": 81,
+    "Lumee Wearables": 0,
+    "Lung": 78,
+    "Lung  Function tests": 0,
+    "Metabolites-Proteomics": 89,
+    "Mindstgrong Wearables": 0,
+    "OMED Wearables": 0,
+    "OPO": 227,
+    "Oxylipin": 156,
+    "P180": 79,
+    "PBMC": 60,
+    "PURINES PYRIMIDINES": 81,
+    "RNA": 120,
+    "RNA Batch2": 113,
+    "Reciva Wearables": 0
+  }
+}
