@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(python3:*)",
+      "Bash(pip3 install:*)",
+      "Bash(source:*)",
+      "Bash(pip install:*)",
+      "Bash(python:*)",
+      "Bash(ls:*)",
+      "Bash(lsof:*)",
+      "Bash(xargs kill:*)",
+      "Bash(chmod:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(git init:*)",
+      "Bash(cat:*)",
+      "Bash(git branch:*)",
+      "Bash(git remote add:*)",
+      "Bash(./deploy-to-github.sh)",
+      "Bash(yes:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
