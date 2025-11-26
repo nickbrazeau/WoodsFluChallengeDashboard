@@ -8,6 +8,7 @@ import pandas as pd
 import json
 from pathlib import Path
 from datetime import datetime
+import numpy as np
 
 def convert_samples_to_json():
     """Convert deduplicated sample inventory to JSON"""
@@ -30,6 +31,9 @@ def convert_samples_to_json():
     # Keep only existing fields
     available_fields = [f for f in dashboard_fields if f in inventory.columns]
     samples_df = inventory[available_fields].copy()
+
+    # Replace NaN with None (becomes null in JSON)
+    samples_df = samples_df.replace({np.nan: None})
 
     # Convert to records
     samples = samples_df.to_dict('records')
@@ -150,6 +154,9 @@ def convert_assays_to_json():
     # Load assay tracking
     assays_df = pd.read_csv('data/processed/assay_tracking_table.csv')
     print(f"Loaded {len(assays_df)} assay records")
+
+    # Replace NaN with None (becomes null in JSON)
+    assays_df = assays_df.replace({np.nan: None})
 
     # Convert to JSON-friendly format
     assays = assays_df.to_dict('records')

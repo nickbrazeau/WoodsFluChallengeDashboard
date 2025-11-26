@@ -27,7 +27,7 @@
     "Samples": 120,
     "Subject ID ranges": "PROM001-20",
     "Timepoint(s)": "Day -1 / Day 0 / Day 1 / Day 2 / Day 3",
-    "Comment": NaN
+    "Comment": null
   },
   {
     "biobank_study_code": "DU17-04",
@@ -37,7 +37,7 @@
     "Samples": 113,
     "Subject ID ranges": "PROM021-39",
     "Timepoint(s)": "Day -1 / Day 0 / Day 1 / Day 2 / Day 3",
-    "Comment": NaN
+    "Comment": null
   },
   {
     "biobank_study_code": "DU17-04",
@@ -47,7 +47,7 @@
     "Samples": 0,
     "Subject ID ranges": "ALL",
     "Timepoint(s)": "datetime during study",
-    "Comment": NaN
+    "Comment": null
   },
   {
     "biobank_study_code": "DU17-04",
@@ -57,7 +57,7 @@
     "Samples": 0,
     "Subject ID ranges": "PROM021-38",
     "Timepoint(s)": "datetime during study",
-    "Comment": NaN
+    "Comment": null
   },
   {
     "biobank_study_code": "DU17-04",
@@ -67,7 +67,7 @@
     "Samples": 78,
     "Subject ID ranges": "ALL",
     "Timepoint(s)": "Not specified",
-    "Comment": NaN
+    "Comment": null
   },
   {
     "biobank_study_code": "DU17-04",
@@ -77,7 +77,7 @@
     "Samples": 227,
     "Subject ID ranges": "PROM008-038",
     "Timepoint(s)": "Not specified",
-    "Comment": NaN
+    "Comment": null
   },
   {
     "biobank_study_code": "DU17-04",
@@ -87,7 +87,7 @@
     "Samples": 60,
     "Subject ID ranges": "PROM002-19",
     "Timepoint(s)": "Day -1 /  Day 1 / Day 2 / Day 3",
-    "Comment": NaN
+    "Comment": null
   },
   {
     "biobank_study_code": "DU17-04",
@@ -97,7 +97,7 @@
     "Samples": 89,
     "Subject ID ranges": "retrospective",
     "Timepoint(s)": "Not specified",
-    "Comment": NaN
+    "Comment": null
   },
   {
     "biobank_study_code": "DU17-04",
@@ -107,7 +107,7 @@
     "Samples": 141,
     "Subject ID ranges": "retrospective",
     "Timepoint(s)": "Not specified",
-    "Comment": NaN
+    "Comment": null
   },
   {
     "biobank_study_code": "DU17-04",
@@ -117,7 +117,7 @@
     "Samples": 81,
     "Subject ID ranges": "retrospective",
     "Timepoint(s)": "Not specified",
-    "Comment": NaN
+    "Comment": null
   },
   {
     "biobank_study_code": "DU17-04",
@@ -127,7 +127,7 @@
     "Samples": 156,
     "Subject ID ranges": "retrospective",
     "Timepoint(s)": "Not specified",
-    "Comment": NaN
+    "Comment": null
   },
   {
     "biobank_study_code": "DU17-04",
@@ -137,7 +137,7 @@
     "Samples": 79,
     "Subject ID ranges": "retrospective",
     "Timepoint(s)": "Not specified",
-    "Comment": NaN
+    "Comment": null
   },
   {
     "biobank_study_code": "DU17-04",
@@ -147,70 +147,70 @@
     "Samples": 81,
     "Subject ID ranges": "retrospective",
     "Timepoint(s)": "Not specified",
-    "Comment": NaN
+    "Comment": null
   },
   {
-    "biobank_study_code": NaN,
+    "biobank_study_code": null,
     "Study": "H3N2 EXHALE Challenge",
     "Assay": "OMED Wearables",
     "Keys": "omed_key_cohort1 - cohort3",
     "Samples": 0,
     "Subject ID ranges": "all",
     "Timepoint(s)": "all timepoints",
-    "Comment": NaN
+    "Comment": null
   },
   {
-    "biobank_study_code": NaN,
+    "biobank_study_code": null,
     "Study": "H3N2 EXHALE Challenge",
     "Assay": "Reciva Wearables",
     "Keys": "reciva_redcapimport_cohort1 - 3",
     "Samples": 0,
     "Subject ID ranges": "all",
     "Timepoint(s)": "Day1 - Day7",
-    "Comment": NaN
+    "Comment": null
   },
   {
-    "biobank_study_code": NaN,
+    "biobank_study_code": null,
     "Study": "SIGMA PRISMM Family Study ",
     "Assay": "*NO SEQ DATA",
     "Keys": "Not specified",
     "Samples": 0,
     "Subject ID ranges": "Not specified",
     "Timepoint(s)": "Not specified",
-    "Comment": NaN
+    "Comment": null
   },
   {
-    "biobank_study_code": NaN,
+    "biobank_study_code": null,
     "Study": "SIGMA PRISMM Family Study ",
     "Assay": "Faros Wearables",
     "Keys": "sp_rc_faros",
     "Samples": 68,
     "Subject ID ranges": "adults in household",
     "Timepoint(s)": "during study",
-    "Comment": NaN
+    "Comment": null
   },
   {
-    "biobank_study_code": NaN,
+    "biobank_study_code": null,
     "Study": "SIGMA PRISMM Family Study ",
     "Assay": "Garmin Wearables",
     "Keys": "sp_rc_faros",
     "Samples": 61,
     "Subject ID ranges": "adults in household",
     "Timepoint(s)": "during study",
-    "Comment": NaN
+    "Comment": null
   },
   {
-    "biobank_study_code": NaN,
+    "biobank_study_code": null,
     "Study": "SIGMA Plus - ICL H3N2 Challenge (2020)",
     "Assay": "*NO SEQ DATA",
     "Keys": "Not specified",
     "Samples": 0,
     "Subject ID ranges": "Not specified",
     "Timepoint(s)": "Not specified",
-    "Comment": NaN
+    "Comment": null
   },
   {
-    "biobank_study_code": NaN,
+    "biobank_study_code": null,
     "Study": "SIGMA Plus - ICL H3N2 Challenge (2020)",
     "Assay": "Biovotion everion Wearables",
     "Keys": "Not specified",
@@ -220,7 +220,7 @@
     "Comment": "no data keys only"
   },
   {
-    "biobank_study_code": NaN,
+    "biobank_study_code": null,
     "Study": "SIGMA Plus - ICL H3N2 Challenge (2020)",
     "Assay": "Bittium Faros Wearables",
     "Keys": "Not specified",
@@ -230,43 +230,43 @@
     "Comment": "device data uploaded to RTI have at Duke"
   },
   {
-    "biobank_study_code": NaN,
+    "biobank_study_code": null,
     "Study": "SIGMA Plus - ICL H3N2 Challenge (2020)",
     "Assay": "Garmin wristband Wearables",
     "Keys": "Not specified",
     "Samples": 0,
     "Subject ID ranges": "Not specified",
     "Timepoint(s)": "Not specified",
-    "Comment": NaN
+    "Comment": null
   },
   {
-    "biobank_study_code": NaN,
+    "biobank_study_code": null,
     "Study": "SIGMA Plus - ICL H3N2 Challenge (2020)",
     "Assay": "Lumee Wearables",
     "Keys": "sfc_profusa_lumee",
     "Samples": 0,
     "Subject ID ranges": "SPFC001-020",
     "Timepoint(s)": "Not specified",
-    "Comment": NaN
+    "Comment": null
   },
   {
-    "biobank_study_code": NaN,
+    "biobank_study_code": null,
     "Study": "SIGMA Plus - ICL H3N2 Challenge (2020)",
     "Assay": "Mindstgrong Wearables",
     "Keys": "Not specified",
     "Samples": 0,
     "Subject ID ranges": "Not specified",
     "Timepoint(s)": "Not specified",
-    "Comment": NaN
+    "Comment": null
   },
   {
-    "biobank_study_code": NaN,
+    "biobank_study_code": null,
     "Study": "SIGMA Plus - ICL H3N2 Challenge (2020)",
     "Assay": "Lung  Function tests",
     "Keys": "sfc_lung_function_tests",
     "Samples": 0,
     "Subject ID ranges": "SPFC001-020",
     "Timepoint(s)": "Not specified",
-    "Comment": NaN
+    "Comment": null
   }
 ]
