@@ -352,136 +352,175 @@
         }
 
         function createSankeyDiagram() {
-            // Prepare data for Sankey: Sample Types -> Assays
-            const width = document.getElementById('sankey-diagram').offsetWidth;
-            const height = 600;
+            try {
+                // Prepare data for Sankey: Sample Types -> Assays -> Storage
+                const container = document.getElementById('sankey-diagram');
+                const width = container.offsetWidth || 1000;
+                const height = 600;
 
-            const svg = d3.select('#sankey-diagram')
-                .append('svg')
-                .attr('width', width)
-                .attr('height', height);
+                // Clear any existing content
+                container.innerHTML = '';
 
-            // Create nodes and links for Sample Types -> Assays -> Storage
-            const sampleTypes = ['Whole Blood', 'Plasma', 'Serum', 'PBMC', 'Nasal Wash', 'RNA', 'DNA'];
-            const assayTypes = [...new Set(allData.map(d => d.Assay))].filter(a => a && !a.includes('NO SEQ') && !a.includes('Wearables'));
-            const storageNodes = [...new Set(allData.map(d => d.storage_location))].filter(s => s);
+                const svg = d3.select('#sankey-diagram')
+                    .append('svg')
+                    .attr('width', width)
+                    .attr('height', height);
 
-            const nodes = [
-                ...sampleTypes.map(s => ({name: s, category: 'sample'})),
-                ...assayTypes.map(a => ({name: a, category: 'assay'})),
-                ...storageNodes.map(s => ({name: s, category: 'storage'}))
-            ];
+                // Get unique assays and storage locations from actual data
+                const assayTypes = [...new Set(allData.map(d => d.Assay))].filter(a => a).slice(0, 10);
+                const storageNodes = [...new Set(allData.map(d => d.storage_location))].filter(s => s);
 
-            // Create links (Sample -> Assay connections)
-            const linkMap = new Map();
+                // Simple flow: Assays -> Storage Locations
+                const nodes = [
+                    ...assayTypes.map(a => ({name: a, id: `assay_${a}`})),
+                    ...storageNodes.map(s => ({name: s, id: `storage_${s}`}))
+                ];
 
-            // Sample types to assays (estimated based on common patterns)
-            const sampleAssayMap = {
-                'Whole Blood': ['RNA', 'RNA Batch2', 'Cytokines'],
-                'Plasma': ['Cytokines', 'FIA P180', 'Oxylipin', 'P180'],
-                'PBMC': ['PBMC', 'RNA', 'RNA Batch2'],
-                'Nasal Wash': ['Cytokines', 'OPO'],
-                'RNA': ['RNA', 'RNA Batch2'],
-                'Serum': ['Cytokines', 'HSC']
-            };
+                // Create links from assays to storage with aggregated sample counts
+                const linkMap = new Map();
 
-            sampleTypes.forEach(sample => {
-                const relatedAssays = sampleAssayMap[sample] || [];
-                relatedAssays.forEach(assay => {
-                    if (assayTypes.includes(assay)) {
-                        const sourceIdx = nodes.findIndex(n => n.name === sample);
-                        const targetIdx = nodes.findIndex(n => n.name === assay);
+                allData.forEach(record => {
+                    if (record.Assay && record.storage_location && (record.Samples || 0) > 0) {
+                        const assayName = record.Assay;
+                        const storageName = record.storage_location;
 
-                        // Skip if source === target or invalid indices
-                        if (sourceIdx >= 0 && targetIdx >= 0 && sourceIdx !== targetIdx) {
-                            const key = `${sourceIdx}-${targetIdx}`;
-                            if (linkMap.has(key)) {
-                                linkMap.get(key).value += 100;
-                            } else {
-                                linkMap.set(key, {source: sourceIdx, target: targetIdx, value: 100});
+                        if (assayTypes.includes(assayName) && storageNodes.includes(storageName)) {
+                            const sourceIdx = nodes.findIndex(n => n.name === assayName);
+                            const targetIdx = nodes.findIndex(n => n.name === storageName);
+
+                            if (sourceIdx >= 0 && targetIdx >= 0 && sourceIdx !== targetIdx) {
+                                const key = `${sourceIdx}-${targetIdx}`;
+                                const value = parseInt(record.Samples) || 1;
+
+                                if (linkMap.has(key)) {
+                                    linkMap.get(key).value += value;
+                                } else {
+                                    linkMap.set(key, {source: sourceIdx, target: targetIdx, value: value});
+                                }
                             }
                         }
                     }
                 });
-            });
 
-            // Assays to storage - aggregate by source-target pair
-            allData.forEach(record => {
-                if (record.Assay && record.storage_location && (record.Samples || 0) > 0) {
-                    const sourceIdx = nodes.findIndex(n => n.name === record.Assay);
-                    const targetIdx = nodes.findIndex(n => n.name === record.storage_location);
+                const links = Array.from(linkMap.values());
 
-                    // Skip if source === target or invalid indices
-                    if (sourceIdx >= 0 && targetIdx >= 0 && sourceIdx !== targetIdx) {
-                        const key = `${sourceIdx}-${targetIdx}`;
-                        const value = parseInt(record.Samples) || 50;
-
-                        if (linkMap.has(key)) {
-                            linkMap.get(key).value += value;
-                        } else {
-                            linkMap.set(key, {source: sourceIdx, target: targetIdx, value: value});
-                        }
-                    }
+                // Check if we have valid data
+                if (nodes.length === 0 || links.length === 0) {
+                    throw new Error('No valid data for Sankey diagram');
                 }
-            });
 
-            // Convert map to array
-            const links = Array.from(linkMap.values());
+                console.log(`Sankey: ${nodes.length} nodes, ${links.length} links`);
 
-            // Create Sankey layout
-            const sankey = d3.sankey()
-                .nodeWidth(15)
-                .nodePadding(10)
-                .extent([[1, 1], [width - 1, height - 6]]);
+                // Create Sankey layout
+                const sankey = d3.sankey()
+                    .nodeId(d => d.name)
+                    .nodeWidth(20)
+                    .nodePadding(15)
+                    .extent([[10, 10], [width - 10, height - 10]]);
 
-            const {nodes: sankeyNodes, links: sankeyLinks} = sankey({
-                nodes: nodes.map(d => Object.assign({}, d)),
-                links: links.map(d => Object.assign({}, d))
-            });
-
-            // Color scale
-            const color = d3.scaleOrdinal()
-                .domain(['sample', 'assay', 'storage'])
-                .range(['#00539B', '#E89923', '#339898']);
-
-            // Draw links
-            svg.append('g')
-                .selectAll('path')
-                .data(sankeyLinks)
-                .join('path')
-                .attr('d', d3.sankeyLinkHorizontal())
-                .attr('stroke-width', d => Math.max(1, d.width))
-                .attr('stroke', '#ccc')
-                .attr('fill', 'none')
-                .attr('opacity', 0.5)
-                .on('mouseover', function() {
-                    d3.select(this).attr('opacity', 0.8);
-                })
-                .on('mouseout', function() {
-                    d3.select(this).attr('opacity', 0.5);
+                const graph = sankey({
+                    nodes: nodes.map(d => Object.assign({}, d)),
+                    links: links.map(d => Object.assign({}, d))
                 });
 
-            // Draw nodes
-            const node = svg.append('g')
-                .selectAll('g')
-                .data(sankeyNodes)
-                .join('g');
+                // Color scales
+                const assayColor = d3.scaleOrdinal(d3.schemeCategory10);
+                const storageColor = d3.scaleOrdinal(['#00539B', '#E89923', '#339898', '#7A0019', '#6F263D']);
 
-            node.append('rect')
-                .attr('x', d => d.x0)
-                .attr('y', d => d.y0)
-                .attr('height', d => d.y1 - d.y0)
-                .attr('width', d => d.x1 - d.x0)
-                .attr('fill', d => color(d.category));
+                // Draw links
+                svg.append('g')
+                    .attr('fill', 'none')
+                    .attr('stroke-opacity', 0.4)
+                    .selectAll('path')
+                    .data(graph.links)
+                    .join('path')
+                    .attr('d', d3.sankeyLinkHorizontal())
+                    .attr('stroke', d => assayColor(d.source.name))
+                    .attr('stroke-width', d => Math.max(1, d.width))
+                    .on('mouseover', function() {
+                        d3.select(this).attr('stroke-opacity', 0.8);
+                    })
+                    .on('mouseout', function() {
+                        d3.select(this).attr('stroke-opacity', 0.4);
+                    })
+                    .append('title')
+                    .text(d => `${d.source.name} → ${d.target.name}\n${d.value} samples`);
 
-            node.append('text')
-                .attr('x', d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
-                .attr('y', d => (d.y1 + d.y0) / 2)
-                .attr('dy', '0.35em')
-                .attr('text-anchor', d => d.x0 < width / 2 ? 'start' : 'end')
-                .text(d => d.name)
-                .style('font-size', '12px')
-                .style('fill', '#333');
+                // Draw nodes
+                const node = svg.append('g')
+                    .selectAll('g')
+                    .data(graph.nodes)
+                    .join('g');
+
+                node.append('rect')
+                    .attr('x', d => d.x0)
+                    .attr('y', d => d.y0)
+                    .attr('height', d => Math.max(1, d.y1 - d.y0))
+                    .attr('width', d => d.x1 - d.x0)
+                    .attr('fill', d => d.id.startsWith('assay_') ? assayColor(d.name) : storageColor(d.name))
+                    .attr('stroke', '#333')
+                    .attr('stroke-width', 0.5)
+                    .append('title')
+                    .text(d => `${d.name}\n${d.value} samples`);
+
+                // Add labels
+                node.append('text')
+                    .attr('x', d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
+                    .attr('y', d => (d.y1 + d.y0) / 2)
+                    .attr('dy', '0.35em')
+                    .attr('text-anchor', d => d.x0 < width / 2 ? 'start' : 'end')
+                    .text(d => d.name)
+                    .style('font-size', '11px')
+                    .style('font-weight', '500')
+                    .style('fill', '#333');
+
+                // Add legend
+                const legend = svg.append('g')
+                    .attr('transform', `translate(${width - 200}, 20)`);
+
+                legend.append('text')
+                    .attr('x', 0)
+                    .attr('y', 0)
+                    .style('font-size', '12px')
+                    .style('font-weight', 'bold')
+                    .text('Data Flow');
+
+                legend.append('rect')
+                    .attr('x', 0)
+                    .attr('y', 10)
+                    .attr('width', 15)
+                    .attr('height', 15)
+                    .attr('fill', assayColor('Cytokines'));
+
+                legend.append('text')
+                    .attr('x', 20)
+                    .attr('y', 22)
+                    .style('font-size', '11px')
+                    .text('Assay Types');
+
+                legend.append('rect')
+                    .attr('x', 0)
+                    .attr('y', 35)
+                    .attr('width', 15)
+                    .attr('height', 15)
+                    .attr('fill', storageColor('Duke Compute Cluster'));
+
+                legend.append('text')
+                    .attr('x', 20)
+                    .attr('y', 47)
+                    .style('font-size', '11px')
+                    .text('Storage Locations');
+
+            } catch (error) {
+                console.error('Error creating Sankey diagram:', error);
+                document.getElementById('sankey-diagram').innerHTML = `
+                    <div style="padding: 2rem; text-align: center; color: var(--graphite);">
+                        <p><strong>Unable to render Sankey diagram</strong></p>
+                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">The data provenance visualization could not be generated.</p>
+                        <p style="font-size: 0.875rem; margin-top: 0.5rem; color: var(--hatteras);">${error.message}</p>
+                    </div>
+                `;
+            }
         }
 
         function createStudySummaries() {
