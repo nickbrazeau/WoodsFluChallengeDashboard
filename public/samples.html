@@ -29,6 +29,41 @@
             Search and explore biological samples from influenza challenge studies
         </p>
 
+        <!-- Interactive Pivot Table -->
+        <section id="pivot-section" class="hidden" style="margin-bottom: 3rem;">
+            <h2>Sample Summary Pivot Table</h2>
+            <div class="card">
+                <p style="margin-bottom: 1rem;">Interactive summary of samples by study and type</p>
+                <div style="margin-bottom: 1rem;">
+                    <label><strong>Group by:</strong></label>
+                    <select id="pivot-groupby" onchange="updatePivot()" style="margin-left: 1rem; padding: 0.5rem;">
+                        <option value="study">Study</option>
+                        <option value="type">Sample Type</option>
+                    </select>
+                    <button class="btn btn-secondary" onclick="exportPivot()" style="margin-left: 1rem;">Export Pivot</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <div id="pivot-table"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Samples by Study -->
+        <section id="study-breakdown-section" class="hidden mt-4">
+            <h2>Samples by Study</h2>
+            <div class="card">
+                <div id="study-breakdown"></div>
+            </div>
+        </section>
+
+        <!-- Sample Types Distribution -->
+        <section id="sample-types-section" class="hidden mt-4">
+            <h2>Top Sample Types</h2>
+            <div class="card">
+                <div id="sample-types"></div>
+            </div>
+        </section>
+
         <!-- Search Bar -->
         <div class="search-container">
             <div class="search-bar">
@@ -163,19 +198,43 @@
         // Load samples
         async function loadSamples() {
             try {
-                const response = await fetch('data/samples.json');
-                allSamples = await response.json();
+                const [samplesResponse, statsResponse, configResponse] = await Promise.all([
+                    fetch('data/samples.json'),
+                    fetch('data/sample_statistics.json'),
+                    fetch('data/config.json')
+                ]);
+
+                allSamples = await samplesResponse.json();
+                const stats = await statsResponse.json();
+                const config = await configResponse.json();
+
                 filteredSamples = [...allSamples];
+
+                // Update footer
+                const lastUpdated = new Date(config.last_updated);
+                document.getElementById('footer-last-updated').textContent = lastUpdated.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
 
                 // Populate filter dropdowns
                 populateFilters();
 
+                // Display pivot table and summaries
+                displayPivotTable(stats);
+                displayStudyBreakdown(stats.samples_by_study);
+                displaySampleTypes(stats.samples_by_type);
+
                 // Display initial results
                 displayResults();
 
-                // Hide loading, show results
+                // Hide loading, show content
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('results-container').classList.remove('hidden');
+                document.getElementById('pivot-section').classList.remove('hidden');
+                document.getElementById('study-breakdown-section').classList.remove('hidden');
+                document.getElementById('sample-types-section').classList.remove('hidden');
 
             } catch (error) {
                 console.error('Error loading samples:', error);
@@ -383,6 +442,132 @@
             const filename = `sample_inventory_${timestamp}.csv`;
 
             exportTableToCSV(exportData, filename);
+        }
+
+        // Pivot table functions
+        let pivotData = null;
+
+        function displayPivotTable(stats) {
+            pivotData = stats;
+            updatePivot();
+        }
+
+        function updatePivot() {
+            const groupBy = document.getElementById('pivot-groupby').value;
+            const container = document.getElementById('pivot-table');
+
+            if (groupBy === 'study') {
+                const sortedStudies = Object.entries(pivotData.samples_by_study).sort((a, b) => b[1] - a[1]);
+                let html = '<table><thead><tr><th>Study Code</th><th>Sample Count</th><th>Percentage</th></tr></thead><tbody>';
+                const total = Object.values(pivotData.samples_by_study).reduce((sum, count) => sum + count, 0);
+
+                sortedStudies.forEach(([study, count]) => {
+                    const percentage = ((count / total) * 100).toFixed(1);
+                    html += `
+                        <tr>
+                            <td><strong>${study}</strong></td>
+                            <td>${count.toLocaleString()}</td>
+                            <td>${percentage}%</td>
+                        </tr>
+                    `;
+                });
+
+                html += '</tbody></table>';
+                container.innerHTML = html;
+            } else {
+                const sortedTypes = Object.entries(pivotData.samples_by_type).sort((a, b) => b[1] - a[1]);
+                let html = '<table><thead><tr><th>Sample Type</th><th>Count</th><th>Percentage</th></tr></thead><tbody>';
+                const total = Object.values(pivotData.samples_by_type).reduce((sum, count) => sum + count, 0);
+
+                sortedTypes.forEach(([type, count]) => {
+                    const percentage = ((count / total) * 100).toFixed(1);
+                    html += `
+                        <tr>
+                            <td><strong>${type}</strong></td>
+                            <td>${count.toLocaleString()}</td>
+                            <td>${percentage}%</td>
+                        </tr>
+                    `;
+                });
+
+                html += '</tbody></table>';
+                container.innerHTML = html;
+            }
+        }
+
+        function exportPivot() {
+            const groupBy = document.getElementById('pivot-groupby').value;
+            let csv = '';
+
+            if (groupBy === 'study') {
+                csv = 'Study Code,Sample Count,Percentage\n';
+                const sortedStudies = Object.entries(pivotData.samples_by_study).sort((a, b) => b[1] - a[1]);
+                const total = Object.values(pivotData.samples_by_study).reduce((sum, count) => sum + count, 0);
+
+                sortedStudies.forEach(([study, count]) => {
+                    const percentage = ((count / total) * 100).toFixed(1);
+                    csv += `"${study}",${count},${percentage}%\n`;
+                });
+            } else {
+                csv = 'Sample Type,Count,Percentage\n';
+                const sortedTypes = Object.entries(pivotData.samples_by_type).sort((a, b) => b[1] - a[1]);
+                const total = Object.values(pivotData.samples_by_type).reduce((sum, count) => sum + count, 0);
+
+                sortedTypes.forEach(([type, count]) => {
+                    const percentage = ((count / total) * 100).toFixed(1);
+                    csv += `"${type}",${count},${percentage}%\n`;
+                });
+            }
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `samples_pivot_${groupBy}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        function displayStudyBreakdown(studyData) {
+            const container = document.getElementById('study-breakdown');
+            const sortedStudies = Object.entries(studyData).sort((a, b) => b[1] - a[1]);
+
+            let html = '<table><thead><tr><th>Study Code</th><th>Sample Count</th><th>Percentage</th></tr></thead><tbody>';
+
+            const total = Object.values(studyData).reduce((sum, count) => sum + count, 0);
+
+            sortedStudies.forEach(([study, count]) => {
+                const percentage = ((count / total) * 100).toFixed(1);
+                html += `
+                    <tr>
+                        <td><strong>${study}</strong></td>
+                        <td>${count.toLocaleString()}</td>
+                        <td>${percentage}%</td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function displaySampleTypes(typeData) {
+            const container = document.getElementById('sample-types');
+            const sortedTypes = Object.entries(typeData).sort((a, b) => b[1] - a[1]);
+
+            let html = '<table><thead><tr><th>Sample Type</th><th>Count</th></tr></thead><tbody>';
+
+            sortedTypes.forEach(([type, count]) => {
+                html += `
+                    <tr>
+                        <td><strong>${type}</strong></td>
+                        <td>${count.toLocaleString()}</td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
         }
 
         // Load on page load

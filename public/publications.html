@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Publications - Woods Lab Dashboard</title>
     <link rel="stylesheet" href="css/main.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -28,6 +29,15 @@
         <p style="font-size: 1.1rem; color: var(--graphite); margin-bottom: 2rem;">
             Scientific publications utilizing influenza challenge study data
         </p>
+
+        <!-- Publication Network Graph -->
+        <section id="network-section" class="hidden mt-4">
+            <h2>Publication Network</h2>
+            <div class="card">
+                <p style="margin-bottom: 1rem;">Interactive network showing relationships between authors, studies, and research themes</p>
+                <div id="network-plot" style="width: 100%; height: 600px;"></div>
+            </div>
+        </section>
 
         <!-- Filters -->
         <div class="filters">
@@ -131,9 +141,11 @@
                 filteredPublications = [...allPublications];
 
                 populateFilters();
+                createPublicationNetwork();
                 applyFilters();
 
                 document.getElementById('loading').classList.add('hidden');
+                document.getElementById('network-section').classList.remove('hidden');
 
             } catch (error) {
                 console.error('Error loading publications:', error);
@@ -318,6 +330,174 @@
                 closeModal();
             }
         });
+
+        // Create publication network graph
+        function createPublicationNetwork() {
+            // Extract simplified research themes from abstracts/titles
+            function extractTheme(pub) {
+                const text = ((pub.abstract || '') + ' ' + (pub.title || '')).toLowerCase();
+
+                if (text.includes('immune') || text.includes('immunity') || text.includes('antibod'))
+                    return 'Immune Response';
+                if (text.includes('predict') || text.includes('biomarker') || text.includes('signature'))
+                    return 'Biomarkers & Prediction';
+                if (text.includes('transcriptom') || text.includes('gene') || text.includes('rna'))
+                    return 'Transcriptomics';
+                if (text.includes('cytokine') || text.includes('inflamm'))
+                    return 'Cytokine & Inflammation';
+                if (text.includes('metabol') || text.includes('lipid'))
+                    return 'Metabolomics';
+                if (text.includes('challenge') || text.includes('infect'))
+                    return 'Challenge Studies';
+
+                return 'General Virology';
+            }
+
+            // Build network nodes and edges
+            const authors = new Set();
+            const studies = new Set();
+            const themes = new Set();
+            const edges = [];
+
+            allPublications.forEach(pub => {
+                const author = pub.first_author || 'Unknown';
+                const study = pub.study_code || 'Unknown';
+                const theme = extractTheme(pub);
+
+                authors.add(author);
+                studies.add(study);
+                themes.add(theme);
+
+                // Create edges: author->study, study->theme
+                edges.push({ source: author, target: study, type: 'author-study' });
+                edges.push({ source: study, target: theme, type: 'study-theme' });
+            });
+
+            // Create node positions (simple layout)
+            const nodeData = [];
+            const linkData = [];
+
+            // Author nodes (left)
+            const authorList = Array.from(authors);
+            authorList.forEach((author, i) => {
+                nodeData.push({
+                    x: 0.1,
+                    y: (i + 1) / (authorList.length + 1),
+                    text: author,
+                    type: 'author',
+                    marker: { size: 15, color: '#00539B', symbol: 'circle' }
+                });
+            });
+
+            // Study nodes (middle)
+            const studyList = Array.from(studies);
+            studyList.forEach((study, i) => {
+                nodeData.push({
+                    x: 0.5,
+                    y: (i + 1) / (studyList.length + 1),
+                    text: study,
+                    type: 'study',
+                    marker: { size: 20, color: '#E89923', symbol: 'square' }
+                });
+            });
+
+            // Theme nodes (right)
+            const themeList = Array.from(themes);
+            themeList.forEach((theme, i) => {
+                nodeData.push({
+                    x: 0.9,
+                    y: (i + 1) / (themeList.length + 1),
+                    text: theme,
+                    type: 'theme',
+                    marker: { size: 18, color: '#339898', symbol: 'diamond' }
+                });
+            });
+
+            // Create links
+            edges.forEach(edge => {
+                const sourceNode = nodeData.find(n => n.text === edge.source);
+                const targetNode = nodeData.find(n => n.text === edge.target);
+
+                if (sourceNode && targetNode) {
+                    linkData.push({
+                        x: [sourceNode.x, targetNode.x],
+                        y: [sourceNode.y, targetNode.y],
+                        mode: 'lines',
+                        line: { width: 1, color: '#cccccc' },
+                        hoverinfo: 'none',
+                        showlegend: false
+                    });
+                }
+            });
+
+            // Plot nodes by type
+            const authorTrace = {
+                x: nodeData.filter(n => n.type === 'author').map(n => n.x),
+                y: nodeData.filter(n => n.type === 'author').map(n => n.y),
+                text: nodeData.filter(n => n.type === 'author').map(n => n.text),
+                mode: 'markers+text',
+                type: 'scatter',
+                name: 'Authors',
+                textposition: 'middle left',
+                textfont: { size: 10 },
+                marker: { size: 12, color: '#00539B', symbol: 'circle' },
+                hovertemplate: '<b>%{text}</b><br>First Author<extra></extra>'
+            };
+
+            const studyTrace = {
+                x: nodeData.filter(n => n.type === 'study').map(n => n.x),
+                y: nodeData.filter(n => n.type === 'study').map(n => n.y),
+                text: nodeData.filter(n => n.type === 'study').map(n => n.text),
+                mode: 'markers+text',
+                type: 'scatter',
+                name: 'Studies',
+                textposition: 'top center',
+                textfont: { size: 11, color: '#333' },
+                marker: { size: 16, color: '#E89923', symbol: 'square' },
+                hovertemplate: '<b>%{text}</b><br>Challenge Study<extra></extra>'
+            };
+
+            const themeTrace = {
+                x: nodeData.filter(n => n.type === 'theme').map(n => n.x),
+                y: nodeData.filter(n => n.type === 'theme').map(n => n.y),
+                text: nodeData.filter(n => n.type === 'theme').map(n => n.text),
+                mode: 'markers+text',
+                type: 'scatter',
+                name: 'Research Themes',
+                textposition: 'middle right',
+                textfont: { size: 10 },
+                marker: { size: 14, color: '#339898', symbol: 'diamond' },
+                hovertemplate: '<b>%{text}</b><br>Research Theme<extra></extra>'
+            };
+
+            const layout = {
+                xaxis: { visible: false, range: [0, 1] },
+                yaxis: { visible: false, range: [0, 1] },
+                hovermode: 'closest',
+                showlegend: true,
+                legend: {
+                    x: 0.5,
+                    y: -0.1,
+                    xanchor: 'center',
+                    orientation: 'h'
+                },
+                margin: { t: 30, b: 50, l: 150, r: 150 },
+                plot_bgcolor: '#ffffff',
+                paper_bgcolor: '#ffffff'
+            };
+
+            const config = {
+                responsive: true,
+                displayModeBar: true,
+                displaylogo: false,
+                modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d']
+            };
+
+            // Combine links and nodes
+            const data = [...linkData, authorTrace, studyTrace, themeTrace];
+
+            Plotly.newPlot('network-plot', data, layout, config);
+        }
 
         // Load on page load
         document.addEventListener('DOMContentLoaded', loadPublications);

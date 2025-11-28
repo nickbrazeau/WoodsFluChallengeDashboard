@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Woods Lab Influenza Challenge Studies Dashboard</title>
     <link rel="stylesheet" href="css/main.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -77,25 +79,24 @@
             <h2>Study Timeline</h2>
             <div class="card">
                 <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">
-                    Research spanning from 2008 to 2024, encompassing multiple influenza challenge studies
+                    Interactive timeline of human influenza challenge studies from 2008 to 2024. Click on studies for more details.
                 </p>
-                <div id="timeline-content"></div>
+                <div id="timeline-plot" style="width: 100%; height: 400px;"></div>
             </div>
         </section>
 
-        <!-- Samples by Study -->
-        <section id="study-breakdown-section" class="hidden mt-4">
-            <h2>Samples by Study</h2>
-            <div class="card">
-                <div id="study-breakdown"></div>
-            </div>
-        </section>
-
-        <!-- Sample Types Distribution -->
-        <section id="sample-types-section" class="hidden mt-4">
-            <h2>Top Sample Types</h2>
-            <div class="card">
-                <div id="sample-types"></div>
+        <!-- Statistics Visualizations -->
+        <section id="stats-viz-section" class="hidden mt-4">
+            <h2>Data Overview</h2>
+            <div class="grid grid-2">
+                <div class="card">
+                    <h3>Samples by Study</h3>
+                    <canvas id="study-chart" style="max-height: 350px;"></canvas>
+                </div>
+                <div class="card">
+                    <h3>Sample Types Distribution</h3>
+                    <canvas id="types-chart" style="max-height: 350px;"></canvas>
+                </div>
             </div>
         </section>
 
@@ -172,21 +173,18 @@
                     day: 'numeric'
                 });
 
-                // Display study breakdown
-                displayStudyBreakdown(stats.samples_by_study);
+                // Display Chart.js visualizations
+                displayStudyChart(stats.samples_by_study);
+                displaySampleTypesChart(stats.samples_by_type);
 
-                // Display sample types
-                displaySampleTypes(stats.samples_by_type);
-
-                // Display timeline
-                displayTimeline(config);
+                // Display Plotly timeline
+                displayInteractiveTimeline();
 
                 // Hide loading, show content
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('stats-section').classList.remove('hidden');
                 document.getElementById('timeline-section').classList.remove('hidden');
-                document.getElementById('study-breakdown-section').classList.remove('hidden');
-                document.getElementById('sample-types-section').classList.remove('hidden');
+                document.getElementById('stats-viz-section').classList.remove('hidden');
 
             } catch (error) {
                 console.error('Error loading dashboard:', error);
@@ -199,76 +197,203 @@
             }
         }
 
-        function displayStudyBreakdown(studyData) {
-            const container = document.getElementById('study-breakdown');
+        function displayStudyChart(studyData) {
             const sortedStudies = Object.entries(studyData).sort((a, b) => b[1] - a[1]);
+            const labels = sortedStudies.map(([study, _]) => study);
+            const data = sortedStudies.map(([_, count]) => count);
 
-            let html = '<table><thead><tr><th>Study Code</th><th>Sample Count</th><th>Percentage</th></tr></thead><tbody>';
-
-            const total = Object.values(studyData).reduce((sum, count) => sum + count, 0);
-
-            sortedStudies.forEach(([study, count]) => {
-                const percentage = ((count / total) * 100).toFixed(1);
-                html += `
-                    <tr>
-                        <td><strong>${study}</strong></td>
-                        <td>${count.toLocaleString()}</td>
-                        <td>${percentage}%</td>
-                    </tr>
-                `;
+            const ctx = document.getElementById('study-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Sample Count',
+                        data: data,
+                        backgroundColor: [
+                            '#00539B', '#E89923', '#339898',
+                            '#C84E00', '#012169', '#7A0019', '#6F263D'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Samples: ' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length > 0) {
+                            const index = elements[0].index;
+                            const studyCode = labels[index];
+                            window.location.href = `studies.html?study=${studyCode}`;
+                        }
+                    }
+                }
             });
-
-            html += '</tbody></table>';
-            container.innerHTML = html;
         }
 
-        function displaySampleTypes(typeData) {
-            const container = document.getElementById('sample-types');
-            const sortedTypes = Object.entries(typeData).sort((a, b) => b[1] - a[1]);
+        function displaySampleTypesChart(typeData) {
+            const sortedTypes = Object.entries(typeData).sort((a, b) => b[1] - a[1]).slice(0, 8);
+            const labels = sortedTypes.map(([type, _]) => type);
+            const data = sortedTypes.map(([_, count]) => count);
 
-            let html = '<table><thead><tr><th>Sample Type</th><th>Count</th></tr></thead><tbody>';
-
-            sortedTypes.forEach(([type, count]) => {
-                html += `
-                    <tr>
-                        <td><strong>${type}</strong></td>
-                        <td>${count.toLocaleString()}</td>
-                    </tr>
-                `;
+            const ctx = document.getElementById('types-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            '#00539B', '#E89923', '#339898', '#C84E00',
+                            '#012169', '#7A0019', '#6F263D', '#666666'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 10,
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${label}: ${value.toLocaleString()} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
             });
-
-            html += '</tbody></table>';
-            container.innerHTML = html;
         }
 
-        function displayTimeline(config) {
-            const container = document.getElementById('timeline-content');
+        function displayInteractiveTimeline() {
             const studies = [
-                { code: 'DU08-04', name: 'DEE2 H3N2', year: 2008, virus: 'H3N2' },
-                { code: 'DU09-06', name: 'DEE3 H1N1', year: 2009, virus: 'H1N1' },
-                { code: 'DU09-07', name: 'DEE4 H1N1', year: 2009, virus: 'H1N1' },
-                { code: 'DU11-02', name: 'DEE5 H3N2', year: 2011, virus: 'H3N2' },
-                { code: 'DU17-04', name: 'PROMETHEUS', year: 2017, virus: 'H1N1' },
-                { code: 'DU20-01', name: 'SIGMA Plus', year: 2020, virus: 'H3N2' },
-                { code: 'DU24-01', name: 'EXHALE', year: 2024, virus: 'H3N2' }
+                { code: 'DU08-04', name: 'DEE2', fullName: 'DEE2 H3N2 Flu Challenge', year: 2008, virus: 'H3N2', y: 1 },
+                { code: 'DU09-06', name: 'DEE3', fullName: 'DEE3 H1N1 Flu Challenge', year: 2009, virus: 'H1N1', y: 2 },
+                { code: 'DU09-07', name: 'DEE4', fullName: 'DEE4 H1N1 Flu Challenge', year: 2009, virus: 'H1N1', y: 1 },
+                { code: 'DU11-02', name: 'DEE5', fullName: 'DEE5 H3N2 Flu Challenge', year: 2011, virus: 'H3N2', y: 2 },
+                { code: 'DU17-04', name: 'PROMETHEUS', fullName: 'PROMETHEUS H1N1 ICL Flu Challenge', year: 2017, virus: 'H1N1', y: 1 },
+                { code: 'DU20-01', name: 'SIGMA Plus', fullName: 'SIGMA Plus H3N2 Flu Challenge', year: 2020, virus: 'H3N2', y: 2 },
+                { code: 'DU24-01', name: 'EXHALE', fullName: 'EXHALE H3N2 Flu Challenge', year: 2024, virus: 'H3N2', y: 1 }
             ];
 
-            let html = '<div style="overflow-x: auto;">';
-            html += '<table><thead><tr><th>Year</th><th>Study Code</th><th>Name</th><th>Virus</th></tr></thead><tbody>';
+            const h1n1Studies = studies.filter(s => s.virus === 'H1N1');
+            const h3n2Studies = studies.filter(s => s.virus === 'H3N2');
 
-            studies.forEach(study => {
-                html += `
-                    <tr>
-                        <td><strong>${study.year}</strong></td>
-                        <td><span class="badge badge-primary">${study.code}</span></td>
-                        <td>${study.name}</td>
-                        <td>${study.virus}</td>
-                    </tr>
-                `;
+            const trace1 = {
+                x: h1n1Studies.map(s => s.year),
+                y: h1n1Studies.map(s => s.y),
+                mode: 'markers+text',
+                type: 'scatter',
+                name: 'H1N1',
+                text: h1n1Studies.map(s => s.name),
+                textposition: 'top center',
+                marker: {
+                    size: 20,
+                    color: '#00539B',
+                    symbol: 'circle',
+                    line: { width: 2, color: '#012169' }
+                },
+                hovertemplate: '<b>%{text}</b><br>Year: %{x}<br>Click for details<extra></extra>',
+                customdata: h1n1Studies.map(s => ({ code: s.code, fullName: s.fullName }))
+            };
+
+            const trace2 = {
+                x: h3n2Studies.map(s => s.year),
+                y: h3n2Studies.map(s => s.y),
+                mode: 'markers+text',
+                type: 'scatter',
+                name: 'H3N2',
+                text: h3n2Studies.map(s => s.name),
+                textposition: 'bottom center',
+                marker: {
+                    size: 20,
+                    color: '#C84E00',
+                    symbol: 'square',
+                    line: { width: 2, color: '#7A0019' }
+                },
+                hovertemplate: '<b>%{text}</b><br>Year: %{x}<br>Click for details<extra></extra>',
+                customdata: h3n2Studies.map(s => ({ code: s.code, fullName: s.fullName }))
+            };
+
+            const layout = {
+                xaxis: {
+                    title: 'Year',
+                    range: [2007, 2025],
+                    dtick: 2,
+                    showgrid: true,
+                    gridcolor: '#e5e5e5'
+                },
+                yaxis: {
+                    visible: false,
+                    range: [0, 3]
+                },
+                hovermode: 'closest',
+                showlegend: true,
+                legend: {
+                    x: 0.85,
+                    y: 0.95,
+                    bgcolor: 'rgba(255,255,255,0.9)',
+                    bordercolor: '#ccc',
+                    borderwidth: 1
+                },
+                margin: { t: 40, b: 60, l: 50, r: 50 },
+                plot_bgcolor: '#ffffff',
+                paper_bgcolor: '#ffffff'
+            };
+
+            const config = {
+                responsive: true,
+                displayModeBar: true,
+                displaylogo: false,
+                modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d', 'autoScale2d']
+            };
+
+            Plotly.newPlot('timeline-plot', [trace1, trace2], layout, config);
+
+            // Add click event to navigate to study page
+            document.getElementById('timeline-plot').on('plotly_click', function(data) {
+                const point = data.points[0];
+                const studyCode = point.customdata.code;
+                window.location.href = `studies.html?study=${studyCode}`;
             });
-
-            html += '</tbody></table></div>';
-            container.innerHTML = html;
         }
 
         // Load on page load
