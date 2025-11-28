@@ -32,7 +32,7 @@
         </p>
 
         <div class="alert alert-info" style="margin-bottom: 2rem;">
-            <strong>Most Important Resource:</strong> This page provides a complete overview of all available molecular data,
+            <strong>Overview:</strong> This page provides a complete overview of all available molecular data,
             assay types, and where the data is currently stored. Use the interactive tables and visualizations to explore
             data provenance and availability.
         </div>
@@ -67,7 +67,7 @@
         <section id="sankey-section" class="hidden" style="margin-bottom: 3rem;">
             <h2>Data Provenance Flow</h2>
             <p style="color: var(--graphite); margin-bottom: 1rem;">
-                Interactive Sankey diagram showing how samples flow through different assay types to generate molecular data
+                Diagram demonstrates what molecular data was generated from each set of samples
             </p>
             <div class="card">
                 <div id="sankey-diagram" style="width: 100%; height: 600px; overflow-x: auto;"></div>
@@ -122,7 +122,6 @@
                                 <th onclick="sortTable(4)">Subject ID Range <span class="sort-arrow">↕</span></th>
                                 <th onclick="sortTable(5)">Timepoints <span class="sort-arrow">↕</span></th>
                                 <th onclick="sortTable(6)">Data Storage Location <span class="sort-arrow">↕</span></th>
-                                <th onclick="sortTable(7)">Notes <span class="sort-arrow">↕</span></th>
                             </tr>
                         </thead>
                         <tbody id="data-tbody"></tbody>
@@ -161,15 +160,15 @@
         let sortColumn = 0;
         let sortAscending = true;
 
-        // Storage location mapping (placeholder - will be actual locations)
+        // Storage location mapping (to be documented)
         const storageLocations = {
-            'DU08-04': 'Duke Compute Cluster - /data/studies/DU08-04',
-            'DU09-06': 'Duke Compute Cluster - /data/studies/DU09-06',
-            'DU09-07': 'External Hard Drive - HD_001',
-            'DU11-02': 'Duke Compute Cluster - /data/studies/DU11-02',
-            'DU17-04': 'Duke Compute Cluster - /data/studies/DU17-04',
-            'DU20-01': 'Local Server - Woods Lab NAS',
-            'DU24-01': 'Duke Compute Cluster - /data/studies/DU24-01'
+            'DU08-04': 'Location pending documentation',
+            'DU09-06': 'Location pending documentation',
+            'DU09-07': 'Location pending documentation',
+            'DU11-02': 'Location pending documentation',
+            'DU17-04': 'Location pending documentation',
+            'DU20-01': 'Location pending documentation',
+            'DU24-01': 'Location pending documentation'
         };
 
         // Load data
@@ -300,7 +299,7 @@
             document.getElementById('results-count').textContent = count;
 
             if (count === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem;">No records found</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;">No records found</td></tr>';
                 return;
             }
 
@@ -315,7 +314,6 @@
                         <td>${record['Subject ID ranges'] || 'N/A'}</td>
                         <td style="font-size: 0.875rem;">${record['Timepoint(s)'] || 'N/A'}</td>
                         <td style="font-weight: 500; color: var(--primary-blue);">${record.storage_location}</td>
-                        <td style="font-size: 0.875rem;">${record.Comment || '-'}</td>
                     </tr>
                 `;
             });
@@ -331,7 +329,7 @@
                 sortAscending = true;
             }
 
-            const columns = ['biobank_study_code', 'study_name', 'Assay', 'Samples', 'Subject ID ranges', 'Timepoint(s)', 'storage_location', 'Comment'];
+            const columns = ['biobank_study_code', 'study_name', 'Assay', 'Samples', 'Subject ID ranges', 'Timepoint(s)', 'storage_location'];
             const col = columns[column];
 
             filteredData.sort((a, b) => {
@@ -583,7 +581,7 @@
         }
 
         function exportToCSV() {
-            const headers = ['Study Code', 'Study Name', 'Assay Type', 'Samples', 'Subject ID Range', 'Timepoints', 'Storage Location', 'Notes'];
+            const headers = ['Study Code', 'Study Name', 'Assay Type', 'Samples', 'Subject ID Range', 'Timepoints', 'Storage Location'];
             const rows = filteredData.map(record => [
                 record.biobank_study_code || '',
                 record.study_name || record.Study || '',
@@ -591,8 +589,7 @@
                 record.Samples || '0',
                 record['Subject ID ranges'] || '',
                 record['Timepoint(s)'] || '',
-                record.storage_location || '',
-                record.Comment || ''
+                record.storage_location || ''
             ]);
 
             let csv = headers.join(',') + '\n';

@@ -1,0 +1,563 @@
+[
+  {
+    "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0214871",
+    "success": false,
+    "status": "paywall_or_abstract",
+    "message": "Not a PDF (content-type: text/html;charset=utf-8). Likely behind paywall or abstract page. Paywall detected.",
+    "file_path": null,
+    "status_code": 200,
+    "publication": {
+      "first_author": "Lydon",
+      "title": "A Host Gene Expression Approach for Identifying Triggers of Asthma\u00a0Exacerbations",
+      "journal": "A Host Gene Expression Approach for Identifying Triggers of Asthma\u00a0Exacerbations.\u00a0PLoS\u00a0One",
+      "year": "2019",
+      "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0214871",
+      "study_id": "5229",
+      "study_title": "Confirmation of Infectious Illness"
+    }
+  },
+  {
+    "url": "https://stm.sciencemag.org/content/8/322/322ra11.short",
+    "success": false,
+    "status": "error",
+    "message": "HTTP 403",
+    "file_path": null,
+    "status_code": 403,
+    "publication": {
+      "first_author": "Tsalik",
+      "title": "Host Gene Expression Classifiers Diagnose Acute Respiratory Illness Etiology",
+      "journal": "Host Gene Expression Classifiers Diagnose Acute Respiratory Illness Etiology.\u00a0Science Translational Medicine",
+      "year": "2016",
+      "url": "https://stm.sciencemag.org/content/8/322/322ra11.short",
+      "study_id": "5229",
+      "study_title": "Confirmation of Infectious Illness"
+    }
+  },
+  {
+    "url": "https://stm.sciencemag.org/content/5/203/203ra126.long",
+    "success": false,
+    "status": "error",
+    "message": "HTTP 403",
+    "file_path": null,
+    "status_code": 403,
+    "publication": {
+      "first_author": "Zaas",
+      "title": "A Host-Based RT-PCR Gene Expression Signature to Identify Acute Respiratory Viral Infection",
+      "journal": "A Host-Based RT-PCR Gene Expression Signature to Identify Acute Respiratory Viral Infection.\u00a0Science Translational Medicine",
+      "year": "2013",
+      "url": "https://stm.sciencemag.org/content/5/203/203ra126.long",
+      "study_id": "5229",
+      "study_title": "Confirmation of Infectious Illness"
+    }
+  },
+  {
+    "url": "https://www.nature.com/articles/s41467-018-06735-8",
+    "success": false,
+    "status": "paywall_or_abstract",
+    "message": "Not a PDF (content-type: text/html; charset=\"utf-8\"). Likely behind paywall or abstract page. Paywall detected.",
+    "file_path": null,
+    "status_code": 200,
+    "publication": {
+      "first_author": "Fourati",
+      "title": "A Crowdsourced Analysis to Identify Ab Initio Molecular Signatures Predictive of Susceptibility to Viral Infection",
+      "journal": "A Crowdsourced Analysis to Identify Ab Initio Molecular Signatures Predictive of Susceptibility to Viral Infection.\u00a0Nature Communications",
+      "year": "2018",
+      "url": "https://www.nature.com/articles/s41467-018-06735-8",
+      "study_id": "5233",
+      "study_title": "Influenza H1N1 Challenge"
+    }
+  },
+  {
+    "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4722633/",
+    "success": false,
+    "status": "paywall_or_abstract",
+    "message": "Not a PDF (content-type: text/html; charset=utf-8). Likely behind paywall or abstract page. Paywall detected.",
+    "file_path": null,
+    "status_code": 200,
+    "publication": {
+      "first_author": "Liu",
+      "title": "An individualized predictor of health and disease using paired reference and target samples",
+      "journal": "An individualized predictor of health and disease using paired reference and target samples.\u00a0BMC Bioinformatics",
+      "year": "2016",
+      "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4722633/",
+      "study_id": "5233",
+      "study_title": "Influenza H1N1 Challenge"
+    }
+  },
+  {
+    "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0132259",
+    "success": false,
+    "status": "paywall_or_abstract",
+    "message": "Not a PDF (content-type: text/html;charset=utf-8). Likely behind paywall or abstract page. Paywall detected.",
+    "file_path": null,
+    "status_code": 200,
+    "publication": {
+      "first_author": "Rose",
+      "title": "Gene Expression Profiles Link Respiratory Viral Infection, Platelet Response to Aspirin, and Acute Myocardial Infarction",
+      "journal": "Gene Expression Profiles Link Respiratory Viral Infection, Platelet Response to Aspirin, and Acute Myocardial Infarction.\u00a0PLoS\u00a0One",
+      "year": "2015",
+      "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0132259",
+      "study_id": "5233",
+      "study_title": "Influenza H1N1 Challenge"
+    }
+  },
+  {
+    "url": "https://stm.sciencemag.org/content/5/203/203ra126.long",
+    "success": false,
+    "status": "error",
+    "message": "HTTP 403",
+    "file_path": null,
+    "status_code": 403,
+    "publication": {
+      "first_author": "Zaas",
+      "title": "A Host-Based RT-PCR Gene Expression Signature to Identify Acute Respiratory Viral Infection",
+      "journal": "A Host-Based RT-PCR Gene Expression Signature to Identify Acute Respiratory Viral Infection.\u00a0Science Translational Medicine",
+      "year": "2013",
+      "url": "https://stm.sciencemag.org/content/5/203/203ra126.long",
+      "study_id": "5233",
+      "study_title": "Influenza H1N1 Challenge"
+    }
+  },
+  {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/24048524/",
+    "success": false,
+    "status": "paywall_or_abstract",
+    "message": "Not a PDF (content-type: text/html; charset=utf-8). Likely behind paywall or abstract page. Paywall detected.",
+    "file_path": null,
+    "status_code": 200,
+    "publication": {
+      "first_author": "Woods",
+      "title": "A Host Transcriptional Signature for Presymptomatic Detection of Infection in Humans Exposed to Influenza H1N1 or H3N2",
+      "journal": "A Host Transcriptional Signature for Presymptomatic Detection of Infection in Humans Exposed to Influenza H1N1 or H3N2.\u00a0PLoS One",
+      "year": "2013",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/24048524/",
+      "study_id": "5233",
+      "study_title": "Influenza H1N1 Challenge"
+    }
+  },
+  {
+    "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3964679/",
+    "success": false,
+    "status": "paywall_or_abstract",
+    "message": "Not a PDF (content-type: text/html; charset=utf-8). Likely behind paywall or abstract page. Paywall detected.",
+    "file_path": null,
+    "status_code": 200,
+    "publication": {
+      "first_author": "Carin",
+      "title": "High-Dimensional Longitudinal Genomic Data: An Analysis Used for Monitoring Viral Infections",
+      "journal": "High-Dimensional Longitudinal Genomic Data: An Analysis Used for Monitoring Viral Infections.\u00a0IEEE Signal Processing Magazine",
+      "year": "2012",
+      "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3964679/",
+      "study_id": "5233",
+      "study_title": "Influenza H1N1 Challenge"
+    }
+  },
+  {
+    "url": "https://www.nature.com/articles/s41467-018-06735-8",
+    "success": false,
+    "status": "paywall_or_abstract",
+    "message": "Not a PDF (content-type: text/html; charset=\"utf-8\"). Likely behind paywall or abstract page. Paywall detected.",
+    "file_path": null,
+    "status_code": 200,
+    "publication": {
+      "first_author": "Fourati",
+      "title": "A Crowdsourced Analysis to Identify Ab Initio Molecular Signatures Predictive of Susceptibility to Viral Infection",
+      "journal": "A Crowdsourced Analysis to Identify Ab Initio Molecular Signatures Predictive of Susceptibility to Viral Infection.\u00a0Nature Communications",
+      "year": "2018",
+      "url": "https://www.nature.com/articles/s41467-018-06735-8",
+      "study_id": "5234",
+      "study_title": "Influenza H1N1 Intervention"
+    }
+  },
+  {
+    "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4722633/",
+    "success": false,
+    "status": "paywall_or_abstract",
+    "message": "Not a PDF (content-type: text/html; charset=utf-8). Likely behind paywall or abstract page. Paywall detected.",
+    "file_path": null,
+    "status_code": 200,
+    "publication": {
+      "first_author": "Liu",
+      "title": "An individualized\u00a0predictor of health and disease using paired reference and target samples.",
+      "journal": "An individualized\u00a0predictor of health and disease using paired reference and target samples.\u00a0BMC Bioinformatics",
+      "year": "2016",
+      "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4722633/",
+      "study_id": "5234",
+      "study_title": "Influenza H1N1 Intervention"
+    }
+  },
+  {
+    "url": "https://www.nature.com/articles/s41467-018-06735-8",
+    "success": false,
+    "status": "paywall_or_abstract",
+    "message": "Not a PDF (content-type: text/html; charset=\"utf-8\"). Likely behind paywall or abstract page. Paywall detected.",
+    "file_path": null,
+    "status_code": 200,
+    "publication": {
+      "first_author": "Fourati",
+      "title": "A Crowdsourced Anaylsis to Identify Ab Initio Molecular Signatures Predictive of Susceptibility to Viral Infection",
+      "journal": "A Crowdsourced Anaylsis to Identify Ab Initio Molecular Signatures Predictive of Susceptibility to Viral Infection.\u00a0Nature Communications",
+      "year": "2018",
+      "url": "https://www.nature.com/articles/s41467-018-06735-8",
+      "study_id": "5236",
+      "study_title": "Influenza H3N2 Challenge - 2008"
+    }
+  },
+  {
+    "url": "https://www.sciencedirect.com/science/article/pii/S2352396417300749?via%3Dihub",
+    "success": false,
+    "status": "error",
+    "message": "HTTP 403",
+    "file_path": null,
+    "status_code": 403,
+    "publication": {
+      "first_author": "Burke",
+      "title": "Nasopharyngeal Protein Biomarkers of Acute Respiratory Virus Infection",
+      "journal": "Nasopharyngeal Protein Biomarkers of Acute Respiratory Virus Infection.\u00a0EBioMedicine",
+      "year": "2017",
+      "url": "https://www.sciencedirect.com/science/article/pii/S2352396417300749?via%3Dihub",
+      "study_id": "5236",
+      "study_title": "Influenza H3N2 Challenge - 2008"
+    }
+  },
+  {
+    "url": "https://journals.plos.org/plospathogens/article?id=10.1371/journal.ppat.1006203",
+    "success": false,
+    "status": "paywall_or_abstract",
+    "message": "Not a PDF (content-type: text/html;charset=utf-8). Likely behind paywall or abstract page. Paywall detected.",
+    "file_path": null,
+    "status_code": 200,
+    "publication": {
+      "first_author": "Leonard",
+      "title": "The Effective Rate of Influenza Reassortment is Limited During Human Infection",
+      "journal": "The Effective Rate of Influenza Reassortment is Limited During Human Infection.\u00a0PLoS Pathogens",
+      "year": "2017",
+      "url": "https://journals.plos.org/plospathogens/article?id=10.1371/journal.ppat.1006203",
+      "study_id": "5236",
+      "study_title": "Influenza H3N2 Challenge - 2008"
+    }
+  },
+  {
+    "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4722633/",
+    "success": false,
+    "status": "paywall_or_abstract",
+    "message": "Not a PDF (content-type: text/html; charset=utf-8). Likely behind paywall or abstract page. Paywall detected.",
+    "file_path": null,
+    "status_code": 200,
+    "publication": {
+      "first_author": "Liu",
+      "title": "An individualized predictor of health and disease using paired reference and target samples",
+      "journal": "An individualized predictor of health and disease using paired reference and target samples.\u00a0BMC Bioinformatics",
+      "year": "2016",
+      "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4722633/",
+      "study_id": "5236",
+      "study_title": "Influenza H3N2 Challenge - 2008"
+    }
+  },
+  {
+    "url": "https://jvi.asm.org/content/90/24/11247.long",
+    "success": false,
+    "status": "error",
+    "message": "HTTP 403",
+    "file_path": null,
+    "status_code": 403,
+    "publication": {
+      "first_author": "Leonard",
+      "title": "Deep Sequencing of Influenza A Virus from a Human Challenge Study Reveals a Selective Bottleneck and Only Limited Intrahost Genetic Diversification",
+      "journal": "Deep Sequencing of Influenza A Virus from a Human Challenge Study Reveals a Selective Bottleneck and Only Limited Intrahost Genetic Diversification.\u00a0Journal of Virology",
+      "year": "2016",
+      "url": "https://jvi.asm.org/content/90/24/11247.long",
+      "study_id": "5236",
+      "study_title": "Influenza H3N2 Challenge - 2008"
+    }
+  },
+  {
+    "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0132259",
+    "success": false,
+    "status": "paywall_or_abstract",
+    "message": "Not a PDF (content-type: text/html;charset=utf-8). Likely behind paywall or abstract page. Paywall detected.",
+    "file_path": null,
+    "status_code": 200,
+    "publication": {
+      "first_author": "Rose",
+      "title": "Gene Expression Profiles Link Respiratory Viral Infection, Platelet Response to Aspirin, and Acute Myocardial Infarction",
+      "journal": "Gene Expression Profiles Link Respiratory Viral Infection, Platelet Response to Aspirin, and Acute Myocardial Infarction.\u00a0PLoS One",
+      "year": "2015",
+      "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0132259",
+      "study_id": "5236",
+      "study_title": "Influenza H3N2 Challenge - 2008"
+    }
+  },
+  {
+    "url": "https://onlinelibrary.wiley.com/doi/full/10.1111/cei.12736",
+    "success": false,
+    "status": "error",
+    "message": "HTTP 403",
+    "file_path": null,
+    "status_code": 403,
+    "publication": {
+      "first_author": "McClain",
+      "title": "Differential Evolution of Peripheral Cytokine\u00a0Levels in Symptomatic and symptomatic responses to Experimental Influenza Virus Challenge",
+      "journal": "Differential Evolution of Peripheral Cytokine\u00a0Levels in Symptomatic and symptomatic responses to Experimental Influenza Virus Challenge.\u00a0Clinical & Experimental Immunology",
+      "year": "2015",
+      "url": "https://onlinelibrary.wiley.com/doi/full/10.1111/cei.12736",
+      "study_id": "5236",
+      "study_title": "Influenza H3N2 Challenge - 2008"
+    }
+  },
+  {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/23714753/",
+    "success": false,
+    "status": "paywall_or_abstract",
+    "message": "Not a PDF (content-type: text/html; charset=utf-8). Likely behind paywall or abstract page. Paywall detected.",
+    "file_path": null,
+    "status_code": 200,
+    "publication": {
+      "first_author": "Bagga",
+      "title": "Comparing Influenza and RSV Viral and Disease Dynamics in Experimentally Infected Adults Predicts Clinical Effectiveness of RSV Antivirals",
+      "journal": "Comparing Influenza and RSV Viral and Disease Dynamics in Experimentally Infected Adults Predicts Clinical Effectiveness of RSV Antivirals.\u00a0Antiviral Therapy",
+      "year": "2013",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23714753/",
+      "study_id": "5236",
+      "study_title": "Influenza H3N2 Challenge - 2008"
+    }
+  },
+  {
+    "url": "https://www.sciencedirect.com/science/article/pii/S138665321300406X?via%3Dihub",
+    "success": false,
+    "status": "error",
+    "message": "HTTP 403",
+    "file_path": null,
+    "status_code": 403,
+    "publication": {
+      "first_author": "McClain",
+      "title": "Longitudinal Analysis of Leukocyte Differentials in Peripheral Blood of Patients With Acute Respiratory Viral Infections",
+      "journal": "Longitudinal Analysis of Leukocyte Differentials in Peripheral Blood of Patients With Acute Respiratory Viral Infections.\u00a0Journal of Clinical Virology",
+      "year": "2013",
+      "url": "https://www.sciencedirect.com/science/article/pii/S138665321300406X?via%3Dihub",
+      "study_id": "5236",
+      "study_title": "Influenza H3N2 Challenge - 2008"
+    }
+  },
+  {
+    "url": "https://stm.sciencemag.org/content/5/203/203ra126.long",
+    "success": false,
+    "status": "error",
+    "message": "HTTP 403",
+    "file_path": null,
+    "status_code": 403,
+    "publication": {
+      "first_author": "Zaas",
+      "title": "A Host-Based RT-PCR Gene Expression Signature to Identify Acute Respiratory Viral Infection",
+      "journal": "A Host-Based RT-PCR Gene Expression Signature to Identify Acute Respiratory Viral Infection.\u00a0Science Translational Medicine",
+      "year": "2013",
+      "url": "https://stm.sciencemag.org/content/5/203/203ra126.long",
+      "study_id": "5236",
+      "study_title": "Influenza H3N2 Challenge - 2008"
+    }
+  },
+  {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/23326326/",
+    "success": false,
+    "status": "paywall_or_abstract",
+    "message": "Not a PDF (content-type: text/html; charset=utf-8). Likely behind paywall or abstract page. Paywall detected.",
+    "file_path": null,
+    "status_code": 200,
+    "publication": {
+      "first_author": "Woods",
+      "title": "A Host Transcriptional Signature for Presymptomatic Detection of Infection in Humans Exposed to Influenza H1N1 or H3N2",
+      "journal": "A Host Transcriptional Signature for Presymptomatic Detection of Infection in Humans Exposed to Influenza H1N1 or H3N2.\u00a0PLoS One",
+      "year": "2013",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23326326/",
+      "study_id": "5236",
+      "study_title": "Influenza H3N2 Challenge - 2008"
+    }
+  },
+  {
+    "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3964679/",
+    "success": false,
+    "status": "paywall_or_abstract",
+    "message": "Not a PDF (content-type: text/html; charset=utf-8). Likely behind paywall or abstract page. Paywall detected.",
+    "file_path": null,
+    "status_code": 200,
+    "publication": {
+      "first_author": "Carin",
+      "title": "High-Dimensional Longitudinal Genomic Data: An Analysis Used for Monitoring Viral Infections",
+      "journal": "High-Dimensional Longitudinal Genomic Data: An Analysis Used for Monitoring Viral Infections. IEEE Signal Process Magazine",
+      "year": "2012",
+      "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3964679/",
+      "study_id": "5236",
+      "study_title": "Influenza H3N2 Challenge - 2008"
+    }
+  },
+  {
+    "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0025797",
+    "success": false,
+    "status": "paywall_or_abstract",
+    "message": "Not a PDF (content-type: text/html;charset=utf-8). Likely behind paywall or abstract page. Paywall detected.",
+    "file_path": null,
+    "status_code": 200,
+    "publication": {
+      "first_author": "Moody",
+      "title": "H3N2 Influenza Infection Elicits More Cross-Reactive and Less Clonally Expanded Anti-Hemagglutinin Antibodies Than Influenza Vaccination",
+      "journal": "H3N2 Influenza Infection Elicits More Cross-Reactive and Less Clonally Expanded Anti-Hemagglutinin Antibodies Than Influenza Vaccination.\u00a0PLoS One",
+      "year": "2011",
+      "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0025797",
+      "study_id": "5236",
+      "study_title": "Influenza H3N2 Challenge - 2008"
+    }
+  },
+  {
+    "url": "https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1002234",
+    "success": false,
+    "status": "paywall_or_abstract",
+    "message": "Not a PDF (content-type: text/html;charset=utf-8). Likely behind paywall or abstract page. Paywall detected.",
+    "file_path": null,
+    "status_code": 200,
+    "publication": {
+      "first_author": "Huang",
+      "title": "Temporal Dynamics of Host Molecular Responses Differentiate Symptomatic and Asymptomatic Influenza A Infection",
+      "journal": "Temporal Dynamics of Host Molecular Responses Differentiate Symptomatic and Asymptomatic Influenza A Infection.\u00a0PLoS Genetics",
+      "year": "2011",
+      "url": "https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1002234",
+      "study_id": "5236",
+      "study_title": "Influenza H3N2 Challenge - 2008"
+    }
+  },
+  {
+    "url": "https://ieeexplore.ieee.org/document/5512621",
+    "success": false,
+    "status": "paywall_or_abstract",
+    "message": "Not a PDF (content-type: text/html;charset=utf-8). Likely behind paywall or abstract page. Paywall detected.",
+    "file_path": null,
+    "status_code": 200,
+    "publication": {
+      "first_author": "Chen",
+      "title": "Detection of Viruses via Statistical Gene Expression Analysis",
+      "journal": "Detection of Viruses via Statistical Gene Expression Analysis.\u00a0IEEE",
+      "year": "2011",
+      "url": "https://ieeexplore.ieee.org/document/5512621",
+      "study_id": "5236",
+      "study_title": "Influenza H3N2 Challenge - 2008"
+    }
+  },
+  {
+    "url": "https://www.sciencedirect.com/science/article/pii/S1931312809002510?via%3Dihub",
+    "success": false,
+    "status": "error",
+    "message": "HTTP 403",
+    "file_path": null,
+    "status_code": 403,
+    "publication": {
+      "first_author": "Zaas",
+      "title": "Gene Expression Signatures Diagnose Influenza and Other Symptomatic Respiratory Viral Infections in Humans",
+      "journal": "Gene Expression Signatures Diagnose Influenza and Other Symptomatic Respiratory Viral Infections in Humans.\u00a0Cell Host & Microbe",
+      "year": "2009",
+      "url": "https://www.sciencedirect.com/science/article/pii/S1931312809002510?via%3Dihub",
+      "study_id": "5236",
+      "study_title": "Influenza H3N2 Challenge - 2008"
+    }
+  },
+  {
+    "url": "https://www.frontiersin.org/articles/10.3389/fmicb.2018.02957/full",
+    "success": false,
+    "status": "paywall_or_abstract",
+    "message": "Not a PDF (content-type: text/html;charset=utf-8). Likely behind paywall or abstract page. Paywall detected.",
+    "file_path": null,
+    "status_code": 200,
+    "publication": {
+      "first_author": "Poore",
+      "title": "A miRNA Host Response Signature Accurately Discriminates Acute Respiratory Infection Etiologies",
+      "journal": "A miRNA Host Response Signature Accurately Discriminates Acute Respiratory Infection Etiologies.\u00a0Frontiers Microbiology",
+      "year": "2018",
+      "url": "https://www.frontiersin.org/articles/10.3389/fmicb.2018.02957/full",
+      "study_id": "5237",
+      "study_title": "Influenza H3N2 Challenge - 2011 \"Cure-before\""
+    }
+  },
+  {
+    "url": "https://www.nature.com/articles/s41467-018-06735-8",
+    "success": false,
+    "status": "paywall_or_abstract",
+    "message": "Not a PDF (content-type: text/html; charset=\"utf-8\"). Likely behind paywall or abstract page. Paywall detected.",
+    "file_path": null,
+    "status_code": 200,
+    "publication": {
+      "first_author": "Fourati",
+      "title": "A Crowdsourced Analysis to Identify Ab Initio Molecular Signatures Predictive of Susceptibility to Viral Infection",
+      "journal": "A Crowdsourced Analysis to Identify Ab Initio Molecular Signatures Predictive of Susceptibility to Viral Infection.\u00a0Nature Communications",
+      "year": "2018",
+      "url": "https://www.nature.com/articles/s41467-018-06735-8",
+      "study_id": "5237",
+      "study_title": "Influenza H3N2 Challenge - 2011 \"Cure-before\""
+    }
+  },
+  {
+    "url": "https://www.sciencedirect.com/science/article/pii/S2352396417300749?via%3Dihub",
+    "success": false,
+    "status": "error",
+    "message": "HTTP 403",
+    "file_path": null,
+    "status_code": 403,
+    "publication": {
+      "first_author": "Burke",
+      "title": "Nasopharyngeal Protein Biomarkers of Acute Respiratory Virus Infection",
+      "journal": "Nasopharyngeal Protein Biomarkers of Acute Respiratory Virus Infection.\u00a0EBioMedicine",
+      "year": "2017",
+      "url": "https://www.sciencedirect.com/science/article/pii/S2352396417300749?via%3Dihub",
+      "study_id": "5237",
+      "study_title": "Influenza H3N2 Challenge - 2011 \"Cure-before\""
+    }
+  },
+  {
+    "url": "https://journals.plos.org/plospathogens/article?id=10.1371/journal.ppat.1006203",
+    "success": false,
+    "status": "paywall_or_abstract",
+    "message": "Not a PDF (content-type: text/html;charset=utf-8). Likely behind paywall or abstract page. Paywall detected.",
+    "file_path": null,
+    "status_code": 200,
+    "publication": {
+      "first_author": "Leonard",
+      "title": "The Effective Rate of Influenza Reassortment Is Limited During Human Infection",
+      "journal": "The Effective Rate of Influenza Reassortment Is Limited During Human Infection.\u00a0PLoS One Pathogens",
+      "year": "2017",
+      "url": "https://journals.plos.org/plospathogens/article?id=10.1371/journal.ppat.1006203",
+      "study_id": "5237",
+      "study_title": "Influenza H3N2 Challenge - 2011 \"Cure-before\""
+    }
+  },
+  {
+    "url": "https://academic.oup.com/ofid/article/3/1/ofw007/2460758",
+    "success": false,
+    "status": "error",
+    "message": "HTTP 403",
+    "file_path": null,
+    "status_code": 403,
+    "publication": {
+      "first_author": "McClain",
+      "title": "A Genomic Signature of Influenza Infection Shows Potential for Presymptomatic Detection, Guiding Early Therapy, and Monitoring Clinical Responses",
+      "journal": "A Genomic Signature of Influenza Infection Shows Potential for Presymptomatic Detection, Guiding Early Therapy, and Monitoring Clinical Responses.\u00a0Open Forum Infectious Disease",
+      "year": "2016",
+      "url": "https://academic.oup.com/ofid/article/3/1/ofw007/2460758",
+      "study_id": "5237",
+      "study_title": "Influenza H3N2 Challenge - 2011 \"Cure-before\""
+    }
+  },
+  {
+    "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4722633/",
+    "success": false,
+    "status": "paywall_or_abstract",
+    "message": "Not a PDF (content-type: text/html; charset=utf-8). Likely behind paywall or abstract page. Paywall detected.",
+    "file_path": null,
+    "status_code": 200,
+    "publication": {
+      "first_author": "Liu",
+      "title": "An individualized predictor of health and disease using paired reference and target samples",
+      "journal": "An individualized predictor of health and disease using paired reference and target samples.\u00a0BMC Bioinformatics",
+      "year": "2016",
+      "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4722633/",
+      "study_id": "5237",
+      "study_title": "Influenza H3N2 Challenge - 2011 \"Cure-before\""
+    }
+  }
+]

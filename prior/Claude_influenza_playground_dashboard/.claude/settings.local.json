@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip3 install:*)",
+      "Bash(python3:*)",
+      "Bash(source venv/bin/activate)",
+      "Bash(pip install:*)",
+      "Bash(python extract_studies.py:*)",
+      "Bash(python generate_dashboard.py:*)",
+      "Bash(chmod:*)",
+      "Bash(open:*)",
+      "Bash(python create_biodata_matrix.py:*)",
+      "Bash(python download_publications.py:*)",
+      "Bash(python generate_unified_dashboard.py:*)",
+      "Bash(cat:*)",
+      "Bash(python:*)",
+      "Bash(xargs:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

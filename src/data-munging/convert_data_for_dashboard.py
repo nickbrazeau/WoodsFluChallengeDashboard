@@ -100,16 +100,26 @@ def convert_publications_to_json():
     # Simplify for dashboard
     dashboard_pubs = []
     for pub in publications:
+        # Helper function to replace NaN/nan with None
+        def clean_value(val):
+            if val is None:
+                return None
+            if isinstance(val, float) and (pd.isna(val) or str(val).lower() == 'nan'):
+                return None
+            if isinstance(val, str) and str(val).lower() == 'nan':
+                return None
+            return val
+
         dashboard_pub = {
-            'title': pub.get('title', 'No title'),
-            'first_author': pub.get('first_author', 'Unknown'),
-            'journal': pub.get('journal', 'Unknown'),
-            'year': pub.get('year', 'Unknown'),
-            'pmid': str(pub.get('pmid', 'N/A')).replace('.0', ''),
-            'pubmed_url': pub.get('pubmed_url', ''),
-            'study_code': pub.get('biobank_study_code', 'Unknown'),
-            'study_name': pub.get('study_name', 'Unknown'),
-            'abstract': pub.get('abstract', '')
+            'title': clean_value(pub.get('title')) or 'No title',
+            'first_author': clean_value(pub.get('first_author')) or 'Unknown',
+            'journal': clean_value(pub.get('journal')) or 'Unknown',
+            'year': clean_value(pub.get('year')) or 'Unknown',
+            'pmid': str(clean_value(pub.get('pmid')) or 'N/A').replace('.0', ''),
+            'pubmed_url': clean_value(pub.get('pubmed_url')) or '',
+            'study_code': clean_value(pub.get('biobank_study_code')) or 'Unknown',
+            'study_name': clean_value(pub.get('study_name')) or None,
+            'abstract': clean_value(pub.get('abstract')) or None
         }
         dashboard_pubs.append(dashboard_pub)
 

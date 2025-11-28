@@ -20,7 +20,8 @@
       "Bash(git branch:*)",
       "Bash(git remote add:*)",
       "Bash(./deploy-to-github.sh)",
-      "Bash(yes:*)"
+      "Bash(yes:*)",
+      "Bash(git reset:*)"
     ],
     "deny": [],
     "ask": []

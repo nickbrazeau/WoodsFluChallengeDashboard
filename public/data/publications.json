@@ -4,10 +4,10 @@
     "first_author": "Fourati",
     "journal": "A Crowdsourced Analysis to Identify Ab Initio Molecular Signatures Predictive of Susceptibility to Viral Infection.\u00a0Nature Communications",
     "year": "2018",
-    "pmid": "nan",
+    "pmid": null,
     "pubmed_url": "https://www.nature.com/articles/s41467-018-06735-8",
     "study_code": "DU09-06",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": NaN
   },
   {
@@ -15,10 +15,10 @@
     "first_author": "Liu",
     "journal": "An individualized predictor of health and disease using paired reference and target samples.\u00a0BMC Bioinformatics",
     "year": "2016",
-    "pmid": "nan",
+    "pmid": null,
     "pubmed_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4722633/",
     "study_code": "DU09-06",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": NaN
   },
   {
@@ -26,10 +26,10 @@
     "first_author": "Rose",
     "journal": "Gene Expression Profiles Link Respiratory Viral Infection, Platelet Response to Aspirin, and Acute Myocardial Infarction.\u00a0PLoS\u00a0One",
     "year": "2015",
-    "pmid": "nan",
+    "pmid": null,
     "pubmed_url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0132259",
     "study_code": "DU09-06",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": NaN
   },
   {
@@ -37,10 +37,10 @@
     "first_author": "Zaas",
     "journal": "A Host-Based RT-PCR Gene Expression Signature to Identify Acute Respiratory Viral Infection.\u00a0Science Translational Medicine",
     "year": "2013",
-    "pmid": "nan",
+    "pmid": null,
     "pubmed_url": "https://stm.sciencemag.org/content/5/203/203ra126.long",
     "study_code": "DU09-06",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": NaN
   },
   {
@@ -51,7 +51,7 @@
     "pmid": "24048524",
     "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/24048524/",
     "study_code": "DU09-06",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": "Can the complex host gene expression signature of viral infection be translated into a practical clinical test? Distilled microarray findings into minimal gene panel. Designed multiplex quantitative RT-PCR assay. Evaluated in independent cohorts including challenge subjects and patients with fever/respiratory symptoms. Developed rapid RT-PCR assay based on small host gene panel (IFI27, IFIT, TRAIL) that accurately identified acute viral infections. Achieved high sensitivity/specificity distinguishing viral ARIs from bacterial infections. Signal became positive before conventional symptoms fully developed, enabling presymptomatic diagnosis."
   },
   {
@@ -62,7 +62,7 @@
     "pmid": "24678238",
     "pubmed_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3964679/",
     "study_code": "DU09-06",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": NaN
   },
   {
@@ -73,7 +73,7 @@
     "pmid": "30356117",
     "pubmed_url": "https://www.nature.com/articles/s41467-018-06735-8",
     "study_code": "DU09-07",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": "Are there pre-infection biomarkers that predict who will get sick when exposed to a virus? DREAM Respiratory Viral Challenge: crowdsourced consortium analyzed 125 subjects from seven challenge studies (4 viruses). Dozens of teams built predictive models using baseline and 24h post-exposure data. Individual susceptibility to viral infection is predictable from pre-exposure gene expression profiles. Most enriched pathway: heme metabolism - higher expression of hemoglobin/iron regulation genes correlated with greater susceptibility. Baseline erythropoietic/iron-inflammatory state linked to resilience or vulnerability to viral illness."
   },
   {
@@ -81,10 +81,10 @@
     "first_author": "Liu",
     "journal": "An individualized\u00a0predictor of health and disease using paired reference and target samples.\u00a0BMC Bioinformatics",
     "year": "2016",
-    "pmid": "nan",
+    "pmid": null,
     "pubmed_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4722633/",
     "study_code": "DU09-07",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": NaN
   },
   {
@@ -92,10 +92,10 @@
     "first_author": "Fourati",
     "journal": "A Crowdsourced Anaylsis to Identify Ab Initio Molecular Signatures Predictive of Susceptibility to Viral Infection.\u00a0Nature Communications",
     "year": "2018",
-    "pmid": "nan",
+    "pmid": null,
     "pubmed_url": "https://www.nature.com/articles/s41467-018-06735-8",
     "study_code": "DU08-04",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": NaN
   },
   {
@@ -103,10 +103,10 @@
     "first_author": "Burke",
     "journal": "Nasopharyngeal Protein Biomarkers of Acute Respiratory Virus Infection.\u00a0EBioMedicine",
     "year": "2017",
-    "pmid": "nan",
+    "pmid": null,
     "pubmed_url": "https://www.sciencedirect.com/science/article/pii/S2352396417300749?via%3Dihub",
     "study_code": "DU08-04",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": NaN
   },
   {
@@ -114,10 +114,10 @@
     "first_author": "Leonard",
     "journal": "The Effective Rate of Influenza Reassortment is Limited During Human Infection.\u00a0PLoS Pathogens",
     "year": "2017",
-    "pmid": "nan",
+    "pmid": null,
     "pubmed_url": "https://journals.plos.org/plospathogens/article?id=10.1371/journal.ppat.1006203",
     "study_code": "DU08-04",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": NaN
   },
   {
@@ -128,7 +128,7 @@
     "pmid": "26801061",
     "pubmed_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4722633/",
     "study_code": "DU08-04",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": NaN
   },
   {
@@ -136,10 +136,10 @@
     "first_author": "Leonard",
     "journal": "Deep Sequencing of Influenza A Virus from a Human Challenge Study Reveals a Selective Bottleneck and Only Limited Intrahost Genetic Diversification.\u00a0Journal of Virology",
     "year": "2016",
-    "pmid": "nan",
+    "pmid": null,
     "pubmed_url": "https://jvi.asm.org/content/90/24/11247.long",
     "study_code": "DU08-04",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": NaN
   },
   {
@@ -150,7 +150,7 @@
     "pmid": "26193668",
     "pubmed_url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0132259",
     "study_code": "DU08-04",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": "Does viral infection predispose to myocardial infarction, and through what mechanism? Case-control cohort of 594 cardiac patients tested for 11-gene viral signature. Separately, 81 volunteers exposed to viruses (RSV, rhinovirus, H1N1, H3N2) followed longitudinally for 30-gene platelet function signature. Individuals with host-virus gene expression signature had double the odds of acute MI (OR ~2.3). Only H1N1 influenza infection significantly increased platelet activation gene signature. Provides mechanistic clue (virus-induced platelet activation) to why influenza can precipitate cardiovascular events."
   },
   {
@@ -158,10 +158,10 @@
     "first_author": "McClain",
     "journal": "Differential Evolution of Peripheral Cytokine\u00a0Levels in Symptomatic and symptomatic responses to Experimental Influenza Virus Challenge.\u00a0Clinical & Experimental Immunology",
     "year": "2015",
-    "pmid": "nan",
+    "pmid": null,
     "pubmed_url": "https://onlinelibrary.wiley.com/doi/full/10.1111/cei.12736",
     "study_code": "DU08-04",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": NaN
   },
   {
@@ -172,7 +172,7 @@
     "pmid": "23714753",
     "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/23714753/",
     "study_code": "DU08-04",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": "How do viral load kinetics and symptom dynamics of influenza A compare to RSV in experimentally infected adults? 17 volunteers challenged with H3N2 influenza, 20 with RSV-A. Nasal wash samples taken twice daily for ~7 days for viral load measurement and symptom recording. Influenza had shorter incubation and earlier peak than RSV. Influenza: viral load and symptoms peaked ~2 days post-inoculation, with peak viral load ~9.6 hours before peak symptoms. RSV: peaked around day 5. For both viruses, rise and fall of viral titers closely paralleled symptom progression."
   },
   {
@@ -183,7 +183,7 @@
     "pmid": "24140015",
     "pubmed_url": "https://www.sciencedirect.com/science/article/pii/S138665321300406X?via%3Dihub",
     "study_code": "DU08-04",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": "Do routine white blood cell differentials change characteristically during influenza infection? Analyzed daily complete blood count with differentials in volunteers challenged with influenza A/H3N2, rhinovirus, or RSV. Tracked leukocyte subpopulations from pre-inoculation through recovery. Influenza-infected subjects showed relative lymphopenia and monocytosis during symptomatic phase. L:M ratio fell below 2 at illness peak in 100% of influenza cases. These WBC changes closely mirrored clinical illness course and provide supportive evidence of acute influenza."
   },
   {
@@ -191,10 +191,10 @@
     "first_author": "Zaas",
     "journal": "A Host-Based RT-PCR Gene Expression Signature to Identify Acute Respiratory Viral Infection.\u00a0Science Translational Medicine",
     "year": "2013",
-    "pmid": "nan",
+    "pmid": null,
     "pubmed_url": "https://stm.sciencemag.org/content/5/203/203ra126.long",
     "study_code": "DU08-04",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": NaN
   },
   {
@@ -205,7 +205,7 @@
     "pmid": "23326326",
     "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/23326326/",
     "study_code": "DU08-04",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": NaN
   },
   {
@@ -216,7 +216,7 @@
     "pmid": "24678238",
     "pubmed_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3964679/",
     "study_code": "DU08-04",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": "How can one harness high-dimensional, longitudinal genomic data to monitor the course of an infection? Applied advanced statistical signal processing techniques (factor analysis, state-space modeling) to longitudinal gene expression profiles from experimentally inoculated subjects. Temporal genomic data can be distilled into meaningful trajectories corresponding to infection stages (pre-symptomatic, acute response, recovery). Proper statistical modeling yields intuitive markers of infection progression that could inform monitoring and decision-making."
   },
   {
@@ -227,7 +227,7 @@
     "pmid": "22039424",
     "pubmed_url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0025797",
     "study_code": "DU08-04",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": "How does the human B-cell/antibody response to influenza infection differ from that induced by influenza vaccination? Studied adults challenged with H3N2 versus those receiving trivalent vaccine. Isolated and characterized anti-hemagglutinin antibodies, examining epitope specificity and cross-reactivity. Natural H3N2 infection elicited antibodies that were more broadly cross-reactive to diverse influenza strains with less clonal focusing, whereas vaccination induced a narrower, more strain-specific antibody response. Infection provides qualitatively different humoral imprint with greater cross-strain reactivity."
   },
   {
@@ -235,10 +235,10 @@
     "first_author": "Huang",
     "journal": "Temporal Dynamics of Host Molecular Responses Differentiate Symptomatic and Asymptomatic Influenza A Infection.\u00a0PLoS Genetics",
     "year": "2011",
-    "pmid": "nan",
+    "pmid": null,
     "pubmed_url": "https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1002234",
     "study_code": "DU08-04",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": NaN
   },
   {
@@ -246,10 +246,10 @@
     "first_author": "Chen",
     "journal": "Detection of Viruses via Statistical Gene Expression Analysis.\u00a0IEEE",
     "year": "2011",
-    "pmid": "nan",
+    "pmid": null,
     "pubmed_url": "https://ieeexplore.ieee.org/document/5512621",
     "study_code": "DU08-04",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": NaN
   },
   {
@@ -257,10 +257,10 @@
     "first_author": "Zaas",
     "journal": "Gene Expression Signatures Diagnose Influenza and Other Symptomatic Respiratory Viral Infections in Humans.\u00a0Cell Host & Microbe",
     "year": "2009",
-    "pmid": "nan",
+    "pmid": null,
     "pubmed_url": "https://www.sciencedirect.com/science/article/pii/S1931312809002510?via%3Dihub",
     "study_code": "DU08-04",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": NaN
   },
   {
@@ -271,7 +271,7 @@
     "pmid": "30619110",
     "pubmed_url": "https://www.frontiersin.org/articles/10.3389/fmicb.2018.02957/full",
     "study_code": "DU11-02",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": "Can host microRNAs distinguish viral from bacterial respiratory infection? Analyzed blood from 13 symptomatic H3N2-infected subjects and 10 S. pneumoniae pneumonia patients, plus 21 healthy controls. High-throughput sequencing of miRNAs, microarrays of mRNAs. Sparse logistic regression to derive signatures. Blood miRNA signatures highly accurate: 11 miRNAs perfectly separated bacterial pneumonia from controls (100%). Different miRNA panel differentiated bacterial from viral infection with ~91% accuracy (AUC 0.96). miRNA\u2013mRNA network showed bacterial infection triggers neutrophil activation, viral triggers interferon-mediated response."
   },
   {
@@ -279,10 +279,10 @@
     "first_author": "Fourati",
     "journal": "A Crowdsourced Analysis to Identify Ab Initio Molecular Signatures Predictive of Susceptibility to Viral Infection.\u00a0Nature Communications",
     "year": "2018",
-    "pmid": "nan",
+    "pmid": null,
     "pubmed_url": "https://www.nature.com/articles/s41467-018-06735-8",
     "study_code": "DU11-02",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": NaN
   },
   {
@@ -290,10 +290,10 @@
     "first_author": "Burke",
     "journal": "Nasopharyngeal Protein Biomarkers of Acute Respiratory Virus Infection.\u00a0EBioMedicine",
     "year": "2017",
-    "pmid": "nan",
+    "pmid": null,
     "pubmed_url": "https://www.sciencedirect.com/science/article/pii/S2352396417300749?via%3Dihub",
     "study_code": "DU11-02",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": NaN
   },
   {
@@ -301,10 +301,10 @@
     "first_author": "Leonard",
     "journal": "The Effective Rate of Influenza Reassortment Is Limited During Human Infection.\u00a0PLoS One Pathogens",
     "year": "2017",
-    "pmid": "nan",
+    "pmid": null,
     "pubmed_url": "https://journals.plos.org/plospathogens/article?id=10.1371/journal.ppat.1006203",
     "study_code": "DU11-02",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": NaN
   },
   {
@@ -312,10 +312,10 @@
     "first_author": "McClain",
     "journal": "A Genomic Signature of Influenza Infection Shows Potential for Presymptomatic Detection, Guiding Early Therapy, and Monitoring Clinical Responses.\u00a0Open Forum Infectious Disease",
     "year": "2016",
-    "pmid": "nan",
+    "pmid": null,
     "pubmed_url": "https://academic.oup.com/ofid/article/3/1/ofw007/2460758",
     "study_code": "DU11-02",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": NaN
   },
   {
@@ -326,7 +326,7 @@
     "pmid": "26801061",
     "pubmed_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4722633/",
     "study_code": "DU11-02",
-    "study_name": NaN,
+    "study_name": null,
     "abstract": "Can comparing post-exposure gene expression to one's own healthy baseline improve infection prediction accuracy? Large-scale analysis of 151 volunteers across seven challenge studies (H1N1, H3N2, RSV, HRV). Applied reference-aided machine learning comparing post-exposure to personal baseline. Using paired-reference approach boosted prediction accuracy by 14% for H3N2 and 6% for H1N1, while using fewer genes. Each person serves as their own control. Personalized genomic approach improved both sensitivity and specificity of early infection prediction."
   },
   {

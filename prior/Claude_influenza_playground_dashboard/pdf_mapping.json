@@ -1,0 +1,80 @@
+{
+  "12859_2016_Article_889.pdf": {
+    "author": "Liu et al.",
+    "year": "2016",
+    "journal": "BMC Bioinformatics",
+    "title": "An individualized predictor of health and disease using paired reference and target samples"
+  },
+  "s41467-018-06735-8.pdf": {
+    "author": "Fourati et al.",
+    "year": "2018",
+    "journal": "Nature Communications",
+    "title": "A Crowdsourced Analysis to Identify Ab Initio Molecular Signatures Predictive of Susceptibility to Viral Infection"
+  },
+  "scitranslmed.3006280.pdf": {
+    "author": "Tsalik et al.",
+    "year": "2016",
+    "journal": "Science Translational Medicine",
+    "title": "Host Gene Expression Classifiers Diagnose Acute Respiratory Illness Etiology"
+  },
+  "scitranslmed.aad6873.pdf": {
+    "author": "Zaas et al.",
+    "year": "2013",
+    "journal": "Science Translational Medicine",
+    "title": "A Host-Based RT-PCR Gene Expression Signature to Identify Acute Respiratory Viral Infection"
+  },
+  "plsone.pdf": {
+    "author": "Rose et al.",
+    "year": "2015",
+    "journal": "PLoS One",
+    "title": "Gene Expression Profiles Link Respiratory Viral Infection, Platelet Response to Aspirin, and Acute Myocardial Infarction"
+  },
+  "pone.0052198.pdf": {
+    "author": "Woods et al.",
+    "year": "2013",
+    "journal": "PLoS One",
+    "title": "A Host Transcriptional Signature for Presymptomatic Detection of Infection in Humans Exposed to Influenza H1N1 or H3N2"
+  },
+  "nihms-444985.pdf": {
+    "author": "Carin et al.",
+    "year": "2012",
+    "journal": "IEEE Signal Processing Magazine",
+    "title": "High-Dimensional Longitudinal Genomic Data: An Analysis Used for Monitoring Viral Infections"
+  },
+  "sobel-leonard-et-al-2016-deep-sequencing-of-influenza-a-virus-from-a-human-challenge-study-reveals-a-selective.pdf": {
+    "author": "Leonard et al.",
+    "year": "2016",
+    "journal": "Journal of Virology",
+    "title": "Deep Sequencing of Influenza A Virus from a Human Challenge Study Reveals a Selective Bottleneck and Only Limited Intrahost Genetic Diversification"
+  },
+  "bagga-et-al-2013-comparing-influenza-and-rsv-viral-and-disease-dynamics-in-experimentally-infected-adults-predicts.pdf": {
+    "author": "Bagga et al.",
+    "year": "2013",
+    "journal": "Antiviral Therapy",
+    "title": "Comparing Influenza and RSV Viral and Disease Dynamics in Experimentally Infected Adults Predicts Clinical Effectiveness of RSV Antivirals"
+  },
+  "CEI-183-441.pdf": {
+    "author": "McClain et al.",
+    "year": "2015",
+    "journal": "Clinical & Experimental Immunology",
+    "title": "Differential Evolution of Peripheral Cytokine Levels in Symptomatic and symptomatic responses to Experimental Influenza Virus Challenge"
+  },
+  "Detection_of_Viruses_Via_Statistical_Gene_Expression_Analysis.pdf": {
+    "author": "Chen et al.",
+    "year": "2011",
+    "journal": "IEEE",
+    "title": "Detection of Viruses via Statistical Gene Expression Analysis"
+  },
+  "fmicb-09-02957.pdf": {
+    "author": "Poore et al.",
+    "year": "2018",
+    "journal": "Frontiers Microbiology",
+    "title": "A miRNA Host Response Signature Accurately Discriminates Acute Respiratory Infection Etiologies"
+  },
+  "ofw007.pdf": {
+    "author": "McClain et al.",
+    "year": "2016",
+    "journal": "Open Forum Infectious Disease",
+    "title": "A Genomic Signature of Influenza Infection Shows Potential for Presymptomatic Detection, Guiding Early Therapy, and Monitoring Clinical Responses"
+  }
+}
