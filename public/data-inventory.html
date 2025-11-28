@@ -130,6 +130,20 @@
             </div>
         </section>
 
+        <!-- Assay Pivot Table by Study -->
+        <section id="assay-pivot-section" class="hidden" style="margin-top: 3rem;">
+            <h2>Assay Pivot Table by Study</h2>
+            <div class="card">
+                <p style="margin-bottom: 1rem;">Comprehensive matrix showing which assays were performed for each study</p>
+                <div style="margin-bottom: 1rem;">
+                    <button class="btn btn-secondary" onclick="exportAssayPivot()">Export Assay Matrix</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <div id="assay-pivot-table"></div>
+                </div>
+            </div>
+        </section>
+
         <!-- Pivot Summary by Study -->
         <section id="pivot-by-study" class="hidden" style="margin-top: 3rem;">
             <h2>Summary by Study</h2>
@@ -220,11 +234,15 @@
                 // Create study summaries
                 createStudySummaries();
 
+                // Create assay pivot table
+                createAssayPivotTable();
+
                 // Show sections
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('sankey-section').classList.remove('hidden');
                 document.getElementById('pivot-controls').classList.remove('hidden');
                 document.getElementById('data-table-section').classList.remove('hidden');
+                document.getElementById('assay-pivot-section').classList.remove('hidden');
                 document.getElementById('pivot-by-study').classList.remove('hidden');
 
             } catch (error) {
@@ -578,6 +596,128 @@
             });
 
             container.innerHTML = html;
+        }
+
+        function createAssayPivotTable() {
+            // Create a pivot table: rows=studies, columns=assays, values=sample counts
+            const studies = [...new Set(allData.map(d => d.biobank_study_code).filter(s => s))].sort();
+            const assays = [...new Set(allData.map(d => d.Assay).filter(a => a))].sort();
+
+            // Build pivot data
+            const pivotData = {};
+            studies.forEach(study => {
+                pivotData[study] = {};
+                assays.forEach(assay => {
+                    pivotData[study][assay] = 0;
+                });
+            });
+
+            // Populate pivot with sample counts
+            allData.forEach(record => {
+                const study = record.biobank_study_code;
+                const assay = record.Assay;
+                const samples = parseInt(record.Samples) || 0;
+
+                if (study && assay && pivotData[study] && pivotData[study][assay] !== undefined) {
+                    pivotData[study][assay] += samples;
+                }
+            });
+
+            // Generate HTML table
+            const container = document.getElementById('assay-pivot-table');
+            let html = '<table style="font-size: 0.9rem;"><thead><tr>';
+            html += '<th style="position: sticky; left: 0; background: white; z-index: 10;">Study</th>';
+            assays.forEach(assay => {
+                html += `<th style="min-width: 80px;">${assay}</th>`;
+            });
+            html += '<th style="font-weight: bold;">Total</th></tr></thead><tbody>';
+
+            studies.forEach(study => {
+                const rowData = pivotData[study];
+                const rowTotal = Object.values(rowData).reduce((sum, val) => sum + val, 0);
+
+                html += '<tr>';
+                html += `<td style="position: sticky; left: 0; background: white; z-index: 5;"><strong>${study}</strong></td>`;
+
+                assays.forEach(assay => {
+                    const count = rowData[assay];
+                    const cellStyle = count > 0 ? 'background-color: #e8f4f8;' : '';
+                    html += `<td style="text-align: center; ${cellStyle}">${count > 0 ? count.toLocaleString() : '-'}</td>`;
+                });
+
+                html += `<td style="font-weight: bold; text-align: center;">${rowTotal.toLocaleString()}</td>`;
+                html += '</tr>';
+            });
+
+            // Add column totals
+            html += '<tr style="border-top: 2px solid #333; font-weight: bold;">';
+            html += '<td style="position: sticky; left: 0; background: white; z-index: 5;">Total</td>';
+
+            let grandTotal = 0;
+            assays.forEach(assay => {
+                const colTotal = studies.reduce((sum, study) => sum + pivotData[study][assay], 0);
+                grandTotal += colTotal;
+                html += `<td style="text-align: center;">${colTotal.toLocaleString()}</td>`;
+            });
+
+            html += `<td style="text-align: center;">${grandTotal.toLocaleString()}</td>`;
+            html += '</tr>';
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function exportAssayPivot() {
+            const studies = [...new Set(allData.map(d => d.biobank_study_code).filter(s => s))].sort();
+            const assays = [...new Set(allData.map(d => d.Assay).filter(a => a))].sort();
+
+            // Build pivot data
+            const pivotData = {};
+            studies.forEach(study => {
+                pivotData[study] = {};
+                assays.forEach(assay => {
+                    pivotData[study][assay] = 0;
+                });
+            });
+
+            allData.forEach(record => {
+                const study = record.biobank_study_code;
+                const assay = record.Assay;
+                const samples = parseInt(record.Samples) || 0;
+
+                if (study && assay && pivotData[study]) {
+                    pivotData[study][assay] += samples;
+                }
+            });
+
+            // Generate CSV
+            let csv = 'Study,' + assays.join(',') + ',Total\n';
+
+            studies.forEach(study => {
+                const rowData = pivotData[study];
+                const rowTotal = Object.values(rowData).reduce((sum, val) => sum + val, 0);
+                const row = [study, ...assays.map(a => rowData[a] || 0), rowTotal];
+                csv += row.join(',') + '\n';
+            });
+
+            // Add totals row
+            const totals = ['Total'];
+            let grandTotal = 0;
+            assays.forEach(assay => {
+                const colTotal = studies.reduce((sum, study) => sum + pivotData[study][assay], 0);
+                grandTotal += colTotal;
+                totals.push(colTotal);
+            });
+            totals.push(grandTotal);
+            csv += totals.join(',') + '\n';
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'assay_pivot_by_study.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
         }
 
         function exportToCSV() {
