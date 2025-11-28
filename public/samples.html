@@ -10,8 +10,8 @@
     <!-- Navigation -->
     <nav>
         <div class="nav-container">
-            <a href="index.html" class="nav-brand">Woods Lab Dashboard</a>
-                        <ul class="nav-links">
+            <a href="index.html" class="nav-brand" style="margin-right: 3rem;">Woods Lab Dashboard</a>
+            <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="studies.html">Studies</a></li>
                 <li><a href="data-inventory.html">Data Inventory</a></li>
@@ -45,22 +45,6 @@
                 <div style="overflow-x: auto;">
                     <div id="pivot-table"></div>
                 </div>
-            </div>
-        </section>
-
-        <!-- Samples by Study -->
-        <section id="study-breakdown-section" class="hidden mt-4">
-            <h2>Samples by Study</h2>
-            <div class="card">
-                <div id="study-breakdown"></div>
-            </div>
-        </section>
-
-        <!-- Sample Types Distribution -->
-        <section id="sample-types-section" class="hidden mt-4">
-            <h2>Top Sample Types</h2>
-            <div class="card">
-                <div id="sample-types"></div>
             </div>
         </section>
 
@@ -223,8 +207,6 @@
 
                 // Display pivot table and summaries
                 displayPivotTable(stats);
-                displayStudyBreakdown(stats.samples_by_study);
-                displaySampleTypes(stats.samples_by_type);
 
                 // Display initial results
                 displayResults();
@@ -233,8 +215,6 @@
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('results-container').classList.remove('hidden');
                 document.getElementById('pivot-section').classList.remove('hidden');
-                document.getElementById('study-breakdown-section').classList.remove('hidden');
-                document.getElementById('sample-types-section').classList.remove('hidden');
 
             } catch (error) {
                 console.error('Error loading samples:', error);

@@ -12,7 +12,7 @@
     <!-- Navigation -->
     <nav>
         <div class="nav-container">
-            <a href="index.html" class="nav-brand">Woods Lab Dashboard</a>
+            <a href="index.html" class="nav-brand" style="margin-right: 3rem;">Woods Lab Dashboard</a>
             <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="studies.html">Studies</a></li>
@@ -63,17 +63,6 @@
             <p>Loading data inventory...</p>
         </div>
 
-        <!-- Data Provenance Visualization -->
-        <section id="sankey-section" class="hidden" style="margin-bottom: 3rem;">
-            <h2>Data Provenance Flow</h2>
-            <p style="color: var(--graphite); margin-bottom: 1rem;">
-                Diagram demonstrates what molecular data was generated from each set of samples
-            </p>
-            <div class="card">
-                <div id="sankey-diagram" style="width: 100%; height: 600px; overflow-x: auto;"></div>
-            </div>
-        </section>
-
         <!-- Pivot Table Controls -->
         <section id="pivot-controls" class="hidden" style="margin-bottom: 2rem;">
             <h2>Interactive Data Table</h2>
@@ -115,13 +104,12 @@
                     <table id="data-table">
                         <thead>
                             <tr>
-                                <th onclick="sortTable(0)">Study Code <span class="sort-arrow">↕</span></th>
-                                <th onclick="sortTable(1)">Study Name <span class="sort-arrow">↕</span></th>
-                                <th onclick="sortTable(2)">Assay Type <span class="sort-arrow">↕</span></th>
-                                <th onclick="sortTable(3)">Samples Analyzed <span class="sort-arrow">↕</span></th>
-                                <th onclick="sortTable(4)">Subject ID Range <span class="sort-arrow">↕</span></th>
-                                <th onclick="sortTable(5)">Timepoints <span class="sort-arrow">↕</span></th>
-                                <th onclick="sortTable(6)">Data Storage Location <span class="sort-arrow">↕</span></th>
+                                <th onclick="sortTable(0)">Study Name <span class="sort-arrow">↕</span></th>
+                                <th onclick="sortTable(1)">Assay Type <span class="sort-arrow">↕</span></th>
+                                <th onclick="sortTable(2)">Samples Analyzed <span class="sort-arrow">↕</span></th>
+                                <th onclick="sortTable(3)">Subject ID Range <span class="sort-arrow">↕</span></th>
+                                <th onclick="sortTable(4)">Timepoints <span class="sort-arrow">↕</span></th>
+                                <th onclick="sortTable(5)">Data Storage Location <span class="sort-arrow">↕</span></th>
                             </tr>
                         </thead>
                         <tbody id="data-tbody"></tbody>
@@ -228,9 +216,6 @@
                 // Display data
                 displayData();
 
-                // Create Sankey diagram
-                createSankeyDiagram();
-
                 // Create study summaries
                 createStudySummaries();
 
@@ -239,7 +224,6 @@
 
                 // Show sections
                 document.getElementById('loading').classList.add('hidden');
-                document.getElementById('sankey-section').classList.remove('hidden');
                 document.getElementById('pivot-controls').classList.remove('hidden');
                 document.getElementById('data-table-section').classList.remove('hidden');
                 document.getElementById('assay-pivot-section').classList.remove('hidden');
@@ -317,7 +301,7 @@
             document.getElementById('results-count').textContent = count;
 
             if (count === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;">No records found</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">No records found</td></tr>';
                 return;
             }
 
@@ -325,7 +309,6 @@
             filteredData.forEach(record => {
                 html += `
                     <tr>
-                        <td><strong>${record.biobank_study_code || 'N/A'}</strong></td>
                         <td>${record.study_name || record.Study}</td>
                         <td><span class="badge badge-primary">${record.Assay}</span></td>
                         <td>${(record.Samples || 0).toLocaleString()}</td>
@@ -347,7 +330,7 @@
                 sortAscending = true;
             }
 
-            const columns = ['biobank_study_code', 'study_name', 'Assay', 'Samples', 'Subject ID ranges', 'Timepoint(s)', 'storage_location'];
+            const columns = ['study_name', 'Assay', 'Samples', 'Subject ID ranges', 'Timepoint(s)', 'storage_location'];
             const col = columns[column];
 
             filteredData.sort((a, b) => {
@@ -365,178 +348,6 @@
             });
 
             displayData();
-        }
-
-        function createSankeyDiagram() {
-            try {
-                // Prepare data for Sankey: Sample Types -> Assays -> Storage
-                const container = document.getElementById('sankey-diagram');
-                const width = container.offsetWidth || 1000;
-                const height = 600;
-
-                // Clear any existing content
-                container.innerHTML = '';
-
-                const svg = d3.select('#sankey-diagram')
-                    .append('svg')
-                    .attr('width', width)
-                    .attr('height', height);
-
-                // Get unique assays and storage locations from actual data
-                const assayTypes = [...new Set(allData.map(d => d.Assay))].filter(a => a).slice(0, 10);
-                const storageNodes = [...new Set(allData.map(d => d.storage_location))].filter(s => s);
-
-                // Simple flow: Assays -> Storage Locations
-                const nodes = [
-                    ...assayTypes.map(a => ({name: a, id: `assay_${a}`})),
-                    ...storageNodes.map(s => ({name: s, id: `storage_${s}`}))
-                ];
-
-                // Create links from assays to storage with aggregated sample counts
-                const linkMap = new Map();
-
-                allData.forEach(record => {
-                    if (record.Assay && record.storage_location && (record.Samples || 0) > 0) {
-                        const assayName = record.Assay;
-                        const storageName = record.storage_location;
-
-                        if (assayTypes.includes(assayName) && storageNodes.includes(storageName)) {
-                            const sourceIdx = nodes.findIndex(n => n.name === assayName);
-                            const targetIdx = nodes.findIndex(n => n.name === storageName);
-
-                            if (sourceIdx >= 0 && targetIdx >= 0 && sourceIdx !== targetIdx) {
-                                const key = `${sourceIdx}-${targetIdx}`;
-                                const value = parseInt(record.Samples) || 1;
-
-                                if (linkMap.has(key)) {
-                                    linkMap.get(key).value += value;
-                                } else {
-                                    linkMap.set(key, {source: sourceIdx, target: targetIdx, value: value});
-                                }
-                            }
-                        }
-                    }
-                });
-
-                const links = Array.from(linkMap.values());
-
-                // Check if we have valid data
-                if (nodes.length === 0 || links.length === 0) {
-                    throw new Error('No valid data for Sankey diagram');
-                }
-
-                console.log(`Sankey: ${nodes.length} nodes, ${links.length} links`);
-
-                // Create Sankey layout
-                const sankey = d3.sankey()
-                    .nodeId(d => d.name)
-                    .nodeWidth(20)
-                    .nodePadding(15)
-                    .extent([[10, 10], [width - 10, height - 10]]);
-
-                const graph = sankey({
-                    nodes: nodes.map(d => Object.assign({}, d)),
-                    links: links.map(d => Object.assign({}, d))
-                });
-
-                // Color scales
-                const assayColor = d3.scaleOrdinal(d3.schemeCategory10);
-                const storageColor = d3.scaleOrdinal(['#00539B', '#E89923', '#339898', '#7A0019', '#6F263D']);
-
-                // Draw links
-                svg.append('g')
-                    .attr('fill', 'none')
-                    .attr('stroke-opacity', 0.4)
-                    .selectAll('path')
-                    .data(graph.links)
-                    .join('path')
-                    .attr('d', d3.sankeyLinkHorizontal())
-                    .attr('stroke', d => assayColor(d.source.name))
-                    .attr('stroke-width', d => Math.max(1, d.width))
-                    .on('mouseover', function() {
-                        d3.select(this).attr('stroke-opacity', 0.8);
-                    })
-                    .on('mouseout', function() {
-                        d3.select(this).attr('stroke-opacity', 0.4);
-                    })
-                    .append('title')
-                    .text(d => `${d.source.name} → ${d.target.name}\n${d.value} samples`);
-
-                // Draw nodes
-                const node = svg.append('g')
-                    .selectAll('g')
-                    .data(graph.nodes)
-                    .join('g');
-
-                node.append('rect')
-                    .attr('x', d => d.x0)
-                    .attr('y', d => d.y0)
-                    .attr('height', d => Math.max(1, d.y1 - d.y0))
-                    .attr('width', d => d.x1 - d.x0)
-                    .attr('fill', d => d.id.startsWith('assay_') ? assayColor(d.name) : storageColor(d.name))
-                    .attr('stroke', '#333')
-                    .attr('stroke-width', 0.5)
-                    .append('title')
-                    .text(d => `${d.name}\n${d.value} samples`);
-
-                // Add labels
-                node.append('text')
-                    .attr('x', d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
-                    .attr('y', d => (d.y1 + d.y0) / 2)
-                    .attr('dy', '0.35em')
-                    .attr('text-anchor', d => d.x0 < width / 2 ? 'start' : 'end')
-                    .text(d => d.name)
-                    .style('font-size', '11px')
-                    .style('font-weight', '500')
-                    .style('fill', '#333');
-
-                // Add legend
-                const legend = svg.append('g')
-                    .attr('transform', `translate(${width - 200}, 20)`);
-
-                legend.append('text')
-                    .attr('x', 0)
-                    .attr('y', 0)
-                    .style('font-size', '12px')
-                    .style('font-weight', 'bold')
-                    .text('Data Flow');
-
-                legend.append('rect')
-                    .attr('x', 0)
-                    .attr('y', 10)
-                    .attr('width', 15)
-                    .attr('height', 15)
-                    .attr('fill', assayColor('Cytokines'));
-
-                legend.append('text')
-                    .attr('x', 20)
-                    .attr('y', 22)
-                    .style('font-size', '11px')
-                    .text('Assay Types');
-
-                legend.append('rect')
-                    .attr('x', 0)
-                    .attr('y', 35)
-                    .attr('width', 15)
-                    .attr('height', 15)
-                    .attr('fill', storageColor('Duke Compute Cluster'));
-
-                legend.append('text')
-                    .attr('x', 20)
-                    .attr('y', 47)
-                    .style('font-size', '11px')
-                    .text('Storage Locations');
-
-            } catch (error) {
-                console.error('Error creating Sankey diagram:', error);
-                document.getElementById('sankey-diagram').innerHTML = `
-                    <div style="padding: 2rem; text-align: center; color: var(--graphite);">
-                        <p><strong>Unable to render Sankey diagram</strong></p>
-                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">The data provenance visualization could not be generated.</p>
-                        <p style="font-size: 0.875rem; margin-top: 0.5rem; color: var(--hatteras);">${error.message}</p>
-                    </div>
-                `;
-            }
         }
 
         function createStudySummaries() {
@@ -721,9 +532,8 @@
         }
 
         function exportToCSV() {
-            const headers = ['Study Code', 'Study Name', 'Assay Type', 'Samples', 'Subject ID Range', 'Timepoints', 'Storage Location'];
+            const headers = ['Study Name', 'Assay Type', 'Samples', 'Subject ID Range', 'Timepoints', 'Storage Location'];
             const rows = filteredData.map(record => [
-                record.biobank_study_code || '',
                 record.study_name || record.Study || '',
                 record.Assay || '',
                 record.Samples || '0',
