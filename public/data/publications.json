@@ -8,7 +8,7 @@
     "pubmed_url": "https://www.nature.com/articles/s41467-018-06735-8",
     "study_code": "DU09-06",
     "study_name": null,
-    "abstract": NaN
+    "abstract": null
   },
   {
     "title": "An individualized predictor of health and disease using paired reference and target samples",
@@ -19,7 +19,7 @@
     "pubmed_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4722633/",
     "study_code": "DU09-06",
     "study_name": null,
-    "abstract": NaN
+    "abstract": null
   },
   {
     "title": "Gene Expression Profiles Link Respiratory Viral Infection, Platelet Response to Aspirin, and Acute Myocardial Infarction",
@@ -30,7 +30,7 @@
     "pubmed_url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0132259",
     "study_code": "DU09-06",
     "study_name": null,
-    "abstract": NaN
+    "abstract": null
   },
   {
     "title": "A Host-Based RT-PCR Gene Expression Signature to Identify Acute Respiratory Viral Infection",
@@ -41,7 +41,7 @@
     "pubmed_url": "https://stm.sciencemag.org/content/5/203/203ra126.long",
     "study_code": "DU09-06",
     "study_name": null,
-    "abstract": NaN
+    "abstract": null
   },
   {
     "title": "A Host Transcriptional Signature for Presymptomatic Detection of Infection in Humans Exposed to Influenza H1N1 or H3N2",
@@ -63,7 +63,7 @@
     "pubmed_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3964679/",
     "study_code": "DU09-06",
     "study_name": null,
-    "abstract": NaN
+    "abstract": null
   },
   {
     "title": "A Crowdsourced Analysis to Identify Ab Initio Molecular Signatures Predictive of Susceptibility to Viral Infection",
@@ -85,7 +85,7 @@
     "pubmed_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4722633/",
     "study_code": "DU09-07",
     "study_name": null,
-    "abstract": NaN
+    "abstract": null
   },
   {
     "title": "A Crowdsourced Anaylsis to Identify Ab Initio Molecular Signatures Predictive of Susceptibility to Viral Infection",
@@ -96,7 +96,7 @@
     "pubmed_url": "https://www.nature.com/articles/s41467-018-06735-8",
     "study_code": "DU08-04",
     "study_name": null,
-    "abstract": NaN
+    "abstract": null
   },
   {
     "title": "Nasopharyngeal Protein Biomarkers of Acute Respiratory Virus Infection",
@@ -107,7 +107,7 @@
     "pubmed_url": "https://www.sciencedirect.com/science/article/pii/S2352396417300749?via%3Dihub",
     "study_code": "DU08-04",
     "study_name": null,
-    "abstract": NaN
+    "abstract": null
   },
   {
     "title": "The Effective Rate of Influenza Reassortment is Limited During Human Infection",
@@ -118,7 +118,7 @@
     "pubmed_url": "https://journals.plos.org/plospathogens/article?id=10.1371/journal.ppat.1006203",
     "study_code": "DU08-04",
     "study_name": null,
-    "abstract": NaN
+    "abstract": null
   },
   {
     "title": "An individualized predictor of health and disease using paired reference and target samples",
@@ -129,7 +129,7 @@
     "pubmed_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4722633/",
     "study_code": "DU08-04",
     "study_name": null,
-    "abstract": NaN
+    "abstract": null
   },
   {
     "title": "Deep Sequencing of Influenza A Virus from a Human Challenge Study Reveals a Selective Bottleneck and Only Limited Intrahost Genetic Diversification",
@@ -140,7 +140,7 @@
     "pubmed_url": "https://jvi.asm.org/content/90/24/11247.long",
     "study_code": "DU08-04",
     "study_name": null,
-    "abstract": NaN
+    "abstract": null
   },
   {
     "title": "Gene Expression Profiles Link Respiratory Viral Infection, Platelet Response to Aspirin, and Acute Myocardial Infarction",
@@ -162,7 +162,7 @@
     "pubmed_url": "https://onlinelibrary.wiley.com/doi/full/10.1111/cei.12736",
     "study_code": "DU08-04",
     "study_name": null,
-    "abstract": NaN
+    "abstract": null
   },
   {
     "title": "Comparing Influenza and RSV Viral and Disease Dynamics in Experimentally Infected Adults Predicts Clinical Effectiveness of RSV Antivirals",
@@ -195,7 +195,7 @@
     "pubmed_url": "https://stm.sciencemag.org/content/5/203/203ra126.long",
     "study_code": "DU08-04",
     "study_name": null,
-    "abstract": NaN
+    "abstract": null
   },
   {
     "title": "A Host Transcriptional Signature for Presymptomatic Detection of Infection in Humans Exposed to Influenza H1N1 or H3N2",
@@ -206,7 +206,7 @@
     "pubmed_url": "https://pubmed.ncbi.nlm.nih.gov/23326326/",
     "study_code": "DU08-04",
     "study_name": null,
-    "abstract": NaN
+    "abstract": null
   },
   {
     "title": "High-Dimensional Longitudinal Genomic Data: An Analysis Used for Monitoring Viral Infections",
@@ -239,7 +239,7 @@
     "pubmed_url": "https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1002234",
     "study_code": "DU08-04",
     "study_name": null,
-    "abstract": NaN
+    "abstract": null
   },
   {
     "title": "Detection of Viruses via Statistical Gene Expression Analysis",
@@ -250,7 +250,7 @@
     "pubmed_url": "https://ieeexplore.ieee.org/document/5512621",
     "study_code": "DU08-04",
     "study_name": null,
-    "abstract": NaN
+    "abstract": null
   },
   {
     "title": "Gene Expression Signatures Diagnose Influenza and Other Symptomatic Respiratory Viral Infections in Humans",
@@ -261,7 +261,7 @@
     "pubmed_url": "https://www.sciencedirect.com/science/article/pii/S1931312809002510?via%3Dihub",
     "study_code": "DU08-04",
     "study_name": null,
-    "abstract": NaN
+    "abstract": null
   },
   {
     "title": "A miRNA Host Response Signature Accurately Discriminates Acute Respiratory Infection Etiologies",
@@ -283,7 +283,7 @@
     "pubmed_url": "https://www.nature.com/articles/s41467-018-06735-8",
     "study_code": "DU11-02",
     "study_name": null,
-    "abstract": NaN
+    "abstract": null
   },
   {
     "title": "Nasopharyngeal Protein Biomarkers of Acute Respiratory Virus Infection",
@@ -294,7 +294,7 @@
     "pubmed_url": "https://www.sciencedirect.com/science/article/pii/S2352396417300749?via%3Dihub",
     "study_code": "DU11-02",
     "study_name": null,
-    "abstract": NaN
+    "abstract": null
   },
   {
     "title": "The Effective Rate of Influenza Reassortment Is Limited During Human Infection",
@@ -305,7 +305,7 @@
     "pubmed_url": "https://journals.plos.org/plospathogens/article?id=10.1371/journal.ppat.1006203",
     "study_code": "DU11-02",
     "study_name": null,
-    "abstract": NaN
+    "abstract": null
   },
   {
     "title": "A Genomic Signature of Influenza Infection Shows Potential for Presymptomatic Detection, Guiding Early Therapy, and Monitoring Clinical Responses",
@@ -316,7 +316,7 @@
     "pubmed_url": "https://academic.oup.com/ofid/article/3/1/ofw007/2460758",
     "study_code": "DU11-02",
     "study_name": null,
-    "abstract": NaN
+    "abstract": null
   },
   {
     "title": "An individualized predictor of health and disease using paired reference and target samples",

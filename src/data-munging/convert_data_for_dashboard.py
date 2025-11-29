@@ -98,18 +98,26 @@ def convert_publications_to_json():
     print(f"Loaded {len(publications)} publications")
 
     # Simplify for dashboard
+    import math
+
+    # Enhanced helper function to replace NaN/nan with None
+    def clean_value(val):
+        """Comprehensive NaN cleaning to prevent JSON serialization errors"""
+        # Handle None and empty strings
+        if val is None or val == '':
+            return None
+        # Handle numpy NaN and float NaN
+        if isinstance(val, float):
+            if math.isnan(val) or pd.isna(val):
+                return None
+        # Handle string "NaN" or "nan" (case insensitive)
+        if isinstance(val, str):
+            if val.strip().lower() == 'nan':
+                return None
+        return val
+
     dashboard_pubs = []
     for pub in publications:
-        # Helper function to replace NaN/nan with None
-        def clean_value(val):
-            if val is None:
-                return None
-            if isinstance(val, float) and (pd.isna(val) or str(val).lower() == 'nan'):
-                return None
-            if isinstance(val, str) and str(val).lower() == 'nan':
-                return None
-            return val
-
         dashboard_pub = {
             'title': clean_value(pub.get('title')) or 'No title',
             'first_author': clean_value(pub.get('first_author')) or 'Unknown',
@@ -119,9 +127,21 @@ def convert_publications_to_json():
             'pubmed_url': clean_value(pub.get('pubmed_url')) or '',
             'study_code': clean_value(pub.get('biobank_study_code')) or 'Unknown',
             'study_name': clean_value(pub.get('study_name')) or None,
-            'abstract': clean_value(pub.get('abstract')) or None
+            'abstract': clean_value(pub.get('abstract')) or None  # Critical: clean abstract field
         }
         dashboard_pubs.append(dashboard_pub)
+
+    # Validate JSON before saving
+    print("  Validating JSON structure...")
+    try:
+        # Test serialization
+        test_json = json.dumps(dashboard_pubs)
+        # Test deserialization
+        test_load = json.loads(test_json)
+        print("  ✓ JSON validation passed - no NaN values")
+    except (TypeError, ValueError) as e:
+        print(f"  ✗ JSON validation FAILED: {e}")
+        raise
 
     # Save
     output_file = Path('public/data/publications.json')
