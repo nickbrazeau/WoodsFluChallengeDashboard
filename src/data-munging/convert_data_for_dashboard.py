@@ -67,7 +67,7 @@ def create_sample_statistics():
         'available_samples': int((inventory['is_available'] == True).sum()),
         'transferred_samples': int((inventory['is_transferred'] == True).sum()),
         'samples_by_study': inventory['study_code'].value_counts().to_dict(),
-        'samples_by_type': inventory['sample_type'].value_counts().head(10).to_dict(),
+        'samples_by_type': inventory['sample_type'].value_counts().to_dict(),  # ALL sample types (removed top-10 limit)
         'participants_by_study': inventory.groupby('study_code')['participant_id'].nunique().to_dict(),
         'date_generated': datetime.now().isoformat()
     }
