@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assays - Woods Lab Dashboard</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand" style="margin-right: 3rem;">Woods Lab Dashboard</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="samples.html">Sample Inventory</a></li>
+                <li><a href="studies.html">Studies</a></li>
+                <li><a href="publications.html">Publications</a></li>
+                <li><a href="assays.html">Assays</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <h1>Assay Data</h1>
+        <p style="font-size: 1.1rem; color: var(--graphite); margin-bottom: 2rem;">
+            Molecular assays performed on challenge study samples
+        </p>
+
+        <!-- Statistics -->
+        <div id="stats-section" class="grid grid-3 hidden" style="margin-bottom: 2rem;">
+            <div class="stat-card">
+                <span class="stat-number" id="stat-records">-</span>
+                <span class="stat-label">Assay Records</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="stat-types">-</span>
+                <span class="stat-label">Unique Assay Types</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="stat-samples">-</span>
+                <span class="stat-label">Samples Assayed</span>
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loading" class="text-center" style="margin: 3rem 0;">
+            <div class="loading"></div>
+            <p>Loading assay data...</p>
+        </div>
+
+        <!-- Assay Types Overview -->
+        <div id="assays-overview" class="hidden">
+            <h2>Assays by Type</h2>
+            <div class="card">
+                <div id="assays-by-type-chart"></div>
+            </div>
+        </div>
+
+        <!-- Assay Records Table -->
+        <div id="assays-table-section" class="hidden" style="margin-top: 2rem;">
+            <h2>Detailed Assay Records</h2>
+            <div class="card">
+                <div style="overflow-x: auto;">
+                    <table id="assays-table">
+                        <thead>
+                            <tr>
+                                <th>Assay Type</th>
+                                <th>Study</th>
+                                <th>Samples</th>
+                                <th>Publication</th>
+                            </tr>
+                        </thead>
+                        <tbody id="assays-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Studies with Assays -->
+        <div id="studies-section" class="hidden" style="margin-top: 2rem;">
+            <h2>Assays by Study</h2>
+            <div class="grid grid-2" id="studies-grid"></div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <p><strong>Woods Lab Influenza Challenge Studies Dashboard</strong></p>
+            <p>For sample requests or collaboration inquiries, please contact the lab.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        let assaysData = [];
+        let assayStats = {};
+
+        // Load assays
+        async function loadAssays() {
+            try {
+                const [assaysResponse, statsResponse] = await Promise.all([
+                    fetch('data/assays.json'),
+                    fetch('data/assay_statistics.json')
+                ]);
+
+                assaysData = await assaysResponse.json();
+                assayStats = await statsResponse.json();
+
+                displayStatistics();
+                displayAssaysByType();
+                displayAssaysTable();
+                displayStudiesSection();
+
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('stats-section').classList.remove('hidden');
+                document.getElementById('assays-overview').classList.remove('hidden');
+                document.getElementById('assays-table-section').classList.remove('hidden');
+                document.getElementById('studies-section').classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Error loading assays:', error);
+                document.getElementById('loading').innerHTML = `
+                    <div class="alert alert-warning">
+                        <strong>Error loading assay data.</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Display statistics
+        function displayStatistics() {
+            document.getElementById('stat-records').textContent = assayStats.total_assay_records;
+            document.getElementById('stat-types').textContent = assayStats.unique_assay_types;
+            document.getElementById('stat-samples').textContent = assayStats.total_samples_assayed.toLocaleString();
+        }
+
+        // Display assays by type chart
+        function displayAssaysByType() {
+            const container = document.getElementById('assays-by-type-chart');
+            const assaysByType = assayStats.assays_by_type || {};
+
+            // Sort by sample count
+            const sortedAssays = Object.entries(assaysByType).sort((a, b) => b[1] - a[1]);
+
+            let html = '<table><thead><tr><th>Assay Type</th><th>Total Samples</th><th>Percentage</th></tr></thead><tbody>';
+
+            const total = Object.values(assaysByType).reduce((sum, count) => sum + count, 0);
+
+            sortedAssays.forEach(([assay, count]) => {
+                const percentage = ((count / total) * 100).toFixed(1);
+                const barWidth = Math.max(percentage, 5); // Minimum 5% for visibility
+
+                html += `
+                    <tr>
+                        <td><strong>${assay}</strong></td>
+                        <td>${count.toLocaleString()}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div style="background-color: var(--primary-blue); width: ${barWidth}%; height: 20px; border-radius: 4px;"></div>
+                                <span>${percentage}%</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // Display assays table
+        function displayAssaysTable() {
+            const tbody = document.getElementById('assays-tbody');
+
+            // Group by assay type
+            const assayGroups = {};
+            assaysData.forEach(record => {
+                const assayType = record.Assay || 'Unknown';
+                if (!assayGroups[assayType]) {
+                    assayGroups[assayType] = [];
+                }
+                assayGroups[assayType].push(record);
+            });
+
+            let html = '';
+
+            // Sort assay types alphabetically
+            const sortedAssayTypes = Object.keys(assayGroups).sort();
+
+            sortedAssayTypes.forEach(assayType => {
+                const records = assayGroups[assayType];
+
+                records.forEach((record, index) => {
+                    const isFirstInGroup = index === 0;
+                    const rowspan = isFirstInGroup ? records.length : 0;
+
+                    html += '<tr>';
+
+                    if (isFirstInGroup) {
+                        html += `<td rowspan="${rowspan}" style="background-color: #f8f9fa; font-weight: bold; vertical-align: top;">${assayType}</td>`;
+                    }
+
+                    html += `
+                        <td><span class="badge badge-primary">${record.biobank_study_code || 'N/A'}</span></td>
+                        <td>${record.Samples ? record.Samples.toLocaleString() : 'N/A'}</td>
+                        <td style="font-size: 0.9rem;">${record.publication_title || 'Not specified'}</td>
+                    `;
+
+                    html += '</tr>';
+                });
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // Display studies section
+        function displayStudiesSection() {
+            const container = document.getElementById('studies-grid');
+
+            // Group assays by study
+            const studyGroups = {};
+            assaysData.forEach(record => {
+                const study = record.biobank_study_code || 'Unknown';
+                if (!studyGroups[study]) {
+                    studyGroups[study] = {
+                        assayTypes: new Set(),
+                        totalSamples: 0,
+                        records: []
+                    };
+                }
+                studyGroups[study].assayTypes.add(record.Assay);
+                studyGroups[study].totalSamples += record.Samples || 0;
+                studyGroups[study].records.push(record);
+            });
+
+            let html = '';
+
+            // Sort studies
+            const sortedStudies = Object.keys(studyGroups).sort();
+
+            sortedStudies.forEach(study => {
+                const data = studyGroups[study];
+
+                html += `
+                    <div class="card">
+                        <h3 style="margin-bottom: 1rem;">${study}</h3>
+
+                        <div class="grid grid-2" style="gap: 1rem; margin-bottom: 1rem;">
+                            <div>
+                                <div style="font-size: 1.8rem; font-weight: bold; color: var(--primary-blue);">
+                                    ${data.assayTypes.size}
+                                </div>
+                                <div style="font-size: 0.9rem; color: var(--graphite);">Assay Types</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 1.8rem; font-weight: bold; color: var(--eno);">
+                                    ${data.totalSamples.toLocaleString()}
+                                </div>
+                                <div style="font-size: 0.9rem; color: var(--graphite);">Samples Assayed</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--hatteras);">
+                            <strong style="display: block; margin-bottom: 0.5rem;">Assays:</strong>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                ${Array.from(data.assayTypes).sort().map(assay =>
+                                    `<span class="badge" style="background-color: var(--royal-blue);">${assay}</span>`
+                                ).join('')}
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 1rem;">
+                            <a href="studies.html?study=${study}" class="btn" style="width: 100%;">View Study Details</a>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Load on page load
+        document.addEventListener('DOMContentLoaded', loadAssays);
+    </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{
+  "project_name": "Woods Lab Influenza Challenge Studies Dashboard",
+  "institution": "Woods Lab",
+  "last_updated": "2025-11-26T12:42:42.772440",
+  "version": "1.0.0",
+  "data_version": "Phase 2 Complete (November 2025)",
+  "contact": {
+    "lab": "Woods Lab",
+    "institution": "",
+    "website": ""
+  },
+  "data_sources": {
+    "samples": "combined_inventory_deduplicated.parquet",
+    "publications": "citations.json",
+    "assays": "assay_tracking_table.csv",
+    "linkages": "data/processed/linkages/"
+  },
+  "colors": {
+    "primary_blue": "#012169",
+    "royal_blue": "#00539B",
+    "copper": "#C84E00",
+    "persimmon": "#E89923",
+    "eno": "#339898"
+  },
+  "features": {
+    "sample_search": true,
+    "publication_browser": true,
+    "assay_tracking": true,
+    "data_export": true,
+    "visualizations": true
+  },
+  "known_issues": [
+    "12 publications need study ID verification",
+    "DU19-03 (PRISM Family) inventory pending",
+    "216 samples with unusual timepoints under review",
+    "4,256 samples missing storage location"
+  ]
+}

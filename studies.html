@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studies - Woods Lab Dashboard</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand" style="margin-right: 3rem;">Woods Lab Dashboard</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="studies.html">Studies</a></li>
+                <li><a href="data-inventory.html">Data Inventory</a></li>
+                <li><a href="samples.html">Sample Inventory</a></li>
+                <li><a href="publications.html">Publications</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <h1>Challenge Studies</h1>
+        <p style="font-size: 1.1rem; color: var(--graphite); margin-bottom: 2rem;">
+            Explore the influenza challenge studies and their available resources
+        </p>
+
+        <!-- Loading Indicator -->
+        <div id="loading" class="text-center" style="margin: 3rem 0;">
+            <div class="loading"></div>
+            <p>Loading studies...</p>
+        </div>
+
+        <!-- Studies Grid -->
+        <div id="studies-container" class="hidden">
+            <div class="grid grid-2" id="studies-grid"></div>
+        </div>
+
+        <!-- Study Details Modal -->
+        <div id="study-modal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto;">
+            <div style="max-width: 900px; margin: 2rem auto; padding: 2rem;">
+                <div class="card" style="max-height: 90vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1.5rem;">
+                        <div>
+                            <h2 id="modal-title" style="margin-bottom: 0.5rem;"></h2>
+                            <p id="modal-subtitle" style="color: var(--graphite); font-size: 1.1rem;"></p>
+                        </div>
+                        <button class="btn" onclick="closeModal()">Close</button>
+                    </div>
+                    <div id="modal-content"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <p><strong>Woods Lab Influenza Challenge Studies Dashboard</strong></p>
+            <p style="font-size: 0.875rem;">Last Updated: <span id="footer-last-updated">Loading...</span></p>
+            <p style="font-size: 0.875rem; margin-top: 0.5rem;">
+                © 2025 Woods Lab. Released under the <a href="https://opensource.org/licenses/MIT" target="_blank" style="color: var(--royal-blue); text-decoration: underline;">MIT License</a>.
+            </p>
+            <p style="margin-top: 1rem; font-size: 0.875rem; color: var(--hatteras);">
+                For sample requests or collaboration inquiries, please contact the lab.
+            </p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        let studiesData = {};
+
+        // Load studies
+        async function loadStudies() {
+            try {
+                const [studiesResponse, configResponse] = await Promise.all([
+                    fetch('data/studies.json'),
+                    fetch('data/config.json')
+                ]);
+
+                studiesData = await studiesResponse.json();
+                const config = await configResponse.json();
+
+                // Update footer last updated
+                const lastUpdated = new Date(config.last_updated);
+                document.getElementById('footer-last-updated').textContent = lastUpdated.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                displayStudies();
+
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('studies-container').classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Error loading studies:', error);
+                document.getElementById('loading').innerHTML = `
+                    <div class="alert alert-warning">
+                        <strong>Error loading studies data.</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Display study cards
+        function displayStudies() {
+            const container = document.getElementById('studies-grid');
+            const studyOrder = ['DU08-04', 'DU09-06', 'DU09-07', 'DU11-02', 'DU17-04', 'DU20-01', 'DU24-01'];
+
+            let html = '';
+
+            studyOrder.forEach(code => {
+                const study = studiesData[code];
+                if (!study) return;
+
+                const virusBadgeColor = study.virus && study.virus.includes('H3N2') ? 'var(--copper)' : 'var(--royal-blue)';
+
+                html += `
+                    <div class="card" style="cursor: pointer;" onclick="showStudyDetails('${code}')">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <div>
+                                <h3 style="margin-bottom: 0.25rem;">${study.name}</h3>
+                                <p style="color: var(--graphite); margin-bottom: 0.5rem;">
+                                    <strong>${study.code}</strong> • ${study.year}
+                                </p>
+                            </div>
+                            <span class="badge" style="background-color: ${virusBadgeColor}; color: white;">
+                                ${study.virus}
+                            </span>
+                        </div>
+
+                        <p style="margin-bottom: 1.5rem; color: var(--cast-iron);">
+                            ${study.description}
+                        </p>
+
+                        <div class="grid grid-2" style="gap: 1rem;">
+                            <div>
+                                <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary-blue);">
+                                    ${study.total_samples ? study.total_samples.toLocaleString() : 'N/A'}
+                                </div>
+                                <div style="font-size: 0.9rem; color: var(--graphite);">Total Samples</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 1.5rem; font-weight: bold; color: var(--royal-blue);">
+                                    ${study.participants || 'N/A'}
+                                </div>
+                                <div style="font-size: 0.9rem; color: var(--graphite);">Participants</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 1.5rem; font-weight: bold; color: var(--eno);">
+                                    ${study.publications || 0}
+                                </div>
+                                <div style="font-size: 0.9rem; color: var(--graphite);">Publications</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 1.5rem; font-weight: bold; color: var(--persimmon);">
+                                    ${study.sample_types || 'N/A'}
+                                </div>
+                                <div style="font-size: 0.9rem; color: var(--graphite);">Sample Types</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--hatteras);">
+                            <button class="btn" style="width: 100%;">View Details</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Show study details in modal
+        function showStudyDetails(studyCode) {
+            const study = studiesData[studyCode];
+            if (!study) return;
+
+            document.getElementById('modal-title').textContent = `${study.name} (${study.code})`;
+            document.getElementById('modal-subtitle').textContent = `${study.year} • ${study.virus}`;
+
+            let content = `
+                <div style="margin-bottom: 2rem;">
+                    <h3>Description</h3>
+                    <p>${study.description}</p>
+                </div>
+
+                <div class="grid grid-3" style="margin-bottom: 2rem;">
+                    <div class="stat-card">
+                        <span class="stat-number">${study.total_samples ? study.total_samples.toLocaleString() : 'N/A'}</span>
+                        <span class="stat-label">Total Samples</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">${study.participants || 'N/A'}</span>
+                        <span class="stat-label">Participants</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">${study.sample_types || 'N/A'}</span>
+                        <span class="stat-label">Sample Types</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-2" style="margin-bottom: 2rem;">
+                    <div class="card" style="border-left-color: var(--eno);">
+                        <h4 style="color: var(--eno); margin-bottom: 0.5rem;">Available Samples</h4>
+                        <div style="font-size: 1.8rem; font-weight: bold; color: var(--cast-iron);">
+                            ${study.samples_available ? study.samples_available.toLocaleString() : 'N/A'}
+                        </div>
+                    </div>
+                    <div class="card" style="border-left-color: var(--graphite);">
+                        <h4 style="color: var(--graphite); margin-bottom: 0.5rem;">Transferred Samples</h4>
+                        <div style="font-size: 1.8rem; font-weight: bold; color: var(--cast-iron);">
+                            ${study.samples_transferred ? study.samples_transferred.toLocaleString() : 'N/A'}
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 2rem;">
+                    <h3>Research Outputs</h3>
+                    <div class="grid grid-2">
+                        <div class="card">
+                            <h4 style="color: var(--royal-blue);">Publications</h4>
+                            <div style="font-size: 2rem; font-weight: bold;">${study.publications || 0}</div>
+                            <p style="margin-top: 0.5rem; color: var(--graphite);">
+                                Scientific publications using samples from this study
+                            </p>
+                            ${study.publications > 0 ? `<a href="publications.html?study=${study.code}" class="btn mt-2">View Publications</a>` : ''}
+                        </div>
+                        <div class="card">
+                            <h4 style="color: var(--persimmon);">Assays Performed</h4>
+                            <div style="font-size: 2rem; font-weight: bold;">${study.assays_performed || 0}</div>
+                            <p style="margin-top: 0.5rem; color: var(--graphite);">
+                                Different assay types performed on samples
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3>Quick Actions</h3>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <a href="samples.html?study=${study.code}" class="btn">View Samples</a>
+                        ${study.publications > 0 ? `<a href="publications.html?study=${study.code}" class="btn btn-secondary">View Publications</a>` : ''}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('modal-content').innerHTML = content;
+            document.getElementById('study-modal').classList.remove('hidden');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('study-modal').classList.add('hidden');
+        }
+
+        // Close modal on background click
+        document.getElementById('study-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'study-modal') {
+                closeModal();
+            }
+        });
+
+        // Load on page load
+        document.addEventListener('DOMContentLoaded', loadStudies);
+    </script>
+</body>
+</html>

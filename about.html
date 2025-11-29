@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Woods Lab Dashboard</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand" style="margin-right: 3rem;">Woods Lab Dashboard</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="studies.html">Studies</a></li>
+                <li><a href="data-inventory.html">Data Inventory</a></li>
+                <li><a href="samples.html">Sample Inventory</a></li>
+                <li><a href="publications.html">Publications</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <h1>About This Dashboard</h1>
+
+        <!-- How to Use Section -->
+        <section>
+            <h2>How to Use This Dashboard</h2>
+            <div class="grid grid-2">
+                <div class="card">
+                    <h3>Sample Inventory</h3>
+                    <p>
+                        Navigate to the <a href="samples.html">Sample Inventory</a> page to search
+                        through all available biological samples.
+                    </p>
+                    <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                        <li>Search by barcode, participant ID, or study code</li>
+                        <li>Filter by study, sample type, timepoint, and availability</li>
+                        <li>Sort results by any column</li>
+                        <li>Export filtered results to CSV</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Data Inventory</h3>
+                    <p>
+                        The <a href="data-inventory.html">Data Inventory</a> page provides the most comprehensive view of molecular data.
+                    </p>
+                    <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                        <li>Browse assays performed on samples</li>
+                        <li>View data storage locations</li>
+                        <li>Explore data provenance with Sankey diagrams</li>
+                        <li>Filter by study, assay type, or storage location</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Publications</h3>
+                    <p>
+                        The <a href="publications.html">Publications</a> page catalogs all scientific publications utilizing challenge study data.
+                    </p>
+                    <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                        <li>Browse publications by study, year, or journal</li>
+                        <li>View citation details and abstracts</li>
+                        <li>Access PubMed links where available</li>
+                        <li>See which samples were used in each publication</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Study Overview</h3>
+                    <p>
+                        The <a href="studies.html">Studies</a> page provides details on each challenge study.
+                    </p>
+                    <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                        <li>Overview of each challenge study</li>
+                        <li>Sample counts and availability statistics</li>
+                        <li>Associated publications and assays</li>
+                        <li>Quick links to view study-specific data</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sample Requests Section -->
+        <section style="margin-top: 3rem;">
+            <h2>Sample Requests & Collaboration</h2>
+            <div class="card">
+                <p>
+                    Samples from these influenza challenge studies are available for collaborative research projects.
+                    If you are interested in accessing samples or data, please contact the lab with:
+                </p>
+                <ul style="margin-left: 2rem; margin-top: 1rem;">
+                    <li><strong>Your research question and study design</strong></li>
+                    <li><strong>Specific samples or studies of interest</strong></li>
+                    <li><strong>Proposed assays or analyses</strong></li>
+                    <li><strong>Timeline and funding information</strong></li>
+                </ul>
+                <p style="margin-top: 1.5rem;">
+                    <strong>Contact:</strong> Woods Lab<br>
+                    Please use the lab's official contact channels for collaboration inquiries.
+                </p>
+            </div>
+        </section>
+
+        <!-- Dashboard Statistics Section -->
+        <section style="margin-top: 3rem;">
+            <h2>Dashboard Statistics</h2>
+            <div class="card">
+                <div class="grid grid-3" style="margin-bottom: 1.5rem;">
+                    <div>
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--primary-blue);">
+                            <span id="total-samples">82,046</span>
+                        </div>
+                        <div style="color: var(--graphite);">Biological Samples</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--royal-blue);">
+                            <span id="total-publications">39</span>
+                        </div>
+                        <div style="color: var(--graphite);">Publications</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--persimmon);">
+                            7
+                        </div>
+                        <div style="color: var(--graphite);">Challenge Studies</div>
+                    </div>
+                </div>
+                <p style="margin-top: 1rem;">
+                    Data spans human influenza challenge studies conducted from 2008 to 2024, encompassing H1N1 and H3N2 virus strains.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <p><strong>Woods Lab Influenza Challenge Studies Dashboard</strong></p>
+            <p style="font-size: 0.875rem;">Last Updated: <span id="footer-last-updated">Loading...</span></p>
+            <p style="font-size: 0.875rem; margin-top: 0.5rem;">
+                © 2025 Woods Lab. Released under the <a href="https://opensource.org/licenses/MIT" target="_blank" style="color: var(--royal-blue); text-decoration: underline;">MIT License</a>.
+            </p>
+            <p style="margin-top: 1rem; font-size: 0.875rem; color: var(--hatteras);">
+                For sample requests or collaboration inquiries, please contact the lab.
+            </p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        async function loadAboutData() {
+            try {
+                const [configResponse, sampleStatsResponse, pubStatsResponse] = await Promise.all([
+                    fetch('data/config.json'),
+                    fetch('data/sample_statistics.json'),
+                    fetch('data/publication_statistics.json')
+                ]);
+
+                const config = await configResponse.json();
+                const sampleStats = await sampleStatsResponse.json();
+                const pubStats = await pubStatsResponse.json();
+
+                // Update footer last updated
+                const lastUpdated = new Date(config.last_updated);
+                document.getElementById('footer-last-updated').textContent = lastUpdated.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                // Update stats on page
+                document.getElementById('total-samples').textContent = sampleStats.total_samples.toLocaleString();
+                document.getElementById('total-publications').textContent = pubStats.total_publications;
+
+            } catch (error) {
+                console.error('Error loading about data:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadAboutData);
+    </script>
+</body>
+</html>

@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample Inventory - Woods Lab Dashboard</title>
+    <link rel="stylesheet" href="css/main.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand" style="margin-right: 3rem;">Woods Lab Dashboard</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="studies.html">Studies</a></li>
+                <li><a href="data-inventory.html">Data Inventory</a></li>
+                <li><a href="samples.html">Sample Inventory</a></li>
+                <li><a href="publications.html">Publications</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <h1>Sample Inventory</h1>
+        <p style="font-size: 1.1rem; color: var(--graphite); margin-bottom: 2rem;">
+            Search and explore biological samples from influenza challenge studies
+        </p>
+
+        <!-- Interactive Pivot Table -->
+        <section id="pivot-section" class="hidden" style="margin-bottom: 3rem;">
+            <h2>Sample Summary Pivot Table</h2>
+            <div class="card">
+                <p style="margin-bottom: 1rem;">Interactive summary of samples by study and type</p>
+                <div style="margin-bottom: 1rem;">
+                    <label><strong>Group by:</strong></label>
+                    <select id="pivot-groupby" onchange="updatePivot()" style="margin-left: 1rem; padding: 0.5rem;">
+                        <option value="study">Study</option>
+                        <option value="type">Sample Type</option>
+                    </select>
+                    <button class="btn btn-secondary" onclick="exportPivot()" style="margin-left: 1rem;">Export Pivot</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <div id="pivot-table"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sample Flow Sankey Diagram -->
+        <section id="sankey-section" class="hidden" style="margin-bottom: 3rem;">
+            <h2>Sample Flow Visualization</h2>
+            <div class="card">
+                <p style="margin-bottom: 1rem;">
+                    Interactive flow diagram showing how samples from each study are distributed across sample types and availability status.
+                    Hover over nodes and links to see details.
+                </p>
+                <div id="sankey-diagram" style="width: 100%; height: 500px; overflow: visible;"></div>
+                <div id="sankey-error" class="alert alert-warning hidden">
+                    Unable to render flow diagram. Please check console for details.
+                </div>
+            </div>
+        </section>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+            <div class="search-bar">
+                <input
+                    type="text"
+                    id="search-input"
+                    placeholder="Search by sample barcode, participant ID, or study code..."
+                    style="font-size: 1.1rem;">
+                <button class="btn" onclick="searchSamples()">Search</button>
+                <button class="btn btn-secondary" onclick="resetFilters()">Reset</button>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <h3 style="margin-bottom: 1rem;">Filters</h3>
+            <div class="grid grid-4">
+                <div class="filter-group">
+                    <label for="filter-study">Study</label>
+                    <select id="filter-study" onchange="applyFilters()">
+                        <option value="">All Studies</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-type">Sample Type</label>
+                    <select id="filter-type" onchange="applyFilters()">
+                        <option value="">All Types</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-status">Availability</label>
+                    <select id="filter-status" onchange="applyFilters()">
+                        <option value="">All</option>
+                        <option value="available">Available</option>
+                        <option value="transferred">Transferred</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-participant">Participant ID</label>
+                    <input type="text" id="filter-participant" placeholder="e.g., P001" onkeyup="debounceFilter()">
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Summary -->
+        <div class="card" id="results-summary">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong>Showing <span id="results-count">0</span> samples</strong>
+                    <span id="filter-info" style="color: var(--graphite); margin-left: 1rem;"></span>
+                </div>
+                <button class="btn btn-secondary" onclick="exportResults()">Export to CSV</button>
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loading" class="text-center" style="margin: 3rem 0;">
+            <div class="loading"></div>
+            <p>Loading sample inventory...</p>
+        </div>
+
+        <!-- Results Table -->
+        <div id="results-container" class="hidden">
+            <div style="overflow-x: auto;">
+                <table id="results-table">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable('sample_barcode_id')" style="cursor: pointer;">
+                                Sample Barcode <span id="sort-sample_barcode_id"></span>
+                            </th>
+                            <th onclick="sortTable('study_code')" style="cursor: pointer;">
+                                Study <span id="sort-study_code"></span>
+                            </th>
+                            <th onclick="sortTable('participant_id')" style="cursor: pointer;">
+                                Participant <span id="sort-participant_id"></span>
+                            </th>
+                            <th onclick="sortTable('timepoint_day')" style="cursor: pointer;">
+                                Timepoint (Day) <span id="sort-timepoint_day"></span>
+                            </th>
+                            <th onclick="sortTable('sample_type')" style="cursor: pointer;">
+                                Sample Type <span id="sort-sample_type"></span>
+                            </th>
+                            <th onclick="sortTable('is_available')" style="cursor: pointer;">
+                                Status <span id="sort-is_available"></span>
+                            </th>
+                            <th>Storage Location</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-tbody">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination-container"></div>
+        </div>
+
+        <!-- No Results -->
+        <div id="no-results" class="hidden">
+            <div class="alert alert-info">
+                <strong>No samples found matching your search criteria.</strong><br>
+                Try adjusting your filters or search terms.
+            </div>
+        </div>
+    </main>
+
+        <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <p><strong>Woods Lab Influenza Challenge Studies Dashboard</strong></p>
+            <p style="font-size: 0.875rem;">Last Updated: <span id="footer-last-updated">Loading...</span></p>
+            <p style="font-size: 0.875rem; margin-top: 0.5rem;">
+                © 2025 Woods Lab. Released under the <a href="https://opensource.org/licenses/MIT" target="_blank" style="color: var(--royal-blue); text-decoration: underline;">MIT License</a>.
+            </p>
+            <p style="margin-top: 1rem; font-size: 0.875rem; color: var(--hatteras);">
+                For sample requests or collaboration inquiries, please contact the lab.
+            </p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // Global variables
+        let allSamples = [];
+        let filteredSamples = [];
+        let currentPage = 1;
+        const itemsPerPage = 50;
+        let currentSort = { field: null, ascending: true };
+
+        // Create Sankey flow visualization
+        function createSampleFlowSankey(samplesData) {
+            try {
+                // Step 1: Aggregate data into nodes and links
+                const studyToType = {};
+                const typeToStatus = {};
+
+                samplesData.forEach(sample => {
+                    const study = sample.study_code || 'Unknown';
+                    const type = sample.sample_type || 'Unknown';
+                    const status = sample.is_available ? 'Available' :
+                                  sample.is_transferred ? 'Transferred' : 'Other';
+
+                    // Study → Type
+                    const stKey = `${study}→${type}`;
+                    studyToType[stKey] = (studyToType[stKey] || 0) + 1;
+
+                    // Type → Status
+                    const tsKey = `${type}→${status}`;
+                    typeToStatus[tsKey] = (typeToStatus[tsKey] || 0) + 1;
+                });
+
+                // Step 2: Build nodes array
+                const nodeMap = new Map();
+                let nodeIndex = 0;
+
+                // Add study nodes
+                const studies = [...new Set(samplesData.map(s => s.study_code))].filter(Boolean).sort();
+                studies.forEach(study => {
+                    nodeMap.set(study, nodeIndex++);
+                });
+
+                // Add sample type nodes
+                const types = [...new Set(samplesData.map(s => s.sample_type))].filter(Boolean).sort();
+                types.forEach(type => {
+                    nodeMap.set(type, nodeIndex++);
+                });
+
+                // Add status nodes
+                const statuses = ['Available', 'Transferred', 'Other'];
+                statuses.forEach(status => {
+                    nodeMap.set(status, nodeIndex++);
+                });
+
+                const nodes = Array.from(nodeMap.keys()).map((name, i) => ({
+                    node: i,
+                    name: name
+                }));
+
+                // Step 3: Build links array
+                const links = [];
+
+                // Study → Type links
+                Object.entries(studyToType).forEach(([key, value]) => {
+                    const [source, target] = key.split('→');
+                    links.push({
+                        source: nodeMap.get(source),
+                        target: nodeMap.get(target),
+                        value: value
+                    });
+                });
+
+                // Type → Status links
+                Object.entries(typeToStatus).forEach(([key, value]) => {
+                    const [source, target] = key.split('→');
+                    links.push({
+                        source: nodeMap.get(source),
+                        target: nodeMap.get(target),
+                        value: value
+                    });
+                });
+
+                // Step 4: Render Sankey using D3
+                const container = d3.select('#sankey-diagram');
+                container.selectAll('*').remove(); // Clear previous
+
+                const width = 1000;
+                const height = 500;
+                const margin = { top: 20, right: 150, bottom: 20, left: 150 };
+
+                const svg = container.append('svg')
+                    .attr('width', '100%')
+                    .attr('height', height)
+                    .attr('viewBox', `0 0 ${width} ${height}`)
+                    .attr('preserveAspectRatio', 'xMidYMid meet');
+
+                const g = svg.append('g')
+                    .attr('transform', `translate(${margin.left},${margin.top})`);
+
+                // Create Sankey layout
+                const sankey = d3.sankey()
+                    .nodeWidth(20)
+                    .nodePadding(10)
+                    .extent([[0, 0], [width - margin.left - margin.right, height - margin.top - margin.bottom]]);
+
+                const {nodes: sankeyNodes, links: sankeyLinks} = sankey({
+                    nodes: nodes.map(d => Object.assign({}, d)),
+                    links: links.map(d => Object.assign({}, d))
+                });
+
+                // Color scale
+                const colorScale = d3.scaleOrdinal()
+                    .domain(['study', 'type', 'status'])
+                    .range(['#00539B', '#E89923', '#339898']);
+
+                function getNodeColor(d) {
+                    if (studies.includes(d.name)) return colorScale('study');
+                    if (types.includes(d.name)) return colorScale('type');
+                    return colorScale('status');
+                }
+
+                // Draw links
+                g.append('g')
+                    .selectAll('path')
+                    .data(sankeyLinks)
+                    .join('path')
+                    .attr('d', d3.sankeyLinkHorizontal())
+                    .attr('stroke', d => getNodeColor(d.source))
+                    .attr('stroke-width', d => Math.max(1, d.width))
+                    .attr('fill', 'none')
+                    .attr('opacity', 0.3)
+                    .append('title')
+                    .text(d => `${d.source.name} → ${d.target.name}\n${d.value.toLocaleString()} samples`);
+
+                // Draw nodes
+                g.append('g')
+                    .selectAll('rect')
+                    .data(sankeyNodes)
+                    .join('rect')
+                    .attr('x', d => d.x0)
+                    .attr('y', d => d.y0)
+                    .attr('height', d => d.y1 - d.y0)
+                    .attr('width', d => d.x1 - d.x0)
+                    .attr('fill', getNodeColor)
+                    .attr('opacity', 0.8)
+                    .append('title')
+                    .text(d => `${d.name}\n${d.value.toLocaleString()} samples`);
+
+                // Draw labels
+                g.append('g')
+                    .selectAll('text')
+                    .data(sankeyNodes)
+                    .join('text')
+                    .attr('x', d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
+                    .attr('y', d => (d.y1 + d.y0) / 2)
+                    .attr('dy', '0.35em')
+                    .attr('text-anchor', d => d.x0 < width / 2 ? 'start' : 'end')
+                    .text(d => d.name)
+                    .style('font-size', '11px')
+                    .style('fill', '#333');
+
+                console.log('✓ Sankey diagram rendered successfully');
+                document.getElementById('sankey-section').classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Sankey rendering error:', error);
+                document.getElementById('sankey-error').classList.remove('hidden');
+                document.getElementById('sankey-error').textContent =
+                    `Unable to render flow diagram: ${error.message}`;
+            }
+        }
+
+        // Load samples
+        async function loadSamples() {
+            try {
+                const [samplesResponse, statsResponse, configResponse] = await Promise.all([
+                    fetch('data/samples.json'),
+                    fetch('data/sample_statistics.json'),
+                    fetch('data/config.json')
+                ]);
+
+                allSamples = await samplesResponse.json();
+                const stats = await statsResponse.json();
+                const config = await configResponse.json();
+
+                filteredSamples = [...allSamples];
+
+                // Update footer
+                const lastUpdated = new Date(config.last_updated);
+                document.getElementById('footer-last-updated').textContent = lastUpdated.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                // Populate filter dropdowns
+                populateFilters();
+
+                // Display pivot table and summaries
+                displayPivotTable(stats);
+
+                // Create Sankey flow visualization
+                createSampleFlowSankey(allSamples);
+
+                // Display initial results
+                displayResults();
+
+                // Hide loading, show content
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('results-container').classList.remove('hidden');
+                document.getElementById('pivot-section').classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Error loading samples:', error);
+                document.getElementById('loading').innerHTML = `
+                    <div class="alert alert-warning">
+                        <strong>Error loading sample inventory.</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Populate filter dropdowns with unique values
+        function populateFilters() {
+            const studies = getUniqueValues(allSamples, 'study_code');
+            const types = getUniqueValues(allSamples, 'sample_type');
+
+            document.getElementById('filter-study').innerHTML = createSelectOptions(studies);
+            document.getElementById('filter-type').innerHTML = createSelectOptions(types);
+        }
+
+        // Search samples
+        function searchSamples() {
+            applyFilters();
+        }
+
+        // Apply all filters
+        function applyFilters() {
+            const searchTerm = document.getElementById('search-input').value;
+            const studyFilter = document.getElementById('filter-study').value;
+            const typeFilter = document.getElementById('filter-type').value;
+            const statusFilter = document.getElementById('filter-status').value;
+            const participantFilter = document.getElementById('filter-participant').value;
+
+            // Start with all samples
+            filteredSamples = [...allSamples];
+
+            // Apply search term
+            if (searchTerm) {
+                filteredSamples = filterData(filteredSamples, searchTerm, [
+                    'sample_barcode_id', 'participant_id', 'study_code'
+                ]);
+            }
+
+            // Apply filters
+            if (studyFilter) {
+                filteredSamples = filteredSamples.filter(s => s.study_code === studyFilter);
+            }
+
+            if (typeFilter) {
+                filteredSamples = filteredSamples.filter(s => s.sample_type === typeFilter);
+            }
+
+            if (statusFilter) {
+                if (statusFilter === 'available') {
+                    filteredSamples = filteredSamples.filter(s => s.is_available === true);
+                } else if (statusFilter === 'transferred') {
+                    filteredSamples = filteredSamples.filter(s => s.is_transferred === true);
+                }
+            }
+
+            if (participantFilter) {
+                filteredSamples = filterData(filteredSamples, participantFilter, ['participant_id']);
+            }
+
+            // Reset to page 1
+            currentPage = 1;
+
+            // Update display
+            displayResults();
+        }
+
+        // Debounced filter for participant input
+        const debounceFilter = debounce(() => applyFilters(), 300);
+
+        // Reset all filters
+        function resetFilters() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('filter-study').value = '';
+            document.getElementById('filter-type').value = '';
+            document.getElementById('filter-status').value = '';
+            document.getElementById('filter-participant').value = '';
+
+            filteredSamples = [...allSamples];
+            currentSort = { field: null, ascending: true };
+            currentPage = 1;
+
+            displayResults();
+        }
+
+        // Sort table
+        function sortTable(field) {
+            // Toggle sort direction if clicking same field
+            if (currentSort.field === field) {
+                currentSort.ascending = !currentSort.ascending;
+            } else {
+                currentSort.field = field;
+                currentSort.ascending = true;
+            }
+
+            filteredSamples = sortData(filteredSamples, field, currentSort.ascending);
+
+            // Update sort indicators
+            document.querySelectorAll('[id^="sort-"]').forEach(el => el.textContent = '');
+            const indicator = currentSort.ascending ? '▲' : '▼';
+            document.getElementById(`sort-${field}`).textContent = indicator;
+
+            displayResults();
+        }
+
+        // Display results
+        function displayResults() {
+            const tbody = document.getElementById('results-tbody');
+            const totalResults = filteredSamples.length;
+
+            // Update results count
+            document.getElementById('results-count').textContent = totalResults.toLocaleString();
+
+            // Show/hide no results message
+            if (totalResults === 0) {
+                document.getElementById('results-container').classList.add('hidden');
+                document.getElementById('no-results').classList.remove('hidden');
+                return;
+            } else {
+                document.getElementById('results-container').classList.remove('hidden');
+                document.getElementById('no-results').classList.add('hidden');
+            }
+
+            // Calculate pagination
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, totalResults);
+            const pageResults = filteredSamples.slice(startIndex, endIndex);
+
+            // Build table rows
+            let html = '';
+            pageResults.forEach(sample => {
+                const statusBadge = sample.is_available
+                    ? '<span class="badge badge-available">Available</span>'
+                    : '<span class="badge badge-transferred">Transferred</span>';
+
+                const location = sample.storage_location_path || 'Not specified';
+
+                html += `
+                    <tr>
+                        <td><strong>${sample.sample_barcode_id || 'N/A'}</strong></td>
+                        <td><span class="badge badge-primary">${sample.study_code || 'N/A'}</span></td>
+                        <td>${sample.participant_id || 'N/A'}</td>
+                        <td>${sample.timepoint_day !== null && sample.timepoint_day !== undefined ? sample.timepoint_day : 'N/A'}</td>
+                        <td>${sample.sample_type || 'N/A'}</td>
+                        <td>${statusBadge}</td>
+                        <td style="font-size: 0.9rem;">${location}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+
+            // Update pagination
+            updatePagination();
+        }
+
+        // Update pagination controls
+        function updatePagination() {
+            const container = document.getElementById('pagination-container');
+            const totalResults = filteredSamples.length;
+            const totalPages = Math.ceil(totalResults / itemsPerPage);
+
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = createPagination(totalResults, itemsPerPage, currentPage, 'goToPage');
+        }
+
+        // Go to specific page
+        function goToPage(page) {
+            currentPage = page;
+            displayResults();
+            // Scroll to top of results
+            document.getElementById('results-container').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Export results to CSV
+        function exportResults() {
+            if (filteredSamples.length === 0) {
+                alert('No samples to export');
+                return;
+            }
+
+            // Prepare data for export
+            const exportData = filteredSamples.map(sample => ({
+                'Sample Barcode': sample.sample_barcode_id || '',
+                'Study Code': sample.study_code || '',
+                'Participant ID': sample.participant_id || '',
+                'Timepoint Day': sample.timepoint_day !== null ? sample.timepoint_day : '',
+                'Timepoint Hour': sample.timepoint_hour !== null ? sample.timepoint_hour : '',
+                'Sample Type': sample.sample_type || '',
+                'Available': sample.is_available ? 'Yes' : 'No',
+                'Transferred': sample.is_transferred ? 'Yes' : 'No',
+                'Storage Location': sample.storage_location_path || ''
+            }));
+
+            const timestamp = new Date().toISOString().split('T')[0];
+            const filename = `sample_inventory_${timestamp}.csv`;
+
+            exportTableToCSV(exportData, filename);
+        }
+
+        // Pivot table functions
+        let pivotData = null;
+
+        function displayPivotTable(stats) {
+            pivotData = stats;
+            updatePivot();
+        }
+
+        function updatePivot() {
+            const groupBy = document.getElementById('pivot-groupby').value;
+            const container = document.getElementById('pivot-table');
+
+            if (groupBy === 'study') {
+                const sortedStudies = Object.entries(pivotData.samples_by_study).sort((a, b) => b[1] - a[1]);
+                let html = '<table><thead><tr><th>Study Code</th><th>Sample Count</th><th>Percentage</th></tr></thead><tbody>';
+                const total = Object.values(pivotData.samples_by_study).reduce((sum, count) => sum + count, 0);
+
+                sortedStudies.forEach(([study, count]) => {
+                    const percentage = ((count / total) * 100).toFixed(1);
+                    html += `
+                        <tr>
+                            <td><strong>${study}</strong></td>
+                            <td>${count.toLocaleString()}</td>
+                            <td>${percentage}%</td>
+                        </tr>
+                    `;
+                });
+
+                html += '</tbody></table>';
+                container.innerHTML = html;
+            } else {
+                const sortedTypes = Object.entries(pivotData.samples_by_type).sort((a, b) => b[1] - a[1]);
+                let html = '<table><thead><tr><th>Sample Type</th><th>Count</th><th>Percentage</th></tr></thead><tbody>';
+                const total = Object.values(pivotData.samples_by_type).reduce((sum, count) => sum + count, 0);
+
+                sortedTypes.forEach(([type, count]) => {
+                    const percentage = ((count / total) * 100).toFixed(1);
+                    html += `
+                        <tr>
+                            <td><strong>${type}</strong></td>
+                            <td>${count.toLocaleString()}</td>
+                            <td>${percentage}%</td>
+                        </tr>
+                    `;
+                });
+
+                html += '</tbody></table>';
+                container.innerHTML = html;
+            }
+        }
+
+        function exportPivot() {
+            const groupBy = document.getElementById('pivot-groupby').value;
+            let csv = '';
+
+            if (groupBy === 'study') {
+                csv = 'Study Code,Sample Count,Percentage\n';
+                const sortedStudies = Object.entries(pivotData.samples_by_study).sort((a, b) => b[1] - a[1]);
+                const total = Object.values(pivotData.samples_by_study).reduce((sum, count) => sum + count, 0);
+
+                sortedStudies.forEach(([study, count]) => {
+                    const percentage = ((count / total) * 100).toFixed(1);
+                    csv += `"${study}",${count},${percentage}%\n`;
+                });
+            } else {
+                csv = 'Sample Type,Count,Percentage\n';
+                const sortedTypes = Object.entries(pivotData.samples_by_type).sort((a, b) => b[1] - a[1]);
+                const total = Object.values(pivotData.samples_by_type).reduce((sum, count) => sum + count, 0);
+
+                sortedTypes.forEach(([type, count]) => {
+                    const percentage = ((count / total) * 100).toFixed(1);
+                    csv += `"${type}",${count},${percentage}%\n`;
+                });
+            }
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `samples_pivot_${groupBy}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        function displayStudyBreakdown(studyData) {
+            const container = document.getElementById('study-breakdown');
+            const sortedStudies = Object.entries(studyData).sort((a, b) => b[1] - a[1]);
+
+            let html = '<table><thead><tr><th>Study Code</th><th>Sample Count</th><th>Percentage</th></tr></thead><tbody>';
+
+            const total = Object.values(studyData).reduce((sum, count) => sum + count, 0);
+
+            sortedStudies.forEach(([study, count]) => {
+                const percentage = ((count / total) * 100).toFixed(1);
+                html += `
+                    <tr>
+                        <td><strong>${study}</strong></td>
+                        <td>${count.toLocaleString()}</td>
+                        <td>${percentage}%</td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function displaySampleTypes(typeData) {
+            const container = document.getElementById('sample-types');
+            const sortedTypes = Object.entries(typeData).sort((a, b) => b[1] - a[1]);
+
+            let html = '<table><thead><tr><th>Sample Type</th><th>Count</th></tr></thead><tbody>';
+
+            sortedTypes.forEach(([type, count]) => {
+                html += `
+                    <tr>
+                        <td><strong>${type}</strong></td>
+                        <td>${count.toLocaleString()}</td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // Load on page load
+        document.addEventListener('DOMContentLoaded', loadSamples);
+    </script>
+</body>
+</html>

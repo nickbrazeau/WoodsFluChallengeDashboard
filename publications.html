@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publications - Woods Lab Dashboard</title>
+    <link rel="stylesheet" href="css/main.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand" style="margin-right: 3rem;">Woods Lab Dashboard</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="studies.html">Studies</a></li>
+                <li><a href="data-inventory.html">Data Inventory</a></li>
+                <li><a href="samples.html">Sample Inventory</a></li>
+                <li><a href="publications.html">Publications</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <h1>Publications</h1>
+        <p style="font-size: 1.1rem; color: var(--graphite); margin-bottom: 2rem;">
+            Scientific publications utilizing influenza challenge study data
+        </p>
+
+        <!-- Publication Network Graph -->
+        <section id="network-section" class="hidden mt-4">
+            <h2>Publication Network</h2>
+            <div class="card">
+                <p style="margin-bottom: 1rem;">Interactive network showing relationships between authors, studies, and research themes</p>
+                <div id="network-plot" style="width: 100%; height: 600px;"></div>
+            </div>
+        </section>
+
+        <!-- Filters -->
+        <div class="filters">
+            <h3 style="margin-bottom: 1rem;">Filters</h3>
+            <div class="grid grid-3">
+                <div class="filter-group">
+                    <label for="filter-study">Study</label>
+                    <select id="filter-study" onchange="applyFilters()">
+                        <option value="">All Studies</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-year">Year</label>
+                    <select id="filter-year" onchange="applyFilters()">
+                        <option value="">All Years</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-journal">Journal</label>
+                    <select id="filter-journal" onchange="applyFilters()">
+                        <option value="">All Journals</option>
+                    </select>
+                </div>
+            </div>
+            <div style="margin-top: 1rem;">
+                <button class="btn btn-secondary" onclick="resetFilters()">Reset Filters</button>
+            </div>
+        </div>
+
+        <!-- Results Summary -->
+        <div class="card">
+            <strong>Showing <span id="results-count">0</span> publications</strong>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loading" class="text-center" style="margin: 3rem 0;">
+            <div class="loading"></div>
+            <p>Loading publications...</p>
+        </div>
+
+        <!-- Publications List -->
+        <div id="publications-container" class="hidden"></div>
+
+        <!-- No Results -->
+        <div id="no-results" class="hidden">
+            <div class="alert alert-info">
+                <strong>No publications found matching your filters.</strong><br>
+                Try adjusting your filter criteria.
+            </div>
+        </div>
+
+        <!-- Publication Details Modal -->
+        <div id="pub-modal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto;">
+            <div style="max-width: 900px; margin: 2rem auto; padding: 2rem;">
+                <div class="card" style="max-height: 90vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1.5rem;">
+                        <h2 id="modal-title" style="flex: 1; margin-bottom: 0;"></h2>
+                        <button class="btn" onclick="closeModal()">Close</button>
+                    </div>
+                    <div id="modal-content"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+        <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <p><strong>Woods Lab Influenza Challenge Studies Dashboard</strong></p>
+            <p style="font-size: 0.875rem;">Last Updated: <span id="footer-last-updated">Loading...</span></p>
+            <p style="font-size: 0.875rem; margin-top: 0.5rem;">
+                © 2025 Woods Lab. Released under the <a href="https://opensource.org/licenses/MIT" target="_blank" style="color: var(--royal-blue); text-decoration: underline;">MIT License</a>.
+            </p>
+            <p style="margin-top: 1rem; font-size: 0.875rem; color: var(--hatteras);">
+                For sample requests or collaboration inquiries, please contact the lab.
+            </p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        let allPublications = [];
+        let filteredPublications = [];
+
+        // Load publications
+        async function loadPublications() {
+            try {
+                const response = await fetch('data/publications.json');
+                allPublications = await response.json();
+
+                // Check for URL parameters (e.g., ?study=DU08-04)
+                const urlParams = new URLSearchParams(window.location.search);
+                const studyParam = urlParams.get('study');
+
+                if (studyParam) {
+                    document.getElementById('filter-study').value = studyParam;
+                }
+
+                filteredPublications = [...allPublications];
+
+                populateFilters();
+                createPublicationNetwork();
+                applyFilters();
+
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('network-section').classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Error loading publications:', error);
+                document.getElementById('loading').innerHTML = `
+                    <div class="alert alert-warning">
+                        <strong>Error loading publications.</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Populate filter dropdowns
+        function populateFilters() {
+            const studies = getUniqueValues(allPublications, 'study_code').sort();
+            const years = getUniqueValues(allPublications, 'year').filter(y => y !== 'Unknown').sort().reverse();
+            const journals = getUniqueValues(allPublications, 'journal').sort();
+
+            document.getElementById('filter-study').innerHTML += studies.map(s =>
+                `<option value="${s}">${s}</option>`
+            ).join('');
+
+            document.getElementById('filter-year').innerHTML += years.map(y =>
+                `<option value="${y}">${y}</option>`
+            ).join('');
+
+            document.getElementById('filter-journal').innerHTML += journals.map(j =>
+                `<option value="${j}">${j}</option>`
+            ).join('');
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const studyFilter = document.getElementById('filter-study').value;
+            const yearFilter = document.getElementById('filter-year').value;
+            const journalFilter = document.getElementById('filter-journal').value;
+
+            filteredPublications = allPublications.filter(pub => {
+                if (studyFilter && pub.study_code !== studyFilter) return false;
+                if (yearFilter && pub.year !== yearFilter) return false;
+                if (journalFilter && pub.journal !== journalFilter) return false;
+                return true;
+            });
+
+            displayPublications();
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('filter-study').value = '';
+            document.getElementById('filter-year').value = '';
+            document.getElementById('filter-journal').value = '';
+            applyFilters();
+        }
+
+        // Display publications
+        function displayPublications() {
+            const container = document.getElementById('publications-container');
+            const count = filteredPublications.length;
+
+            document.getElementById('results-count').textContent = count;
+
+            if (count === 0) {
+                container.classList.add('hidden');
+                document.getElementById('no-results').classList.remove('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+            document.getElementById('no-results').classList.add('hidden');
+
+            // Sort by year (newest first)
+            const sortedPubs = [...filteredPublications].sort((a, b) => {
+                const yearA = a.year === 'Unknown' ? 0 : parseInt(a.year);
+                const yearB = b.year === 'Unknown' ? 0 : parseInt(b.year);
+                return yearB - yearA;
+            });
+
+            let html = '';
+
+            sortedPubs.forEach((pub, index) => {
+                const hasPMID = pub.pmid && pub.pmid !== 'N/A' && pub.pmid !== 'Unknown';
+                const pmidDisplay = hasPMID ? `PMID: ${pub.pmid}` : 'PMID not available';
+
+                html += `
+                    <div class="card" style="cursor: pointer;" onclick="showPublicationDetails(${index})">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                            <h3 style="flex: 1; margin-bottom: 0;">${pub.title}</h3>
+                            <span class="badge badge-primary" style="margin-left: 1rem;">${pub.study_code}</span>
+                        </div>
+
+                        <p style="color: var(--graphite); margin-bottom: 0.5rem;">
+                            <strong>${pub.first_author}</strong> et al.
+                        </p>
+
+                        <p style="color: var(--graphite); margin-bottom: 1rem;">
+                            <em>${pub.journal}</em> • ${pub.year}
+                            ${hasPMID ? ` • <a href="${pub.pubmed_url}" target="_blank" onclick="event.stopPropagation();">${pmidDisplay}</a>` : ` • ${pmidDisplay}`}
+                        </p>
+
+                        <button class="btn" style="font-size: 0.9rem;" onclick="event.stopPropagation(); showPublicationDetails(${index});">
+                            View Details
+                        </button>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Show publication details
+        function showPublicationDetails(index) {
+            const pub = filteredPublications.sort((a, b) => {
+                const yearA = a.year === 'Unknown' ? 0 : parseInt(a.year);
+                const yearB = b.year === 'Unknown' ? 0 : parseInt(b.year);
+                return yearB - yearA;
+            })[index];
+
+            document.getElementById('modal-title').textContent = pub.title;
+
+            const hasPMID = pub.pmid && pub.pmid !== 'N/A' && pub.pmid !== 'Unknown';
+
+            let content = `
+                <div style="margin-bottom: 2rem;">
+                    <h3>Citation</h3>
+                    <p style="background-color: #f8f9fa; padding: 1rem; border-radius: 4px;">
+                        <strong>${pub.first_author}</strong> et al. (${pub.year}). ${pub.title}
+                        <em>${pub.journal}</em>.
+                        ${hasPMID ? `PMID: ${pub.pmid}.` : ''}
+                    </p>
+                </div>
+
+                <div class="grid grid-2" style="margin-bottom: 2rem;">
+                    <div class="card">
+                        <h4>Study</h4>
+                        <div style="font-size: 1.2rem; font-weight: bold; color: var(--primary-blue);">
+                            ${pub.study_code}
+                        </div>
+                        <p style="margin-top: 0.5rem; color: var(--graphite);">${pub.study_name}</p>
+                    </div>
+                    <div class="card">
+                        <h4>Journal</h4>
+                        <div style="font-size: 1.2rem; font-weight: bold; color: var(--royal-blue);">
+                            ${pub.year}
+                        </div>
+                        <p style="margin-top: 0.5rem; color: var(--graphite);">${pub.journal}</p>
+                    </div>
+                </div>
+            `;
+
+            if (pub.abstract && pub.abstract !== '') {
+                content += `
+                    <div style="margin-bottom: 2rem;">
+                        <h3>Abstract</h3>
+                        <p style="text-align: justify; line-height: 1.8;">${pub.abstract}</p>
+                    </div>
+                `;
+            }
+
+            content += `
+                <div>
+                    <h3>Links</h3>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        ${hasPMID && pub.pubmed_url ? `<a href="${pub.pubmed_url}" target="_blank" class="btn">View on PubMed</a>` : ''}
+                        <a href="samples.html?study=${pub.study_code}" class="btn btn-secondary">View Study Samples</a>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('modal-content').innerHTML = content;
+            document.getElementById('pub-modal').classList.remove('hidden');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('pub-modal').classList.add('hidden');
+        }
+
+        // Close modal on background click
+        document.getElementById('pub-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'pub-modal') {
+                closeModal();
+            }
+        });
+
+        // Create publication network graph
+        function createPublicationNetwork() {
+            // Extract simplified research themes from abstracts/titles
+            function extractTheme(pub) {
+                const text = ((pub.abstract || '') + ' ' + (pub.title || '')).toLowerCase();
+
+                if (text.includes('immune') || text.includes('immunity') || text.includes('antibod'))
+                    return 'Immune Response';
+                if (text.includes('predict') || text.includes('biomarker') || text.includes('signature'))
+                    return 'Biomarkers & Prediction';
+                if (text.includes('transcriptom') || text.includes('gene') || text.includes('rna'))
+                    return 'Transcriptomics';
+                if (text.includes('cytokine') || text.includes('inflamm'))
+                    return 'Cytokine & Inflammation';
+                if (text.includes('metabol') || text.includes('lipid'))
+                    return 'Metabolomics';
+                if (text.includes('challenge') || text.includes('infect'))
+                    return 'Challenge Studies';
+
+                return 'General Virology';
+            }
+
+            // Build network nodes and edges
+            const authors = new Set();
+            const studies = new Set();
+            const themes = new Set();
+            const edges = [];
+
+            allPublications.forEach(pub => {
+                const author = pub.first_author || 'Unknown';
+                const study = pub.study_code || 'Unknown';
+                const theme = extractTheme(pub);
+
+                authors.add(author);
+                studies.add(study);
+                themes.add(theme);
+
+                // Create edges: author->study, study->theme
+                edges.push({ source: author, target: study, type: 'author-study' });
+                edges.push({ source: study, target: theme, type: 'study-theme' });
+            });
+
+            // Create node positions (simple layout)
+            const nodeData = [];
+            const linkData = [];
+
+            // Author nodes (left)
+            const authorList = Array.from(authors);
+            authorList.forEach((author, i) => {
+                nodeData.push({
+                    x: 0.1,
+                    y: (i + 1) / (authorList.length + 1),
+                    text: author,
+                    type: 'author',
+                    marker: { size: 15, color: '#00539B', symbol: 'circle' }
+                });
+            });
+
+            // Study nodes (middle)
+            const studyList = Array.from(studies);
+            studyList.forEach((study, i) => {
+                nodeData.push({
+                    x: 0.5,
+                    y: (i + 1) / (studyList.length + 1),
+                    text: study,
+                    type: 'study',
+                    marker: { size: 20, color: '#E89923', symbol: 'square' }
+                });
+            });
+
+            // Theme nodes (right)
+            const themeList = Array.from(themes);
+            themeList.forEach((theme, i) => {
+                nodeData.push({
+                    x: 0.9,
+                    y: (i + 1) / (themeList.length + 1),
+                    text: theme,
+                    type: 'theme',
+                    marker: { size: 18, color: '#339898', symbol: 'diamond' }
+                });
+            });
+
+            // Create links
+            edges.forEach(edge => {
+                const sourceNode = nodeData.find(n => n.text === edge.source);
+                const targetNode = nodeData.find(n => n.text === edge.target);
+
+                if (sourceNode && targetNode) {
+                    linkData.push({
+                        x: [sourceNode.x, targetNode.x],
+                        y: [sourceNode.y, targetNode.y],
+                        mode: 'lines',
+                        line: { width: 1, color: '#cccccc' },
+                        hoverinfo: 'none',
+                        showlegend: false
+                    });
+                }
+            });
+
+            // Plot nodes by type
+            const authorTrace = {
+                x: nodeData.filter(n => n.type === 'author').map(n => n.x),
+                y: nodeData.filter(n => n.type === 'author').map(n => n.y),
+                text: nodeData.filter(n => n.type === 'author').map(n => n.text),
+                mode: 'markers+text',
+                type: 'scatter',
+                name: 'Authors',
+                textposition: 'middle left',
+                textfont: { size: 10 },
+                marker: { size: 12, color: '#00539B', symbol: 'circle' },
+                hovertemplate: '<b>%{text}</b><br>First Author<extra></extra>'
+            };
+
+            const studyTrace = {
+                x: nodeData.filter(n => n.type === 'study').map(n => n.x),
+                y: nodeData.filter(n => n.type === 'study').map(n => n.y),
+                text: nodeData.filter(n => n.type === 'study').map(n => n.text),
+                mode: 'markers+text',
+                type: 'scatter',
+                name: 'Studies',
+                textposition: 'top center',
+                textfont: { size: 11, color: '#333' },
+                marker: { size: 16, color: '#E89923', symbol: 'square' },
+                hovertemplate: '<b>%{text}</b><br>Challenge Study<extra></extra>'
+            };
+
+            const themeTrace = {
+                x: nodeData.filter(n => n.type === 'theme').map(n => n.x),
+                y: nodeData.filter(n => n.type === 'theme').map(n => n.y),
+                text: nodeData.filter(n => n.type === 'theme').map(n => n.text),
+                mode: 'markers+text',
+                type: 'scatter',
+                name: 'Research Themes',
+                textposition: 'middle right',
+                textfont: { size: 10 },
+                marker: { size: 14, color: '#339898', symbol: 'diamond' },
+                hovertemplate: '<b>%{text}</b><br>Research Theme<extra></extra>'
+            };
+
+            const layout = {
+                xaxis: { visible: false, range: [0, 1] },
+                yaxis: { visible: false, range: [0, 1] },
+                hovermode: 'closest',
+                showlegend: true,
+                legend: {
+                    x: 0.5,
+                    y: -0.1,
+                    xanchor: 'center',
+                    orientation: 'h'
+                },
+                margin: { t: 30, b: 50, l: 150, r: 150 },
+                plot_bgcolor: '#ffffff',
+                paper_bgcolor: '#ffffff'
+            };
+
+            const config = {
+                responsive: true,
+                displayModeBar: true,
+                displaylogo: false,
+                modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d']
+            };
+
+            // Combine links and nodes
+            const data = [...linkData, authorTrace, studyTrace, themeTrace];
+
+            Plotly.newPlot('network-plot', data, layout, config);
+        }
+
+        // Load on page load
+        document.addEventListener('DOMContentLoaded', loadPublications);
+    </script>
+</body>
+</html>
