@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sample Inventory - Woods Lab Dashboard</title>
     <link rel="stylesheet" href="css/main.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -44,6 +46,21 @@
                 </div>
                 <div style="overflow-x: auto;">
                     <div id="pivot-table"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sample Flow Sankey Diagram -->
+        <section id="sankey-section" class="hidden" style="margin-bottom: 3rem;">
+            <h2>Sample Flow Visualization</h2>
+            <div class="card">
+                <p style="margin-bottom: 1rem;">
+                    Interactive flow diagram showing how samples from each study are distributed across sample types and availability status.
+                    Hover over nodes and links to see details.
+                </p>
+                <div id="sankey-diagram" style="width: 100%; height: 500px; overflow: visible;"></div>
+                <div id="sankey-error" class="alert alert-warning hidden">
+                    Unable to render flow diagram. Please check console for details.
                 </div>
             </div>
         </section>
@@ -179,6 +196,168 @@
         const itemsPerPage = 50;
         let currentSort = { field: null, ascending: true };
 
+        // Create Sankey flow visualization
+        function createSampleFlowSankey(samplesData) {
+            try {
+                // Step 1: Aggregate data into nodes and links
+                const studyToType = {};
+                const typeToStatus = {};
+
+                samplesData.forEach(sample => {
+                    const study = sample.study_code || 'Unknown';
+                    const type = sample.sample_type || 'Unknown';
+                    const status = sample.is_available ? 'Available' :
+                                  sample.is_transferred ? 'Transferred' : 'Other';
+
+                    // Study → Type
+                    const stKey = `${study}→${type}`;
+                    studyToType[stKey] = (studyToType[stKey] || 0) + 1;
+
+                    // Type → Status
+                    const tsKey = `${type}→${status}`;
+                    typeToStatus[tsKey] = (typeToStatus[tsKey] || 0) + 1;
+                });
+
+                // Step 2: Build nodes array
+                const nodeMap = new Map();
+                let nodeIndex = 0;
+
+                // Add study nodes
+                const studies = [...new Set(samplesData.map(s => s.study_code))].filter(Boolean).sort();
+                studies.forEach(study => {
+                    nodeMap.set(study, nodeIndex++);
+                });
+
+                // Add sample type nodes
+                const types = [...new Set(samplesData.map(s => s.sample_type))].filter(Boolean).sort();
+                types.forEach(type => {
+                    nodeMap.set(type, nodeIndex++);
+                });
+
+                // Add status nodes
+                const statuses = ['Available', 'Transferred', 'Other'];
+                statuses.forEach(status => {
+                    nodeMap.set(status, nodeIndex++);
+                });
+
+                const nodes = Array.from(nodeMap.keys()).map((name, i) => ({
+                    node: i,
+                    name: name
+                }));
+
+                // Step 3: Build links array
+                const links = [];
+
+                // Study → Type links
+                Object.entries(studyToType).forEach(([key, value]) => {
+                    const [source, target] = key.split('→');
+                    links.push({
+                        source: nodeMap.get(source),
+                        target: nodeMap.get(target),
+                        value: value
+                    });
+                });
+
+                // Type → Status links
+                Object.entries(typeToStatus).forEach(([key, value]) => {
+                    const [source, target] = key.split('→');
+                    links.push({
+                        source: nodeMap.get(source),
+                        target: nodeMap.get(target),
+                        value: value
+                    });
+                });
+
+                // Step 4: Render Sankey using D3
+                const container = d3.select('#sankey-diagram');
+                container.selectAll('*').remove(); // Clear previous
+
+                const width = 1000;
+                const height = 500;
+                const margin = { top: 20, right: 150, bottom: 20, left: 150 };
+
+                const svg = container.append('svg')
+                    .attr('width', '100%')
+                    .attr('height', height)
+                    .attr('viewBox', `0 0 ${width} ${height}`)
+                    .attr('preserveAspectRatio', 'xMidYMid meet');
+
+                const g = svg.append('g')
+                    .attr('transform', `translate(${margin.left},${margin.top})`);
+
+                // Create Sankey layout
+                const sankey = d3.sankey()
+                    .nodeWidth(20)
+                    .nodePadding(10)
+                    .extent([[0, 0], [width - margin.left - margin.right, height - margin.top - margin.bottom]]);
+
+                const {nodes: sankeyNodes, links: sankeyLinks} = sankey({
+                    nodes: nodes.map(d => Object.assign({}, d)),
+                    links: links.map(d => Object.assign({}, d))
+                });
+
+                // Color scale
+                const colorScale = d3.scaleOrdinal()
+                    .domain(['study', 'type', 'status'])
+                    .range(['#00539B', '#E89923', '#339898']);
+
+                function getNodeColor(d) {
+                    if (studies.includes(d.name)) return colorScale('study');
+                    if (types.includes(d.name)) return colorScale('type');
+                    return colorScale('status');
+                }
+
+                // Draw links
+                g.append('g')
+                    .selectAll('path')
+                    .data(sankeyLinks)
+                    .join('path')
+                    .attr('d', d3.sankeyLinkHorizontal())
+                    .attr('stroke', d => getNodeColor(d.source))
+                    .attr('stroke-width', d => Math.max(1, d.width))
+                    .attr('fill', 'none')
+                    .attr('opacity', 0.3)
+                    .append('title')
+                    .text(d => `${d.source.name} → ${d.target.name}\n${d.value.toLocaleString()} samples`);
+
+                // Draw nodes
+                g.append('g')
+                    .selectAll('rect')
+                    .data(sankeyNodes)
+                    .join('rect')
+                    .attr('x', d => d.x0)
+                    .attr('y', d => d.y0)
+                    .attr('height', d => d.y1 - d.y0)
+                    .attr('width', d => d.x1 - d.x0)
+                    .attr('fill', getNodeColor)
+                    .attr('opacity', 0.8)
+                    .append('title')
+                    .text(d => `${d.name}\n${d.value.toLocaleString()} samples`);
+
+                // Draw labels
+                g.append('g')
+                    .selectAll('text')
+                    .data(sankeyNodes)
+                    .join('text')
+                    .attr('x', d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
+                    .attr('y', d => (d.y1 + d.y0) / 2)
+                    .attr('dy', '0.35em')
+                    .attr('text-anchor', d => d.x0 < width / 2 ? 'start' : 'end')
+                    .text(d => d.name)
+                    .style('font-size', '11px')
+                    .style('fill', '#333');
+
+                console.log('✓ Sankey diagram rendered successfully');
+                document.getElementById('sankey-section').classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Sankey rendering error:', error);
+                document.getElementById('sankey-error').classList.remove('hidden');
+                document.getElementById('sankey-error').textContent =
+                    `Unable to render flow diagram: ${error.message}`;
+            }
+        }
+
         // Load samples
         async function loadSamples() {
             try {
@@ -207,6 +386,9 @@
 
                 // Display pivot table and summaries
                 displayPivotTable(stats);
+
+                // Create Sankey flow visualization
+                createSampleFlowSankey(allSamples);
 
                 // Display initial results
                 displayResults();
