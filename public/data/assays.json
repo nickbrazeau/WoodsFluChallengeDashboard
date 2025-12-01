@@ -150,7 +150,7 @@
     "Comment": null
   },
   {
-    "biobank_study_code": null,
+    "biobank_study_code": "DU24-01",
     "Study": "H3N2 EXHALE Challenge",
     "Assay": "OMED Wearables",
     "Keys": "omed_key_cohort1 - cohort3",
@@ -160,7 +160,7 @@
     "Comment": null
   },
   {
-    "biobank_study_code": null,
+    "biobank_study_code": "DU24-01",
     "Study": "H3N2 EXHALE Challenge",
     "Assay": "Reciva Wearables",
     "Keys": "reciva_redcapimport_cohort1 - 3",
@@ -170,7 +170,7 @@
     "Comment": null
   },
   {
-    "biobank_study_code": null,
+    "biobank_study_code": "DU19-03",
     "Study": "SIGMA PRISMM Family Study ",
     "Assay": "*NO SEQ DATA",
     "Keys": "Not specified",
@@ -180,7 +180,7 @@
     "Comment": null
   },
   {
-    "biobank_study_code": null,
+    "biobank_study_code": "DU19-03",
     "Study": "SIGMA PRISMM Family Study ",
     "Assay": "Faros Wearables",
     "Keys": "sp_rc_faros",
@@ -190,7 +190,7 @@
     "Comment": null
   },
   {
-    "biobank_study_code": null,
+    "biobank_study_code": "DU19-03",
     "Study": "SIGMA PRISMM Family Study ",
     "Assay": "Garmin Wearables",
     "Keys": "sp_rc_faros",
@@ -200,7 +200,7 @@
     "Comment": null
   },
   {
-    "biobank_study_code": null,
+    "biobank_study_code": "DU20-01",
     "Study": "SIGMA Plus - ICL H3N2 Challenge (2020)",
     "Assay": "*NO SEQ DATA",
     "Keys": "Not specified",
@@ -210,7 +210,7 @@
     "Comment": null
   },
   {
-    "biobank_study_code": null,
+    "biobank_study_code": "DU20-01",
     "Study": "SIGMA Plus - ICL H3N2 Challenge (2020)",
     "Assay": "Biovotion everion Wearables",
     "Keys": "Not specified",
@@ -220,7 +220,7 @@
     "Comment": "no data keys only"
   },
   {
-    "biobank_study_code": null,
+    "biobank_study_code": "DU20-01",
     "Study": "SIGMA Plus - ICL H3N2 Challenge (2020)",
     "Assay": "Bittium Faros Wearables",
     "Keys": "Not specified",
@@ -230,7 +230,7 @@
     "Comment": "device data uploaded to RTI have at Duke"
   },
   {
-    "biobank_study_code": null,
+    "biobank_study_code": "DU20-01",
     "Study": "SIGMA Plus - ICL H3N2 Challenge (2020)",
     "Assay": "Garmin wristband Wearables",
     "Keys": "Not specified",
@@ -240,7 +240,7 @@
     "Comment": null
   },
   {
-    "biobank_study_code": null,
+    "biobank_study_code": "DU20-01",
     "Study": "SIGMA Plus - ICL H3N2 Challenge (2020)",
     "Assay": "Lumee Wearables",
     "Keys": "sfc_profusa_lumee",
@@ -250,7 +250,7 @@
     "Comment": null
   },
   {
-    "biobank_study_code": null,
+    "biobank_study_code": "DU20-01",
     "Study": "SIGMA Plus - ICL H3N2 Challenge (2020)",
     "Assay": "Mindstgrong Wearables",
     "Keys": "Not specified",
@@ -260,7 +260,7 @@
     "Comment": null
   },
   {
-    "biobank_study_code": null,
+    "biobank_study_code": "DU20-01",
     "Study": "SIGMA Plus - ICL H3N2 Challenge (2020)",
     "Assay": "Lung  Function tests",
     "Keys": "sfc_lung_function_tests",

@@ -69,6 +69,20 @@
     "samples_available": 13421,
     "samples_transferred": 114
   },
+  "DU19-03": {
+    "code": "DU19-03",
+    "name": "SIGMA PRISMM Family",
+    "virus": "H3N2",
+    "year": 2019,
+    "description": "SIGMA PRISMM Family influenza challenge study",
+    "total_samples": 0,
+    "participants": 0,
+    "sample_types": 0,
+    "publications": 0,
+    "assays_performed": 0,
+    "samples_available": 0,
+    "samples_transferred": 0
+  },
   "DU20-01": {
     "code": "DU20-01",
     "name": "SIGMA Plus H3N2 Flu Challenge",

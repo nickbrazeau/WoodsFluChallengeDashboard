@@ -154,7 +154,7 @@
                 const stats = await statsResponse.json();
 
                 // Load publication statistics
-                const pubStatsResponse = await fetch('data/publication_statistics.json');
+                const pubStatsResponse = await fetch('data/publication_statistics.json?v=1.4.0');
                 const pubStats = await pubStatsResponse.json();
 
                 // Update statistics
@@ -310,7 +310,8 @@
                 { code: 'DU09-07', name: 'DEE4', fullName: 'DEE4 H1N1 Flu Challenge', year: 2009, virus: 'H1N1', y: 1 },
                 { code: 'DU11-02', name: 'DEE5', fullName: 'DEE5 H3N2 Flu Challenge', year: 2011, virus: 'H3N2', y: 2 },
                 { code: 'DU17-04', name: 'PROMETHEUS', fullName: 'PROMETHEUS H1N1 ICL Flu Challenge', year: 2017, virus: 'H1N1', y: 1 },
-                { code: 'DU20-01', name: 'SIGMA Plus', fullName: 'SIGMA Plus H3N2 Flu Challenge', year: 2020, virus: 'H3N2', y: 2 },
+                { code: 'DU19-03', name: 'SIGMA PRISMM', fullName: 'SIGMA PRISMM Family', year: 2019, virus: 'H3N2', y: 2 },
+                { code: 'DU20-01', name: 'SIGMA Plus', fullName: 'SIGMA Plus H3N2 Flu Challenge', year: 2020, virus: 'H3N2', y: 1 },
                 { code: 'DU24-01', name: 'EXHALE', fullName: 'EXHALE H3N2 Flu Challenge', year: 2024, virus: 'H3N2', y: 1 }
             ];
 
