@@ -130,6 +130,11 @@
           "virus": "H1N1 (A/California/07/2009)",
           "year": 2017
         },
+        "DU19-03": {
+          "name": "SIGMA PRISMM Family",
+          "virus": "H3N2",
+          "year": 2019
+        },
         "DU20-01": {
           "name": "SIGMA Plus H3N2 Flu Challenge",
           "virus": "H3N2 (A/Kansas/14/2017)",
