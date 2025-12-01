@@ -651,6 +651,13 @@
                 // Base x position at the year
                 let x = xScale(d.year);
 
+                // Determine if above/below timeline
+                // For single pubs: alternate based on overall index to prevent overlaps
+                // For multi-pubs: alternate within the year
+                const isAbove = totalInYear === 1
+                    ? i % 2 === 0  // Use overall index for single pubs
+                    : indexInYear % 2 === 0;  // Use year index for multi-pubs
+
                 // Add horizontal offset to stagger publications within the same year
                 // This prevents overlapping labels between adjacent years
                 if (totalInYear > 1) {
@@ -659,12 +666,10 @@
                 } else {
                     // Single publications: add small nudge based on whether above/below
                     // to help separate from adjacent years with multiple publications
-                    x += indexInYear % 2 === 0 ? -8 : 8; // slight left/right offset
+                    x += isAbove ? -8 : 8; // slight left/right offset
                 }
 
                 // Stagger vertically based on position within the year
-                // Alternate above/below, and spread out within each side
-                const isAbove = indexInYear % 2 === 0;
                 const tierWithinSide = Math.floor(indexInYear / 2);
 
                 // Use larger base offset for single publications to avoid overlaps
