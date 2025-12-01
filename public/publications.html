@@ -666,8 +666,10 @@
                 // Alternate above/below, and spread out within each side
                 const isAbove = indexInYear % 2 === 0;
                 const tierWithinSide = Math.floor(indexInYear / 2);
-                const baseOffset = 100;
-                const tierSpacing = 60;
+
+                // Use larger base offset for single publications to avoid overlaps
+                const baseOffset = totalInYear === 1 ? 140 : 120;
+                const tierSpacing = 75;  // Increased from 60 for more tier separation
 
                 const y = isAbove
                     ? height / 2 - baseOffset - (tierWithinSide * tierSpacing)
