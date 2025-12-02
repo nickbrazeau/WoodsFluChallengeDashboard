@@ -23,7 +23,9 @@
       "Bash(yes:*)",
       "Bash(git reset:*)",
       "Bash(open:*)",
-      "Bash(kill:*)"
+      "Bash(kill:*)",
+      "Bash(git checkout:*)",
+      "Bash(git stash:*)"
     ],
     "deny": [],
     "ask": []

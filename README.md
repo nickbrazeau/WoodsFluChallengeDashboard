@@ -1,6 +1,9 @@
-# Woods Dashboard - README
-**Updated Date**: November 25, 2025
-**Purpose**: Visual representation of agent interactions, data flows, and human input touchpoints
+# Woods Lab Influenza Challenge Studies Dashboard
+
+**Version**: 1.4.0 (December 1, 2025)
+**Status**: ✅ Production - All major features complete
+**Live Site**: https://nicholasbrazeau.com/WoodsFluChallengeDashboard/
+**Repository**: https://github.com/nickbrazeau/WoodsFluChallengeDashboard
 
 ---
 
