@@ -209,6 +209,116 @@ PUBLICATIONS_FROM_REVIEW = [
         "key_findings": "Blood miRNA signatures highly accurate: 11 miRNAs perfectly separated bacterial pneumonia from controls (100%). Different miRNA panel differentiated bacterial from viral infection with ~91% accuracy (AUC 0.96). miRNA–mRNA network showed bacterial infection triggers neutrophil activation, viral triggers interferon-mediated response.",
         "methods_summary": "Analyzed blood from 13 symptomatic H3N2-infected subjects and 10 S. pneumoniae pneumonia patients, plus 21 healthy controls. High-throughput sequencing of miRNAs, microarrays of mRNAs. Sparse logistic regression to derive signatures.",
         "biobank_study_code": "DU11-02"
+    },
+    {
+        "pmid": "35759279",
+        "title": "Wearable sensor-based detection of influenza in presymptomatic and asymptomatic individuals",
+        "first_author": "Temple",
+        "year": "2022",
+        "journal": "Journal of Infectious Diseases",
+        "study_question": "Can wearable ECG-based sensors detect influenza infection before symptom onset?",
+        "key_findings": "In a human H3N2 challenge (n=20), wearable ECG/activity sensors with a trained anomaly-detection algorithm identified 16/17 infected subjects (94%) before symptom onset (mean 23h early). Early alerts were compatible with smartwatch data, supporting wearable early-detection strategies.",
+        "methods_summary": "Human H3N2 challenge study with 20 participants wearing ECG-based sensors. Machine learning anomaly detection algorithm trained on physiological data from wearable sensors.",
+        "biobank_study_code": "DU08-04"
+    },
+    {
+        "pmid": "32979932",
+        "title": "Blood-based host gene expression assay for early detection of respiratory viral infection",
+        "first_author": "McClain",
+        "year": "2021",
+        "journal": "Lancet Infectious Diseases",
+        "study_question": "Can a blood transcriptomic assay predict viral respiratory infection before peak symptoms?",
+        "key_findings": "In a prospective index-cluster cohort (n≈1465), a 36-gene blood transcriptomic assay predicted proven viral respiratory infection with AUROC ~0.94 at peak symptoms, and 0.74–0.87 up to 3 days before peak (when many were asymptomatic and not shedding virus). This suggests host biomarkers can diagnose infection pre-symptomatically to inform early therapy or containment.",
+        "methods_summary": "Prospective cohort study with approximately 1465 participants. Blood samples analyzed for 36-gene transcriptomic signature. Validation in pre-symptomatic and asymptomatic contacts.",
+        "biobank_study_code": "DU08-04"
+    },
+    {
+        "pmid": "28238698",
+        "title": "Nasopharyngeal Protein Biomarkers of Acute Respiratory Virus Infection",
+        "first_author": "Burke",
+        "year": "2017",
+        "journal": "EBioMedicine",
+        "study_question": "Can nasopharyngeal protein signatures distinguish viral infection from uninfected controls?",
+        "key_findings": "Unbiased proteomic profiling of nasopharyngeal lavage from human volunteers challenged with influenza A/H3N2 or rhinovirus identified 438 proteins altered by viral infection. A targeted 10-peptide signature was developed and validated, classifying infected vs. uninfected samples with high accuracy (AUROC = 0.8623, 75% sensitivity, 97.5% specificity).",
+        "methods_summary": "Human challenge studies with influenza A/H3N2 and rhinovirus. Nasopharyngeal lavage samples collected and analyzed using unbiased proteomics. Targeted validation of 10-peptide signature.",
+        "biobank_study_code": "DU08-04"
+    },
+    {
+        "pmid": "40966076",
+        "title": "Innate immune molecular landscape following controlled human influenza virus infection",
+        "first_author": "Thistlethwaite",
+        "year": "2025",
+        "journal": "Cell Reports",
+        "study_question": "How does influenza infection reshape innate immune programs at the chromatin and transcriptional level?",
+        "key_findings": "Multi-omics (RNA-seq, ATAC-seq) on blood from a human H3N2 challenge showed persistent innate immune changes post-infection. Findings included reduced cytokine and AP-1 gene expression and increased interferon-pathway accessibility. Influenza thus rewires innate immune chromatin and transcriptional programs, tilting away from inflammation.",
+        "methods_summary": "Human H3N2 challenge with multi-omic analysis (RNA-seq, ATAC-seq) of blood samples. Analyzed chromatin accessibility and gene expression changes in circulating innate immune cells.",
+        "biobank_study_code": "DU08-04"
+    },
+    {
+        "pmid": "34777354",
+        "title": "The host response to viral infections reveals common and virus-specific signatures",
+        "first_author": "Tsalik",
+        "year": "2021",
+        "journal": "Frontiers in Immunology",
+        "study_question": "What are the shared and unique host blood transcriptome responses to different viral infections?",
+        "key_findings": "Blood transcriptomes from 162 patients with viral infections (influenza, rhinovirus, dengue, etc.) showed both shared and unique responses. All viruses triggered interferon pathways; influenza specifically upregulated antiviral defense genes and downregulated T-cell/neutrophil pathways, whereas rhinovirus and dengue had distinct profiles.",
+        "methods_summary": "Analyzed blood transcriptomes from 162 patients with diverse viral infections including influenza, rhinovirus, and dengue. Identified common interferon-driven responses and virus-specific gene expression signatures.",
+        "biobank_study_code": "DU08-04"
+    },
+    {
+        "pmid": "20622030",
+        "title": "Viral load drives disease in humans experimentally infected with RSV",
+        "first_author": "DeVincenzo",
+        "year": "2010",
+        "journal": "American Journal of Respiratory and Critical Care Medicine",
+        "study_question": "How does viral load correlate with disease severity in human RSV infection?",
+        "key_findings": "In a human respiratory syncytial virus (RSV) challenge (n=35 healthy adults), 77% became infected. Viral load peaked in parallel with symptom severity and nasal mucus. Higher RSV RNA levels correlated with higher pro-inflammatory cytokines (IL-6, IL-8) and worse clinical scores. Thus RSV disease manifestations closely track viral replication, implying benefit from early antiviral therapy.",
+        "methods_summary": "Human RSV challenge study with 35 healthy adult volunteers. Serial measurements of viral load, symptom scores, and cytokine levels. Correlation analysis between viral load and disease manifestations.",
+        "biobank_study_code": "DU08-04"
+    },
+    {
+        "pmid": "41127485",
+        "title": "Diverse respiratory viruses detected among hospitalized pneumonia patients in Sri Lanka and Vietnam",
+        "first_author": "Phan",
+        "year": "2025",
+        "journal": "IJID Regions",
+        "study_question": "What respiratory viruses are circulating in hospitalized pneumonia patients in South and Southeast Asia?",
+        "key_findings": "Surveillance in 204 Sri Lankan and 197 Vietnamese adults with pneumonia revealed multiple known respiratory viruses including influenza A (H1N1pdm09), RSV-B, rhinovirus, enterovirus, etc. Notably, 43.9% of coronavirus-positive Vietnamese samples were the novel CCoV-HuPn-2018, highlighting the value of routine pathogen surveillance in at-risk regions.",
+        "methods_summary": "Multiplex respiratory virus surveillance in 401 hospitalized adults with pneumonia in Sri Lanka and Vietnam (2020-2022). Detection and characterization of known and novel respiratory viruses.",
+        "biobank_study_code": "DU08-04"
+    },
+    {
+        "pmid": "36702771",
+        "title": "A Multicenter, Controlled Human Infection Study of Influenza A(H1N1)pdm09 in Healthy Adults",
+        "first_author": "Ortiz",
+        "year": "2023",
+        "journal": "Journal of Infectious Diseases",
+        "study_question": "What infection rate and immune correlates of protection are observed in a controlled H1N1pdm09 challenge?",
+        "key_findings": "In a multicenter H1N1pdm09 challenge trial (NCT04044352), 76 healthy adults received intranasal H1N1pdm09 virus. Overall 54/76 (71.1%) developed mild-to-moderate influenza disease. Subjects with higher baseline HAI or microneutralization titers (≥40) had lower attack rates (64.9% vs 76.9%) and each 2-fold higher HAI titer reduced odds of disease by ~19% (OR=0.81). The challenge model achieved a 71% infection rate; pre-existing antibody levels were the main determinant of protection.",
+        "methods_summary": "Multicenter controlled human infection study with 76 healthy adults receiving intranasal H1N1pdm09 virus. Assessment of infection rates, immune correlates of protection, and disease severity.",
+        "biobank_study_code": "DU09-06"
+    },
+    {
+        "pmid": "PMC8482058",
+        "title": "Diagnostic Accuracy of a Host Gene Expression Test in Emergency Department Patients With Suspected COVID-19",
+        "first_author": "Tsalik",
+        "year": "2021",
+        "journal": "JAMA Network Open",
+        "study_question": "Can wearable sensor data and machine learning detect presymptomatic viral infection?",
+        "key_findings": "Wearable sensor data and machine learning achieved up to 92% accuracy detecting H1N1 infection and 88% for rhinovirus. Models also predicted disease severity with 90% accuracy prior to symptom onset, demonstrating the feasibility of presymptomatic viral detection using passive biometric monitoring.",
+        "methods_summary": "Human challenge study with wearable sensors collecting biometric data. Machine learning models trained to detect viral infection and predict disease severity from physiological measurements.",
+        "biobank_study_code": "DU09-06"
+    },
+    {
+        "pmid": "Unknown",
+        "title": "Single-cell genome-wide association reveals that a nonsynonymous variant in ERAP1 confers increased susceptibility to influenza virus",
+        "first_author": "Nedelec",
+        "year": "2022",
+        "journal": "Cell Genomics",
+        "study_question": "What genetic variants influence host susceptibility to influenza infection?",
+        "key_findings": "Using single-cell RNA-seq and genome-wide association in infected lymphoblastoid cells, ERAP1 G346D was linked to higher influenza A burden. Functional validation in vitro and in a human challenge confirmed that this variant increased viral replication and worsened symptoms, implicating ERAP1 in host susceptibility.",
+        "methods_summary": "Single-cell RNA-sequencing and genome-wide association analysis in lymphoblastoid cell lines infected with influenza. Functional validation in vitro and verification in human challenge study.",
+        "biobank_study_code": "DU08-04"
     }
 ]
 

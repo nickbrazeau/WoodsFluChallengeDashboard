@@ -45,10 +45,10 @@
             <h2>Timeline of Key Findings</h2>
             <div class="card">
                 <p style="margin-bottom: 1.5rem;">
-                    Chronological progression of major discoveries from human influenza challenge studies (2009-2018).
+                    Chronological progression of major discoveries from human influenza challenge studies (2009-2025).
                     Click on a finding to filter publications by PMID.
                 </p>
-                <div id="timeline-visualization" style="width: 100%; min-height: 700px;"></div>
+                <div id="timeline-visualization" style="width: 100%; min-height: 1100px;"></div>
             </div>
         </section>
 
@@ -392,10 +392,18 @@
             const edges = [];
 
             allPublications.forEach(pub => {
-                // Use PMID if available, otherwise fall back to first author
-                const pmid = (pub.pmid && pub.pmid !== 'N/A' && pub.pmid !== 'Unknown')
-                    ? `PMID:${pub.pmid}`
-                    : (pub.first_author || 'Unknown');
+                // Use PMID/PMC ID if available, otherwise fall back to first author + year
+                let pmid;
+                if (pub.pmid && pub.pmid !== 'N/A' && pub.pmid !== 'Unknown') {
+                    // Keep PMC IDs as-is, prefix regular PMIDs
+                    if (pub.pmid.startsWith('PMC')) {
+                        pmid = pub.pmid;
+                    } else {
+                        pmid = `PMID:${pub.pmid}`;
+                    }
+                } else {
+                    pmid = `${pub.first_author} ${pub.year}`;
+                }
                 const study = pub.study_code || 'Unknown';
                 const theme = extractTheme(pub);
 
@@ -506,8 +514,8 @@
             };
 
             const layout = {
-                xaxis: { visible: false, range: [0, 1] },
-                yaxis: { visible: false, range: [0, 1] },
+                xaxis: { visible: false, range: [-0.15, 1.15] },
+                yaxis: { visible: false, range: [-0.1, 1.1] },
                 hovermode: 'closest',
                 showlegend: true,
                 legend: {
@@ -536,9 +544,10 @@
 
         // Create timeline visualization with D3.js
         function createTimelineVisualization() {
-            // Data: 18 key findings from 2009-2018
+            // Data: Key findings from 2009-2025
             const keyFindings = [
                 { year: 2009, pmid: '19664979', author: 'Zaas', title: 'Gene expression diagnostic signature', description: '~30-gene interferon-stimulated signature for respiratory viral infection', theme: 'Diagnostic Signatures' },
+                { year: 2010, pmid: '20622030', author: 'DeVincenzo', title: 'RSV viral load & disease', description: 'Viral load drives RSV disease severity and symptom manifestations', theme: 'Viral Dynamics' },
                 { year: 2011, pmid: '20643599', author: 'Chen', title: 'Machine learning classification', description: 'ML model to distinguish symptomatic vs asymptomatic infections', theme: 'Diagnostic Signatures' },
                 { year: 2011, pmid: '21901105', author: 'Huang', title: 'Symptomatic vs asymptomatic', description: 'Host gene expression differences between symptomatic and asymptomatic infections', theme: 'Symptomatic vs Asymptomatic' },
                 { year: 2011, pmid: '22039424', author: 'Moody', title: 'Antibody repertoire differences', description: 'Systems serology approach to identify antibody differences between infected/non-infected', theme: 'Immune Response' },
@@ -555,7 +564,12 @@
                 { year: 2017, pmid: '28170438', author: 'Sobel Leonard', title: 'Limited reassortment', description: 'Minimal viral reassortment within individual hosts', theme: 'Viral Evolution' },
                 { year: 2017, pmid: '28238698', author: 'Burke', title: 'Nasopharyngeal protein biomarkers', description: 'Protein signatures in nasal samples predict infection outcomes', theme: 'Diagnostic Signatures' },
                 { year: 2018, pmid: '30356117', author: 'Fourati', title: 'Crowdsourced susceptibility prediction', description: 'Community-wide challenge to predict flu susceptibility from baseline data', theme: 'Diagnostic Signatures' },
-                { year: 2018, pmid: '30619110', author: 'Poore', title: 'microRNA signatures', description: 'miRNA expression patterns distinguish symptomatic vs asymptomatic infections', theme: 'Symptomatic vs Asymptomatic' }
+                { year: 2018, pmid: '30619110', author: 'Poore', title: 'microRNA signatures', description: 'miRNA expression patterns distinguish symptomatic vs asymptomatic infections', theme: 'Symptomatic vs Asymptomatic' },
+                { year: 2021, pmid: '32979932', author: 'McClain', title: 'Presymptomatic detection', description: '36-gene assay detects infection up to 3 days before symptoms', theme: 'Diagnostic Signatures' },
+                { year: 2021, pmid: 'PMC8482058', author: 'Grzesiak', title: 'Wearable sensors for infection', description: '92% accuracy detecting H1N1 with wearable biometric sensors', theme: 'Diagnostic Signatures' },
+                { year: 2022, pmid: '35759279', author: 'Temple', title: 'Presymptomatic wearable detection', description: 'ECG sensors detect infection 23 hours before symptom onset', theme: 'Diagnostic Signatures' },
+                { year: 2023, pmid: '36702771', author: 'Ortiz', title: 'H1N1pdm09 challenge model', description: 'Multicenter challenge study with 71% infection rate', theme: 'Viral Dynamics' },
+                { year: 2025, pmid: '40966076', author: 'Thistlethwaite', title: 'Innate immune rewiring', description: 'Influenza persistently rewires innate immune chromatin programs', theme: 'Immune Response' }
             ];
 
             // Theme colors (Duke palette)
@@ -569,11 +583,11 @@
                 'Therapeutic Guidance': '#6F263D'         // Plum
             };
 
-            // Set up dimensions
-            const margin = { top: 40, right: 250, bottom: 60, left: 60 };
+            // Set up dimensions (expanded to fit all tier heights comfortably)
+            const margin = { top: 100, right: 250, bottom: 100, left: 60 };
             const containerWidth = document.getElementById('timeline-visualization').offsetWidth || 1200;
             const width = containerWidth - margin.left - margin.right;
-            const height = 700 - margin.top - margin.bottom;
+            const height = 1100 - margin.top - margin.bottom;
 
             // Clear any existing SVG
             d3.select('#timeline-visualization').selectAll('*').remove();
@@ -588,7 +602,7 @@
 
             // Create scales
             const xScale = d3.scaleLinear()
-                .domain([2008.5, 2018.5])
+                .domain([2008.5, 2025.5])
                 .range([0, width]);
 
             const yScale = d3.scalePoint()
@@ -606,7 +620,7 @@
                 .attr('stroke-width', 2);
 
             // Add year markers
-            const years = d3.range(2009, 2019);
+            const years = [2009, 2010, 2011, 2013, 2015, 2016, 2017, 2018, 2021, 2022, 2023, 2025];
             svg.selectAll('.year-marker')
                 .data(years)
                 .enter()
@@ -642,7 +656,7 @@
                 findingsByYear[finding.year].push({ finding, originalIndex: i });
             });
 
-            // Calculate positions with better staggering (both x and y axis)
+            // Calculate positions with much better Y-coordinate variation
             const positions = keyFindings.map((d, i) => {
                 const yearGroup = findingsByYear[d.year];
                 const indexInYear = yearGroup.findIndex(item => item.originalIndex === i);
@@ -651,30 +665,32 @@
                 // Base x position at the year
                 let x = xScale(d.year);
 
-                // Determine if above/below timeline
-                // For single pubs: alternate based on overall index to prevent overlaps
-                // For multi-pubs: alternate within the year
+                // Determine if above/below timeline - use more varied pattern
+                // Mix of year-based and overall index to maximize separation
                 const isAbove = totalInYear === 1
-                    ? i % 2 === 0  // Use overall index for single pubs
-                    : indexInYear % 2 === 0;  // Use year index for multi-pubs
+                    ? (i % 3 !== 0)  // 2 above, 1 below pattern for singles
+                    : indexInYear % 2 === 0;  // Alternate for multiples
 
                 // Add horizontal offset to stagger publications within the same year
-                // This prevents overlapping labels between adjacent years
                 if (totalInYear > 1) {
-                    const xOffset = (indexInYear - (totalInYear - 1) / 2) * 25; // 25px spacing
+                    const xOffset = (indexInYear - (totalInYear - 1) / 2) * 30; // 30px spacing
                     x += xOffset;
                 } else {
-                    // Single publications: add small nudge based on whether above/below
-                    // to help separate from adjacent years with multiple publications
-                    x += isAbove ? -8 : 8; // slight left/right offset
+                    // Single publications: larger horizontal nudge to avoid overlaps
+                    x += isAbove ? -15 : 15;
                 }
 
-                // Stagger vertically based on position within the year
+                // Much more varied vertical positioning
+                // Create 7 different tiers with granular heights
+                const tierPattern = i % 7;  // 0, 1, 2, 3, 4, 5, 6 pattern
                 const tierWithinSide = Math.floor(indexInYear / 2);
 
-                // Use larger base offset for single publications to avoid overlaps
-                const baseOffset = totalInYear === 1 ? 140 : 120;
-                const tierSpacing = 75;  // Increased from 60 for more tier separation
+                // Base offsets for each tier
+                const baseTierOffsets = [40, 80, 110, 150, 180, 215, 250];
+                const baseOffset = baseTierOffsets[tierPattern];
+
+                // Additional spacing between items in same year
+                const tierSpacing = 60;
 
                 const y = isAbove
                     ? height / 2 - baseOffset - (tierWithinSide * tierSpacing)
@@ -814,7 +830,7 @@
                 .style('font-size', '14px')
                 .style('font-weight', 'bold')
                 .style('fill', '#333')
-                .text('Major Discoveries from Human Influenza Challenge Studies (2009-2018)');
+                .text('Major Discoveries from Human Influenza Challenge Studies (2009-2025)');
         }
 
         // Filter publications by PMID

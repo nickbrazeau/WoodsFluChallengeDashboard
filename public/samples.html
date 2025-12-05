@@ -439,6 +439,7 @@
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('results-container').classList.remove('hidden');
                 document.getElementById('pivot-section').classList.remove('hidden');
+                document.getElementById('sankey-section').classList.remove('hidden');
 
             } catch (error) {
                 console.error('Error loading samples:', error);
@@ -558,6 +559,16 @@
             // Update results count
             document.getElementById('results-count').textContent = totalResults.toLocaleString();
 
+            // Show/hide status column header based on access level
+            const statusHeader = document.querySelector('#results-table thead th:nth-child(6)');
+            if (statusHeader) {
+                if (accessLevel === 'private') {
+                    statusHeader.style.display = '';
+                } else {
+                    statusHeader.style.display = 'none';
+                }
+            }
+
             // Show/hide storage location column header based on access level
             const storageHeader = document.querySelector('#results-table thead th:last-child');
             if (storageHeader) {
@@ -599,7 +610,7 @@
                         <td>${sample.participant_id || 'N/A'}</td>
                         <td>${sample.timepoint_day !== null && sample.timepoint_day !== undefined ? sample.timepoint_day : 'N/A'}</td>
                         <td>${sample.sample_type || 'N/A'}</td>
-                        <td>${statusBadge}</td>
+                        ${accessLevel === 'private' ? `<td>${statusBadge}</td>` : ''}
                         ${accessLevel === 'private' ? `<td style="font-size: 0.9rem;">${location}</td>` : ''}
                     </tr>
                 `;
@@ -656,13 +667,13 @@
                     'Participant ID': sample.participant_id || '',
                     'Timepoint Day': sample.timepoint_day !== null ? sample.timepoint_day : '',
                     'Timepoint Hour': sample.timepoint_hour !== null ? sample.timepoint_hour : '',
-                    'Sample Type': sample.sample_type || '',
-                    'Available': sample.is_available ? 'Yes' : 'No',
-                    'Transferred': sample.is_transferred ? 'Yes' : 'No'
+                    'Sample Type': sample.sample_type || ''
                 };
 
-                // Only include storage location in private mode
+                // Only include availability status and storage location in private mode
                 if (accessLevel === 'private') {
+                    data['Available'] = sample.is_available ? 'Yes' : 'No';
+                    data['Transferred'] = sample.is_transferred ? 'Yes' : 'No';
                     data['Storage Location'] = sample.storage_location_path || '';
                 }
 
