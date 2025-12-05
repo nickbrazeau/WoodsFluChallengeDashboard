@@ -1,5 +1,53 @@
 // Woods Lab Dashboard - Main JavaScript Utilities
 
+// ============================================================================
+// Authentication & Data Loading Utilities
+// ============================================================================
+
+/**
+ * Get current access level from session
+ * @returns {'public'|'private'}
+ */
+function getAccessLevel() {
+    try {
+        const session = localStorage.getItem('woodslab_auth_session');
+        if (!session) return 'public';
+
+        const data = JSON.parse(session);
+        if (data.expires < Date.now()) {
+            localStorage.removeItem('woodslab_auth_session');
+            return 'public';
+        }
+
+        return data.accessLevel || 'public';
+    } catch (e) {
+        return 'public';
+    }
+}
+
+/**
+ * Get appropriate data file path based on access level
+ * @param {string} baseName - Base filename (e.g., 'samples', 'sample_statistics')
+ * @returns {string} Full path to appropriate data file
+ */
+function getDataFilePath(baseName) {
+    const accessLevel = getAccessLevel();
+
+    // Files that have public/private versions
+    const tieredFiles = ['samples', 'sample_statistics'];
+
+    if (tieredFiles.includes(baseName)) {
+        return `data/${baseName}_${accessLevel}.json`;
+    }
+
+    // Other files are the same for both modes
+    return `data/${baseName}.json`;
+}
+
+// ============================================================================
+// Utility Functions
+// ============================================================================
+
 // Format large numbers with commas
 function formatNumber(num) {
     return num.toLocaleString();
