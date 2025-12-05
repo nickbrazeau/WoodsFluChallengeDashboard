@@ -31,21 +31,59 @@
             Search and explore biological samples from influenza challenge studies
         </p>
 
-        <!-- Interactive Pivot Table -->
+        <!-- Sample Availability Matrix (Cross-Tabulated Pivot Table) -->
         <section id="pivot-section" class="hidden" style="margin-bottom: 3rem;">
-            <h2>Sample Summary Pivot Table</h2>
+            <h2>Sample Availability Matrix</h2>
             <div class="card">
-                <p style="margin-bottom: 1rem;">Interactive summary of samples by study and type</p>
-                <div style="margin-bottom: 1rem;">
-                    <label><strong>Group by:</strong></label>
-                    <select id="pivot-groupby" onchange="updatePivot()" style="margin-left: 1rem; padding: 0.5rem;">
-                        <option value="study">Study</option>
-                        <option value="type">Sample Type</option>
-                    </select>
-                    <button class="btn btn-secondary" onclick="exportPivot()" style="margin-left: 1rem;">Export Pivot</button>
+                <p style="margin-bottom: 1.5rem; color: var(--graphite);">
+                    Cross-tabulated view showing sample counts by timepoint and sample type.
+                    Use filters to focus on specific studies or sample types.
+                </p>
+
+                <!-- Filter Controls -->
+                <div style="display: flex; gap: 2rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                    <!-- Study Filter -->
+                    <div style="flex: 1; min-width: 200px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
+                            Filter by Study:
+                        </label>
+                        <select id="matrix-study-filter" onchange="updatePivotMatrix()"
+                                style="width: 100%; padding: 0.5rem;">
+                            <option value="">All Studies</option>
+                        </select>
+                    </div>
+
+                    <!-- Sample Type Filter -->
+                    <div style="flex: 2; min-width: 300px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">
+                            Select Sample Types:
+                        </label>
+                        <select id="matrix-type-filter" multiple size="4" onchange="updatePivotMatrix()"
+                                style="width: 100%; padding: 0.5rem;">
+                        </select>
+                        <small style="color: var(--graphite);">Hold Ctrl/Cmd to select multiple</small>
+                    </div>
+
+                    <!-- Actions -->
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; justify-content: flex-end;">
+                        <button class="btn btn-secondary" onclick="selectAllSampleTypes()">
+                            Select All Types
+                        </button>
+                        <button class="btn btn-primary" onclick="exportPivotMatrix()">
+                            Export to CSV
+                        </button>
+                    </div>
                 </div>
-                <div style="overflow-x: auto;">
-                    <div id="pivot-table"></div>
+
+                <!-- Matrix Table -->
+                <div style="overflow-x: auto; margin-bottom: 1rem;">
+                    <div id="pivot-matrix-table"></div>
+                </div>
+
+                <!-- Summary Stats -->
+                <div style="padding: 1rem; background-color: var(--whisperwood); border-radius: 4px;">
+                    <strong>Matrix Summary:</strong>
+                    <span id="matrix-summary"></span>
                 </div>
             </div>
         </section>
@@ -361,9 +399,13 @@
         // Load samples
         async function loadSamples() {
             try {
+                // Use getDataFilePath to load appropriate version based on access level
+                const samplesUrl = getDataFilePath('samples');
+                const statsUrl = getDataFilePath('sample_statistics');
+
                 const [samplesResponse, statsResponse, configResponse] = await Promise.all([
-                    fetch('data/samples.json'),
-                    fetch('data/sample_statistics.json'),
+                    fetch(samplesUrl),
+                    fetch(statsUrl),
                     fetch('data/config.json')
                 ]);
 
@@ -384,8 +426,8 @@
                 // Populate filter dropdowns
                 populateFilters();
 
-                // Display pivot table and summaries
-                displayPivotTable(stats);
+                // Initialize pivot matrix
+                initializePivotMatrix();
 
                 // Create Sankey flow visualization
                 createSampleFlowSankey(allSamples);
@@ -511,9 +553,20 @@
         function displayResults() {
             const tbody = document.getElementById('results-tbody');
             const totalResults = filteredSamples.length;
+            const accessLevel = getAccessLevel();
 
             // Update results count
             document.getElementById('results-count').textContent = totalResults.toLocaleString();
+
+            // Show/hide storage location column header based on access level
+            const storageHeader = document.querySelector('#results-table thead th:last-child');
+            if (storageHeader) {
+                if (accessLevel === 'private') {
+                    storageHeader.style.display = '';
+                } else {
+                    storageHeader.style.display = 'none';
+                }
+            }
 
             // Show/hide no results message
             if (totalResults === 0) {
@@ -547,12 +600,18 @@
                         <td>${sample.timepoint_day !== null && sample.timepoint_day !== undefined ? sample.timepoint_day : 'N/A'}</td>
                         <td>${sample.sample_type || 'N/A'}</td>
                         <td>${statusBadge}</td>
-                        <td style="font-size: 0.9rem;">${location}</td>
+                        ${accessLevel === 'private' ? `<td style="font-size: 0.9rem;">${location}</td>` : ''}
                     </tr>
                 `;
             });
 
             tbody.innerHTML = html;
+
+            // Add note for public mode
+            if (accessLevel === 'public') {
+                const note = document.getElementById('public-mode-note');
+                if (note) note.style.display = 'block';
+            }
 
             // Update pagination
             updatePagination();
@@ -587,107 +646,268 @@
                 return;
             }
 
+            const accessLevel = getAccessLevel();
+
             // Prepare data for export
-            const exportData = filteredSamples.map(sample => ({
-                'Sample Barcode': sample.sample_barcode_id || '',
-                'Study Code': sample.study_code || '',
-                'Participant ID': sample.participant_id || '',
-                'Timepoint Day': sample.timepoint_day !== null ? sample.timepoint_day : '',
-                'Timepoint Hour': sample.timepoint_hour !== null ? sample.timepoint_hour : '',
-                'Sample Type': sample.sample_type || '',
-                'Available': sample.is_available ? 'Yes' : 'No',
-                'Transferred': sample.is_transferred ? 'Yes' : 'No',
-                'Storage Location': sample.storage_location_path || ''
-            }));
+            const exportData = filteredSamples.map(sample => {
+                const data = {
+                    'Sample Barcode': sample.sample_barcode_id || '',
+                    'Study Code': sample.study_code || '',
+                    'Participant ID': sample.participant_id || '',
+                    'Timepoint Day': sample.timepoint_day !== null ? sample.timepoint_day : '',
+                    'Timepoint Hour': sample.timepoint_hour !== null ? sample.timepoint_hour : '',
+                    'Sample Type': sample.sample_type || '',
+                    'Available': sample.is_available ? 'Yes' : 'No',
+                    'Transferred': sample.is_transferred ? 'Yes' : 'No'
+                };
+
+                // Only include storage location in private mode
+                if (accessLevel === 'private') {
+                    data['Storage Location'] = sample.storage_location_path || '';
+                }
+
+                return data;
+            });
 
             const timestamp = new Date().toISOString().split('T')[0];
-            const filename = `sample_inventory_${timestamp}.csv`;
+            const modeLabel = accessLevel === 'private' ? 'full' : 'public';
+            const filename = `sample_inventory_${modeLabel}_${timestamp}.csv`;
 
             exportTableToCSV(exportData, filename);
         }
 
-        // Pivot table functions
-        let pivotData = null;
+        // ============================================================================
+        // PIVOT MATRIX FUNCTIONS (Timepoint × Sample Type Cross-Tabulation)
+        // ============================================================================
 
-        function displayPivotTable(stats) {
-            pivotData = stats;
-            updatePivot();
+        let pivotMatrixData = null;
+
+        /**
+         * Initialize pivot matrix on page load
+         */
+        function initializePivotMatrix() {
+            // Populate study filter
+            const studyFilter = document.getElementById('matrix-study-filter');
+            const studies = [...new Set(allSamples.map(s => s.study_code))].sort();
+            studyFilter.innerHTML = '<option value="">All Studies</option>' +
+                                   studies.map(s => `<option value="${s}">${s}</option>`).join('');
+
+            // Populate sample type filter with all types selected by default
+            const typeFilter = document.getElementById('matrix-type-filter');
+            const sampleTypes = [...new Set(allSamples.map(s => s.sample_type))].filter(Boolean).sort();
+            typeFilter.innerHTML = sampleTypes.map(t => `<option value="${t}" selected>${t}</option>`).join('');
+
+            // Render initial matrix
+            updatePivotMatrix();
         }
 
-        function updatePivot() {
-            const groupBy = document.getElementById('pivot-groupby').value;
-            const container = document.getElementById('pivot-table');
-
-            if (groupBy === 'study') {
-                const sortedStudies = Object.entries(pivotData.samples_by_study).sort((a, b) => b[1] - a[1]);
-                let html = '<table><thead><tr><th>Study Code</th><th>Sample Count</th><th>Percentage</th></tr></thead><tbody>';
-                const total = Object.values(pivotData.samples_by_study).reduce((sum, count) => sum + count, 0);
-
-                sortedStudies.forEach(([study, count]) => {
-                    const percentage = ((count / total) * 100).toFixed(1);
-                    html += `
-                        <tr>
-                            <td><strong>${study}</strong></td>
-                            <td>${count.toLocaleString()}</td>
-                            <td>${percentage}%</td>
-                        </tr>
-                    `;
-                });
-
-                html += '</tbody></table>';
-                container.innerHTML = html;
-            } else {
-                const sortedTypes = Object.entries(pivotData.samples_by_type).sort((a, b) => b[1] - a[1]);
-                let html = '<table><thead><tr><th>Sample Type</th><th>Count</th><th>Percentage</th></tr></thead><tbody>';
-                const total = Object.values(pivotData.samples_by_type).reduce((sum, count) => sum + count, 0);
-
-                sortedTypes.forEach(([type, count]) => {
-                    const percentage = ((count / total) * 100).toFixed(1);
-                    html += `
-                        <tr>
-                            <td><strong>${type}</strong></td>
-                            <td>${count.toLocaleString()}</td>
-                            <td>${percentage}%</td>
-                        </tr>
-                    `;
-                });
-
-                html += '</tbody></table>';
-                container.innerHTML = html;
+        /**
+         * Select all sample types in filter
+         */
+        function selectAllSampleTypes() {
+            const typeFilter = document.getElementById('matrix-type-filter');
+            for (let i = 0; i < typeFilter.options.length; i++) {
+                typeFilter.options[i].selected = true;
             }
+            updatePivotMatrix();
         }
 
-        function exportPivot() {
-            const groupBy = document.getElementById('pivot-groupby').value;
-            let csv = '';
+        /**
+         * Build pivot matrix data structure
+         */
+        function buildPivotMatrix() {
+            const studyFilter = document.getElementById('matrix-study-filter').value;
+            const typeFilter = document.getElementById('matrix-type-filter');
+            const selectedTypes = Array.from(typeFilter.selectedOptions).map(opt => opt.value);
 
-            if (groupBy === 'study') {
-                csv = 'Study Code,Sample Count,Percentage\n';
-                const sortedStudies = Object.entries(pivotData.samples_by_study).sort((a, b) => b[1] - a[1]);
-                const total = Object.values(pivotData.samples_by_study).reduce((sum, count) => sum + count, 0);
-
-                sortedStudies.forEach(([study, count]) => {
-                    const percentage = ((count / total) * 100).toFixed(1);
-                    csv += `"${study}",${count},${percentage}%\n`;
-                });
-            } else {
-                csv = 'Sample Type,Count,Percentage\n';
-                const sortedTypes = Object.entries(pivotData.samples_by_type).sort((a, b) => b[1] - a[1]);
-                const total = Object.values(pivotData.samples_by_type).reduce((sum, count) => sum + count, 0);
-
-                sortedTypes.forEach(([type, count]) => {
-                    const percentage = ((count / total) * 100).toFixed(1);
-                    csv += `"${type}",${count},${percentage}%\n`;
-                });
+            if (selectedTypes.length === 0) {
+                return { matrix: {}, timepoints: [], sampleTypes: [], totalSamples: 0 };
             }
 
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `samples_pivot_${groupBy}.csv`;
-            a.click();
-            window.URL.revokeObjectURL(url);
+            // Filter samples
+            let samples = allSamples;
+            if (studyFilter) {
+                samples = samples.filter(s => s.study_code === studyFilter);
+            }
+            samples = samples.filter(s => selectedTypes.includes(s.sample_type));
+
+            // Build matrix
+            const matrix = {};
+            const timepointSet = new Set();
+
+            samples.forEach(sample => {
+                const timepoint = sample.timepoint_normalized || 'Unknown';
+                const sampleType = sample.sample_type;
+
+                timepointSet.add(timepoint);
+
+                if (!matrix[timepoint]) {
+                    matrix[timepoint] = {};
+                }
+                if (!matrix[timepoint][sampleType]) {
+                    matrix[timepoint][sampleType] = 0;
+                }
+                matrix[timepoint][sampleType]++;
+            });
+
+            // Sort timepoints chronologically
+            const timepoints = Array.from(timepointSet).sort((a, b) => {
+                const extractDay = (tp) => {
+                    if (tp === 'Unknown') return 9999;
+                    const match = tp.match(/Day\s*(-?\d+)/i);
+                    return match ? parseInt(match[1]) : 9999;
+                };
+                return extractDay(a) - extractDay(b);
+            });
+
+            return {
+                matrix: matrix,
+                timepoints: timepoints,
+                sampleTypes: selectedTypes.sort(),
+                totalSamples: samples.length
+            };
+        }
+
+        /**
+         * Render pivot matrix table
+         */
+        function updatePivotMatrix() {
+            const container = document.getElementById('pivot-matrix-table');
+            const summaryContainer = document.getElementById('matrix-summary');
+
+            pivotMatrixData = buildPivotMatrix();
+
+            if (pivotMatrixData.sampleTypes.length === 0) {
+                container.innerHTML = '<p style="padding: 2rem; text-align: center; color: var(--graphite);">Please select at least one sample type.</p>';
+                summaryContainer.innerHTML = 'No sample types selected';
+                return;
+            }
+
+            // Build table HTML
+            let html = '<table style="width: 100%; border-collapse: collapse;">';
+
+            // Header
+            html += '<thead><tr style="background-color: var(--primary-blue); color: white;">';
+            html += '<th style="padding: 0.75rem; text-align: left; position: sticky; left: 0; background-color: var(--primary-blue); z-index: 2;">Timepoint</th>';
+            pivotMatrixData.sampleTypes.forEach(type => {
+                html += `<th style="padding: 0.75rem; text-align: center; min-width: 100px;">${type}</th>`;
+            });
+            html += '<th style="padding: 0.75rem; text-align: center; background-color: var(--royal-blue);"><strong>Total</strong></th>';
+            html += '</tr></thead>';
+
+            // Body
+            html += '<tbody>';
+            pivotMatrixData.timepoints.forEach(timepoint => {
+                html += '<tr style="border-bottom: 1px solid var(--hatteras);">';
+                html += `<td style="padding: 0.5rem; font-weight: 600; position: sticky; left: 0; background-color: white; z-index: 1;">${timepoint}</td>`;
+
+                let rowTotal = 0;
+                pivotMatrixData.sampleTypes.forEach(type => {
+                    const count = pivotMatrixData.matrix[timepoint]?.[type] || 0;
+                    rowTotal += count;
+
+                    // Heat map coloring
+                    const maxCount = 200; // Adjust based on typical values
+                    const intensity = Math.min(count / maxCount, 1);
+                    const bgColor = count > 0
+                        ? `rgba(0, 83, 155, ${intensity * 0.7})`
+                        : 'transparent';
+                    const textColor = intensity > 0.5 ? 'white' : 'inherit';
+
+                    html += `<td style="padding: 0.5rem; text-align: center; background-color: ${bgColor}; color: ${textColor};">`;
+                    html += count > 0 ? count : '-';
+                    html += '</td>';
+                });
+
+                html += `<td style="padding: 0.5rem; text-align: center; font-weight: 600; background-color: var(--hatteras);">${rowTotal}</td>`;
+                html += '</tr>';
+            });
+
+            // Footer with column totals
+            html += '<tr style="background-color: var(--hatteras); font-weight: 600;">';
+            html += '<td style="padding: 0.5rem; position: sticky; left: 0; background-color: var(--hatteras); z-index: 1;"><strong>Total</strong></td>';
+
+            let grandTotal = 0;
+            pivotMatrixData.sampleTypes.forEach(type => {
+                let colTotal = 0;
+                pivotMatrixData.timepoints.forEach(timepoint => {
+                    colTotal += pivotMatrixData.matrix[timepoint]?.[type] || 0;
+                });
+                grandTotal += colTotal;
+                html += `<td style="padding: 0.5rem; text-align: center;">${colTotal}</td>`;
+            });
+
+            html += `<td style="padding: 0.5rem; text-align: center; background-color: var(--royal-blue); color: white;"><strong>${grandTotal}</strong></td>`;
+            html += '</tr>';
+            html += '</tbody></table>';
+
+            container.innerHTML = html;
+
+            // Update summary
+            const studyFilter = document.getElementById('matrix-study-filter').value;
+            const studyText = studyFilter ? ` for ${studyFilter}` : ' across all studies';
+            summaryContainer.innerHTML = `
+                <strong>${pivotMatrixData.timepoints.length}</strong> timepoints ×
+                <strong>${pivotMatrixData.sampleTypes.length}</strong> sample types =
+                <strong>${pivotMatrixData.totalSamples.toLocaleString()}</strong> samples${studyText}
+            `;
+        }
+
+        /**
+         * Export pivot matrix to CSV
+         */
+        function exportPivotMatrix() {
+            if (!pivotMatrixData || pivotMatrixData.sampleTypes.length === 0) {
+                alert('No data to export');
+                return;
+            }
+
+            // Build CSV
+            let csv = 'Timepoint,' + pivotMatrixData.sampleTypes.join(',') + ',Total\n';
+
+            pivotMatrixData.timepoints.forEach(timepoint => {
+                let row = [`"${timepoint}"`];
+                let rowTotal = 0;
+
+                pivotMatrixData.sampleTypes.forEach(type => {
+                    const count = pivotMatrixData.matrix[timepoint]?.[type] || 0;
+                    row.push(count);
+                    rowTotal += count;
+                });
+
+                row.push(rowTotal);
+                csv += row.join(',') + '\n';
+            });
+
+            // Column totals
+            let totalsRow = ['Total'];
+            let grandTotal = 0;
+            pivotMatrixData.sampleTypes.forEach(type => {
+                let colTotal = 0;
+                pivotMatrixData.timepoints.forEach(timepoint => {
+                    colTotal += pivotMatrixData.matrix[timepoint]?.[type] || 0;
+                });
+                grandTotal += colTotal;
+                totalsRow.push(colTotal);
+            });
+            totalsRow.push(grandTotal);
+            csv += totalsRow.join(',') + '\n';
+
+            // Download
+            const studyFilter = document.getElementById('matrix-study-filter').value;
+            const studySuffix = studyFilter ? `_${studyFilter}` : '_all_studies';
+            const timestamp = new Date().toISOString().split('T')[0];
+            const filename = `sample_matrix${studySuffix}_${timestamp}.csv`;
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         function displayStudyBreakdown(studyData) {

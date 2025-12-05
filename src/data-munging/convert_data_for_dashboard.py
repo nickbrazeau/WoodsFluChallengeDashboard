@@ -38,8 +38,8 @@ def convert_samples_to_json():
     # Convert to records
     samples = samples_df.to_dict('records')
 
-    # Save as JSON
-    output_file = Path('public/data/samples.json')
+    # Save as JSON (private version with full data)
+    output_file = Path('public/data/samples_private.json')
     with open(output_file, 'w') as f:
         json.dump(samples, f, indent=2, default=str)
 
@@ -72,7 +72,7 @@ def create_sample_statistics():
         'date_generated': datetime.now().isoformat()
     }
 
-    output_file = Path('public/data/sample_statistics.json')
+    output_file = Path('public/data/sample_statistics_private.json')
     with open(output_file, 'w') as f:
         json.dump(stats, f, indent=2)
 
@@ -381,14 +381,16 @@ def main():
     print("="*80)
 
     print("\n✅ Files Created in public/data/:")
-    print("  1. samples.json - 82,046 sample records")
-    print("  2. sample_statistics.json - Pre-calculated stats")
+    print("  1. samples_private.json - 82,046 sample records (PRIVATE - full data)")
+    print("  2. sample_statistics_private.json - Pre-calculated stats (PRIVATE)")
     print("  3. publications.json - 31 publications")
     print("  4. publication_statistics.json - Publication stats")
     print("  5. assays.json - 27 assay records")
     print("  6. assay_statistics.json - Assay stats")
     print("  7. studies.json - 7 study metadata records")
     print("  8. config.json - Dashboard configuration")
+    print()
+    print("  ⚠️  NEXT STEP: Run agent_scrubber.py to create public versions")
 
     print("\n📊 Dashboard Data Summary:")
     print(f"  • Samples: {sample_stats['total_samples']:,}")
