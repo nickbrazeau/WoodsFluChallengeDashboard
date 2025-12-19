@@ -30,7 +30,12 @@
       "Bash(grep:*)",
       "Bash(git log:*)",
       "Bash(find:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(git status:*)",
+      "Bash(git ls-files:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(gh run:*)",
+      "Bash(jq:*)"
     ],
     "deny": [],
     "ask": []
