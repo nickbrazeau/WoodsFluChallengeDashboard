@@ -404,7 +404,7 @@
                 } else {
                     pmid = `${pub.first_author} ${pub.year}`;
                 }
-                const study = pub.study_code || 'Unknown';
+                const study = (pub.study_code && pub.study_code !== 'NA') ? pub.study_code : 'Misc';
                 const theme = extractTheme(pub);
 
                 pmids.add(pmid);
@@ -590,15 +590,25 @@
             const height = 1100 - margin.top - margin.bottom;
 
             // Clear any existing SVG
-            d3.select('#timeline-visualization').selectAll('*').remove();
+            const container = d3.select('#timeline-visualization');
+            container.selectAll('*').remove();
 
-            // Create SVG
-            const svg = d3.select('#timeline-visualization')
+            // Create SVG with two groups: zoomable content and fixed legend
+            const svg = container
                 .append('svg')
                 .attr('width', width + margin.left + margin.right)
-                .attr('height', height + margin.top + margin.bottom)
-                .append('g')
+                .attr('height', height + margin.top + margin.bottom);
+
+            const mainGroup = svg.append('g')
                 .attr('transform', `translate(${margin.left},${margin.top})`);
+
+            // Zoomable content group
+            const zoomableGroup = mainGroup.append('g')
+                .attr('class', 'zoomable-content');
+
+            // Fixed content group (for legend)
+            const fixedGroup = mainGroup.append('g')
+                .attr('class', 'fixed-content');
 
             // Create scales
             const xScale = d3.scaleLinear()
@@ -610,8 +620,8 @@
                 .range([0, height])
                 .padding(0.5);
 
-            // Draw timeline axis (horizontal line)
-            svg.append('line')
+            // Draw timeline axis (horizontal line) - zoomable
+            zoomableGroup.append('line')
                 .attr('x1', 0)
                 .attr('x2', width)
                 .attr('y1', height / 2)
@@ -619,9 +629,9 @@
                 .attr('stroke', '#cccccc')
                 .attr('stroke-width', 2);
 
-            // Add year markers
+            // Add year markers - zoomable
             const years = [2009, 2010, 2011, 2013, 2015, 2016, 2017, 2018, 2021, 2022, 2023, 2025];
-            svg.selectAll('.year-marker')
+            zoomableGroup.selectAll('.year-marker')
                 .data(years)
                 .enter()
                 .append('text')
@@ -634,8 +644,8 @@
                 .style('fill', '#666')
                 .text(d => d);
 
-            // Add year tick marks
-            svg.selectAll('.year-tick')
+            // Add year tick marks - zoomable
+            zoomableGroup.selectAll('.year-tick')
                 .data(years)
                 .enter()
                 .append('line')
@@ -700,7 +710,7 @@
             });
 
             // Create nodes with improved positioning
-            const nodes = svg.selectAll('.timeline-node')
+            const nodes = zoomableGroup.selectAll('.timeline-node')
                 .data(keyFindings)
                 .enter()
                 .append('g')
@@ -708,12 +718,12 @@
                 .attr('transform', (d, i) => `translate(${positions[i].x},${positions[i].y})`)
                 .style('cursor', 'pointer');
 
-            // Add connecting lines from nodes to timeline
+            // Add connecting lines from nodes to timeline - zoomable
             nodes.each(function(d, i) {
                 const x = positions[i].x;
                 const y = positions[i].y;
 
-                svg.append('line')
+                zoomableGroup.append('line')
                     .attr('class', 'connecting-line')
                     .attr('x1', x)
                     .attr('x2', x)
@@ -798,8 +808,8 @@
                 .style('fill', '#333')
                 .text(d => `${d.author} ${d.year}`);
 
-            // Add legend for research themes
-            const legend = svg.append('g')
+            // Add legend for research themes - fixed (not zoomable)
+            const legend = fixedGroup.append('g')
                 .attr('class', 'legend')
                 .attr('transform', `translate(${width + 20}, 0)`);
 
@@ -822,8 +832,8 @@
                 .style('fill', '#333')
                 .text(d => d);
 
-            // Add title
-            svg.append('text')
+            // Add title - fixed (not zoomable)
+            fixedGroup.append('text')
                 .attr('x', width / 2)
                 .attr('y', -20)
                 .attr('text-anchor', 'middle')
@@ -831,6 +841,54 @@
                 .style('font-weight', 'bold')
                 .style('fill', '#333')
                 .text('Major Discoveries from Human Influenza Challenge Studies (2009-2025)');
+
+            // Add zoom behavior
+            const zoom = d3.zoom()
+                .scaleExtent([0.5, 8])  // Allow zoom out to 50%, zoom in to 800%
+                .translateExtent([[-width, -height], [width * 2, height * 2]])  // Constrain panning
+                .on('zoom', (event) => {
+                    zoomableGroup.attr('transform', event.transform);
+                });
+
+            // Apply zoom to SVG
+            svg.call(zoom);
+
+            // Add zoom controls
+            const controls = container.append('div')
+                .attr('class', 'zoom-controls')
+                .style('position', 'absolute')
+                .style('top', '10px')
+                .style('right', '10px')
+                .style('display', 'flex')
+                .style('gap', '5px')
+                .style('z-index', '10');
+
+            controls.append('button')
+                .attr('class', 'btn btn-secondary')
+                .style('padding', '5px 10px')
+                .style('font-size', '12px')
+                .text('Reset Zoom')
+                .on('click', () => {
+                    svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
+                });
+
+            controls.append('button')
+                .attr('class', 'btn btn-secondary')
+                .style('padding', '5px 10px')
+                .style('font-size', '14px')
+                .text('+')
+                .on('click', () => {
+                    svg.transition().duration(200).call(zoom.scaleBy, 1.3);
+                });
+
+            controls.append('button')
+                .attr('class', 'btn btn-secondary')
+                .style('padding', '5px 10px')
+                .style('font-size', '14px')
+                .text('−')
+                .on('click', () => {
+                    svg.transition().duration(200).call(zoom.scaleBy, 0.77);
+                });
         }
 
         // Filter publications by PMID
