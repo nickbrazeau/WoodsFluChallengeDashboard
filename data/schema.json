@@ -1,0 +1,165 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2025-11-29",
+  "data_model": {
+    "samples": {
+      "primary_key": "sample_barcode_id",
+      "fields": [
+        {
+          "key": "sample_barcode_id",
+          "label": "Sample Barcode",
+          "type": "string",
+          "searchable": true,
+          "sortable": true,
+          "filterable": false,
+          "exportable": true,
+          "display_order": 1
+        },
+        {
+          "key": "study_code",
+          "label": "Study",
+          "type": "categorical",
+          "searchable": true,
+          "sortable": true,
+          "filterable": true,
+          "exportable": true,
+          "display_order": 2,
+          "filter_priority": 1
+        },
+        {
+          "key": "participant_id",
+          "label": "Participant",
+          "type": "string",
+          "searchable": true,
+          "sortable": true,
+          "filterable": true,
+          "exportable": true,
+          "display_order": 3
+        },
+        {
+          "key": "timepoint_day",
+          "label": "Timepoint (Day)",
+          "type": "numeric",
+          "searchable": false,
+          "sortable": true,
+          "filterable": true,
+          "exportable": true,
+          "display_order": 4
+        },
+        {
+          "key": "sample_type",
+          "label": "Sample Type",
+          "type": "categorical",
+          "searchable": false,
+          "sortable": true,
+          "filterable": true,
+          "exportable": true,
+          "display_order": 5,
+          "filter_priority": 2
+        },
+        {
+          "key": "is_available",
+          "label": "Status",
+          "type": "boolean",
+          "searchable": false,
+          "sortable": true,
+          "filterable": true,
+          "exportable": true,
+          "display_order": 6,
+          "display_format": "badge",
+          "filter_priority": 3
+        },
+        {
+          "key": "storage_location_path",
+          "label": "Storage Location",
+          "type": "string",
+          "searchable": false,
+          "sortable": false,
+          "filterable": false,
+          "exportable": true,
+          "display_order": 7
+        },
+        {
+          "key": "timepoint_hour",
+          "label": "Timepoint (Hour)",
+          "type": "numeric",
+          "searchable": false,
+          "sortable": true,
+          "filterable": false,
+          "exportable": true,
+          "display_order": 8
+        },
+        {
+          "key": "is_transferred",
+          "label": "Transferred",
+          "type": "boolean",
+          "searchable": false,
+          "sortable": false,
+          "filterable": true,
+          "exportable": true,
+          "display_order": 9
+        }
+      ]
+    },
+    "studies": {
+      "auto_detect": true,
+      "source_field": "study_code",
+      "metadata_fallback": {
+        "DU08-04": {
+          "name": "DEE2 H3N2 Flu Challenge",
+          "virus": "H3N2 (A/Brisbane/10/2007)",
+          "year": 2008
+        },
+        "DU09-06": {
+          "name": "DEE3 H1N1 Flu Challenge",
+          "virus": "H1N1 (A/California/07/2009)",
+          "year": 2009
+        },
+        "DU09-07": {
+          "name": "DEE4 H1N1 Flu Challenge",
+          "virus": "H1N1 (A/California/07/2009)",
+          "year": 2009
+        },
+        "DU11-02": {
+          "name": "DEE5 H3N2 Flu Challenge",
+          "virus": "H3N2 (A/Victoria/210/2009)",
+          "year": 2011
+        },
+        "DU17-04": {
+          "name": "PROMETHEUS H1N1 ICL Flu Challenge",
+          "virus": "H1N1 (A/California/07/2009)",
+          "year": 2017
+        },
+        "DU19-03": {
+          "name": "SIGMA PRISMM Family",
+          "virus": "H3N2",
+          "year": 2019
+        },
+        "DU20-01": {
+          "name": "SIGMA Plus H3N2 Flu Challenge",
+          "virus": "H3N2 (A/Kansas/14/2017)",
+          "year": 2020
+        },
+        "DU24-01": {
+          "name": "EXHALE H3N2 Flu Challenge",
+          "virus": "H3N2 (A/Kansas/14/2017)",
+          "year": 2024
+        }
+      }
+    }
+  },
+  "ui_config": {
+    "pagination": {
+      "items_per_page": 50,
+      "page_sizes": [25, 50, 100, 200]
+    },
+    "statistics": {
+      "sample_type_limit": null,
+      "show_all_categories": true
+    },
+    "export": {
+      "default_format": "csv",
+      "include_metadata": true
+    }
+  }
+}
