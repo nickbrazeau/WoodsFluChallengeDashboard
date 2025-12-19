@@ -122,6 +122,11 @@
         <section id="assay-pivot-section" class="hidden" style="margin-top: 3rem;">
             <h2>Assay Pivot Table by Study</h2>
             <div class="card">
+                <div class="alert alert-info" style="margin-bottom: 1.5rem;">
+                    <strong>Data Availability Note:</strong> Assay tracking records are currently
+                    available for the Prometheus (DU17-04) study. Additional studies may be added
+                    as assay tracking is completed.
+                </div>
                 <p style="margin-bottom: 1rem;">Comprehensive matrix showing which assays were performed for each study</p>
                 <div style="margin-bottom: 1rem;">
                     <button class="btn btn-secondary" onclick="exportAssayPivot()">Export Assay Matrix</button>
@@ -556,8 +561,58 @@
             window.URL.revokeObjectURL(url);
         }
 
-        // Load on page load
-        document.addEventListener('DOMContentLoaded', loadData);
+        // Load on page load with access control
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check access level before loading data
+            const accessLevel = getAccessLevel(); // from main.js
+
+            if (accessLevel === 'public') {
+                // Hide all content sections
+                const sectionsToHide = [
+                    'pivot-controls',
+                    'data-table-section',
+                    'assay-pivot-section',
+                    'pivot-by-study'
+                ];
+
+                sectionsToHide.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) element.style.display = 'none';
+                });
+
+                // Hide statistics cards (they don't have a section wrapper)
+                const statsGrid = document.querySelector('.grid.grid-4');
+                if (statsGrid) statsGrid.style.display = 'none';
+
+                // Show authentication required message
+                const main = document.querySelector('main');
+                const notice = document.createElement('div');
+                notice.className = 'card';
+                notice.style.margin = '2rem auto';
+                notice.style.maxWidth = '600px';
+                notice.innerHTML = `
+                    <div class="alert alert-info">
+                        <h2 style="margin-top: 0;">Authentication Required</h2>
+                        <p style="margin-top: 1rem;">
+                            The Data Inventory page is only available in private mode.
+                            This page contains detailed assay tracking information and data storage locations
+                            that require authentication to access.
+                        </p>
+                        <p style="margin-top: 1rem;">
+                            <strong>For access:</strong> Please contact the lab administrator.
+                        </p>
+                    </div>
+                `;
+                main.insertBefore(notice, main.firstChild);
+
+                // Don't load data
+                return;
+            }
+
+            // Private mode: load data normally
+            loadData();
+            initializeSortableTable();
+        });
     </script>
 </body>
 </html>
