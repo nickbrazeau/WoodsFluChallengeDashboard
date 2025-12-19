@@ -308,21 +308,48 @@
                 // Study → Type links
                 Object.entries(studyToType).forEach(([key, value]) => {
                     const [source, target] = key.split('→');
-                    links.push({
-                        source: nodeMap.get(source),
-                        target: nodeMap.get(target),
-                        value: value
-                    });
+                    const sourceIndex = nodeMap.get(source);
+                    const targetIndex = nodeMap.get(target);
+
+                    if (sourceIndex !== undefined && targetIndex !== undefined) {
+                        links.push({
+                            source: sourceIndex,
+                            target: targetIndex,
+                            value: value
+                        });
+                    }
                 });
 
                 // Type → Status links
                 Object.entries(typeToStatus).forEach(([key, value]) => {
                     const [source, target] = key.split('→');
-                    links.push({
-                        source: nodeMap.get(source),
-                        target: nodeMap.get(target),
-                        value: value
-                    });
+                    const sourceIndex = nodeMap.get(source);
+                    const targetIndex = nodeMap.get(target);
+
+                    if (sourceIndex !== undefined && targetIndex !== undefined) {
+                        links.push({
+                            source: sourceIndex,
+                            target: targetIndex,
+                            value: value
+                        });
+                    }
+                });
+
+                // Validate we have data to render
+                if (nodes.length === 0 || links.length === 0) {
+                    console.warn('Sankey: Insufficient data', { nodes: nodes.length, links: links.length });
+                    document.getElementById('sankey-error').classList.remove('hidden');
+                    document.getElementById('sankey-error').textContent =
+                        'Insufficient data to render flow diagram.';
+                    document.getElementById('sankey-section').classList.remove('hidden');
+                    return;
+                }
+
+                console.log('Sankey data prepared:', {
+                    nodeCount: nodes.length,
+                    linkCount: links.length,
+                    studies: studies.length,
+                    types: types.length
                 });
 
                 // Step 4: Render Sankey using D3
@@ -343,15 +370,33 @@
                     .attr('transform', `translate(${margin.left},${margin.top})`);
 
                 // Create Sankey layout
-                const sankey = d3.sankey()
-                    .nodeWidth(20)
-                    .nodePadding(10)
-                    .extent([[0, 0], [width - margin.left - margin.right, height - margin.top - margin.bottom]]);
+                let sankeyNodes, sankeyLinks;
+                try {
+                    const sankey = d3.sankey()
+                        .nodeWidth(20)
+                        .nodePadding(10)
+                        .extent([[0, 0], [width - margin.left - margin.right, height - margin.top - margin.bottom]]);
 
-                const {nodes: sankeyNodes, links: sankeyLinks} = sankey({
-                    nodes: nodes.map(d => Object.assign({}, d)),
-                    links: links.map(d => Object.assign({}, d))
-                });
+                    const result = sankey({
+                        nodes: nodes.map(d => Object.assign({}, d)),
+                        links: links.map(d => Object.assign({}, d))
+                    });
+
+                    sankeyNodes = result.nodes;
+                    sankeyLinks = result.links;
+
+                    console.log('Sankey layout computed:', {
+                        nodes: sankeyNodes.length,
+                        links: sankeyLinks.length
+                    });
+                } catch (layoutError) {
+                    console.error('Sankey layout error:', layoutError);
+                    document.getElementById('sankey-error').classList.remove('hidden');
+                    document.getElementById('sankey-error').textContent =
+                        `Unable to compute flow diagram layout: ${layoutError.message}`;
+                    document.getElementById('sankey-section').classList.remove('hidden');
+                    return;
+                }
 
                 // Color scale
                 const colorScale = d3.scaleOrdinal()
@@ -364,48 +409,57 @@
                     return colorScale('status');
                 }
 
-                // Draw links
-                g.append('g')
-                    .selectAll('path')
-                    .data(sankeyLinks)
-                    .join('path')
-                    .attr('d', d3.sankeyLinkHorizontal())
-                    .attr('stroke', d => getNodeColor(d.source))
-                    .attr('stroke-width', d => Math.max(1, d.width))
-                    .attr('fill', 'none')
-                    .attr('opacity', 0.3)
-                    .append('title')
-                    .text(d => `${d.source.name} → ${d.target.name}\n${d.value.toLocaleString()} samples`);
+                // Draw Sankey diagram
+                try {
+                    // Draw links
+                    g.append('g')
+                        .selectAll('path')
+                        .data(sankeyLinks)
+                        .join('path')
+                        .attr('d', d3.sankeyLinkHorizontal())
+                        .attr('stroke', d => getNodeColor(d.source))
+                        .attr('stroke-width', d => Math.max(1, d.width))
+                        .attr('fill', 'none')
+                        .attr('opacity', 0.3)
+                        .append('title')
+                        .text(d => `${d.source.name} → ${d.target.name}\n${d.value.toLocaleString()} samples`);
 
-                // Draw nodes
-                g.append('g')
-                    .selectAll('rect')
-                    .data(sankeyNodes)
-                    .join('rect')
-                    .attr('x', d => d.x0)
-                    .attr('y', d => d.y0)
-                    .attr('height', d => d.y1 - d.y0)
-                    .attr('width', d => d.x1 - d.x0)
-                    .attr('fill', getNodeColor)
-                    .attr('opacity', 0.8)
-                    .append('title')
-                    .text(d => `${d.name}\n${d.value.toLocaleString()} samples`);
+                    // Draw nodes
+                    g.append('g')
+                        .selectAll('rect')
+                        .data(sankeyNodes)
+                        .join('rect')
+                        .attr('x', d => d.x0)
+                        .attr('y', d => d.y0)
+                        .attr('height', d => d.y1 - d.y0)
+                        .attr('width', d => d.x1 - d.x0)
+                        .attr('fill', getNodeColor)
+                        .attr('opacity', 0.8)
+                        .append('title')
+                        .text(d => `${d.name}\n${d.value.toLocaleString()} samples`);
 
-                // Draw labels
-                g.append('g')
-                    .selectAll('text')
-                    .data(sankeyNodes)
-                    .join('text')
-                    .attr('x', d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
-                    .attr('y', d => (d.y1 + d.y0) / 2)
-                    .attr('dy', '0.35em')
-                    .attr('text-anchor', d => d.x0 < width / 2 ? 'start' : 'end')
-                    .text(d => d.name)
-                    .style('font-size', '11px')
-                    .style('fill', '#333');
+                    // Draw labels
+                    g.append('g')
+                        .selectAll('text')
+                        .data(sankeyNodes)
+                        .join('text')
+                        .attr('x', d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
+                        .attr('y', d => (d.y1 + d.y0) / 2)
+                        .attr('dy', '0.35em')
+                        .attr('text-anchor', d => d.x0 < width / 2 ? 'start' : 'end')
+                        .text(d => d.name)
+                        .style('font-size', '11px')
+                        .style('fill', '#333');
 
-                console.log('✓ Sankey diagram rendered successfully');
-                document.getElementById('sankey-section').classList.remove('hidden');
+                    console.log('✓ Sankey diagram rendered successfully');
+                    document.getElementById('sankey-section').classList.remove('hidden');
+                } catch (renderError) {
+                    console.error('Sankey rendering error:', renderError);
+                    document.getElementById('sankey-error').classList.remove('hidden');
+                    document.getElementById('sankey-error').textContent =
+                        `Unable to render flow diagram: ${renderError.message}`;
+                    document.getElementById('sankey-section').classList.remove('hidden');
+                }
 
             } catch (error) {
                 console.error('Sankey rendering error:', error);
