@@ -510,12 +510,16 @@
 
                 // Hide loading, show content
                 document.getElementById('loading').classList.add('hidden');
-                document.getElementById('results-container').classList.remove('hidden');
                 document.getElementById('pivot-section').classList.remove('hidden');
                 document.getElementById('sankey-section').classList.remove('hidden');
 
-                // Hide search and filter sections in public mode
+                // Hide search, filters, and data table in public mode
                 const accessLevel = getAccessLevel();
+
+                // Only show results table in private mode
+                if (accessLevel === 'private') {
+                    document.getElementById('results-container').classList.remove('hidden');
+                }
                 if (accessLevel === 'public') {
                     const searchContainer = document.querySelector('.search-container');
                     const filtersContainer = document.querySelector('.filters');
@@ -523,14 +527,20 @@
                     searchContainer.style.display = 'none';
                     filtersContainer.style.display = 'none';
 
+                    // Hide the results summary, table, and no-results sections
+                    document.getElementById('results-summary').style.display = 'none';
+                    document.getElementById('results-container').style.display = 'none';
+                    document.getElementById('no-results').style.display = 'none';
+
                     // Show informational message
                     const searchPlaceholder = document.createElement('div');
                     searchPlaceholder.className = 'card';
                     searchPlaceholder.style.marginBottom = '2rem';
                     searchPlaceholder.innerHTML = `
                         <div class="alert alert-info">
-                            <strong>Search and filtering features require authentication.</strong><br>
-                            The sample search functionality is only available in private mode.
+                            <strong>Sample detail table requires authentication.</strong><br>
+                            The detailed sample inventory table is only available in private mode.
+                            You can view summary statistics in the Sample Availability Matrix and Sample Flow Visualization above.
                         </div>
                     `;
                     searchContainer.parentNode.insertBefore(searchPlaceholder, searchContainer);
