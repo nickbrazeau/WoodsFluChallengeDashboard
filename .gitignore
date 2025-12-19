@@ -19,6 +19,10 @@ data/raw/
 data/processed/
 data/curated/
 
+# Exception: Allow public/data for deployment
+!public/data/
+!public/data/*.json
+
 # OS files
 .DS_Store
 .DS_Store?
