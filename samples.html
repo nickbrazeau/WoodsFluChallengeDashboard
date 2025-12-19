@@ -237,6 +237,25 @@
         // Create Sankey flow visualization
         function createSampleFlowSankey(samplesData) {
             try {
+                // Validate input data
+                if (!samplesData || samplesData.length === 0) {
+                    document.getElementById('sankey-error').classList.remove('hidden');
+                    document.getElementById('sankey-error').textContent =
+                        'No sample data available for visualization.';
+                    document.getElementById('sankey-section').classList.remove('hidden');
+                    return;
+                }
+
+                // Verify d3.sankey library is loaded
+                if (typeof d3 === 'undefined' || typeof d3.sankey !== 'function') {
+                    document.getElementById('sankey-error').classList.remove('hidden');
+                    document.getElementById('sankey-error').textContent =
+                        'Visualization library failed to load. Please refresh the page.';
+                    document.getElementById('sankey-section').classList.remove('hidden');
+                    console.error('D3 or d3-sankey library not loaded properly');
+                    return;
+                }
+
                 // Step 1: Aggregate data into nodes and links
                 const studyToType = {};
                 const typeToStatus = {};
@@ -441,6 +460,28 @@
                 document.getElementById('pivot-section').classList.remove('hidden');
                 document.getElementById('sankey-section').classList.remove('hidden');
 
+                // Hide search and filter sections in public mode
+                const accessLevel = getAccessLevel();
+                if (accessLevel === 'public') {
+                    const searchContainer = document.querySelector('.search-container');
+                    const filtersContainer = document.querySelector('.filters');
+
+                    searchContainer.style.display = 'none';
+                    filtersContainer.style.display = 'none';
+
+                    // Show informational message
+                    const searchPlaceholder = document.createElement('div');
+                    searchPlaceholder.className = 'card';
+                    searchPlaceholder.style.marginBottom = '2rem';
+                    searchPlaceholder.innerHTML = `
+                        <div class="alert alert-info">
+                            <strong>Search and filtering features require authentication.</strong><br>
+                            The sample search functionality is only available in private mode.
+                        </div>
+                    `;
+                    searchContainer.parentNode.insertBefore(searchPlaceholder, searchContainer);
+                }
+
             } catch (error) {
                 console.error('Error loading samples:', error);
                 document.getElementById('loading').innerHTML = `
@@ -579,6 +620,16 @@
                 }
             }
 
+            // Show/hide sample barcode column header based on access level
+            const barcodeHeader = document.querySelector('#results-table thead th:first-child');
+            if (barcodeHeader) {
+                if (accessLevel === 'private') {
+                    barcodeHeader.style.display = '';
+                } else {
+                    barcodeHeader.style.display = 'none';
+                }
+            }
+
             // Show/hide no results message
             if (totalResults === 0) {
                 document.getElementById('results-container').classList.add('hidden');
@@ -605,7 +656,7 @@
 
                 html += `
                     <tr>
-                        <td><strong>${sample.sample_barcode_id || 'N/A'}</strong></td>
+                        ${accessLevel === 'private' ? `<td><strong>${sample.sample_barcode_id || 'N/A'}</strong></td>` : ''}
                         <td><span class="badge badge-primary">${sample.study_code || 'N/A'}</span></td>
                         <td>${sample.participant_id || 'N/A'}</td>
                         <td>${sample.timepoint_day !== null && sample.timepoint_day !== undefined ? sample.timepoint_day : 'N/A'}</td>
@@ -747,7 +798,10 @@
             const timepointSet = new Set();
 
             samples.forEach(sample => {
-                const timepoint = sample.timepoint_normalized || 'Unknown';
+                // Use timepoint_day only (no hours)
+                const timepoint = (sample.timepoint_day !== null && sample.timepoint_day !== undefined)
+                    ? `Day ${sample.timepoint_day}`
+                    : 'Unknown';
                 const sampleType = sample.sample_type;
 
                 timepointSet.add(timepoint);
