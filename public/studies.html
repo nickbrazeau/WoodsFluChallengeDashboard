@@ -143,6 +143,12 @@
                             ${study.description}
                         </p>
 
+                        ${study.public_data ? `
+                        <div class="alert alert-info" style="margin-bottom: 1.5rem; font-size: 0.875rem;">
+                            <strong>Public gene-expression data available:</strong> ${study.public_data.geo_accession} (${study.public_data.geo_subset}) on NCBI GEO.
+                        </div>
+                        ` : ''}
+
                         <div class="grid grid-2" style="gap: 1rem;">
                             <div>
                                 <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary-blue);">
@@ -223,6 +229,24 @@
                         </div>
                     </div>
                 </div>
+
+                ${study.public_data ? `
+                <div style="margin-bottom: 2rem;">
+                    <h3>Public Data Availability</h3>
+                    <div class="alert alert-info">
+                        <p><strong>${study.public_data.geo_accession}</strong> (subset: ${study.public_data.geo_subset}) &mdash;
+                            bulk gene-expression data from this cohort is publicly deposited on
+                            <a href="${study.public_data.geo_url}" target="_blank" style="color: var(--royal-blue); text-decoration: underline;">NCBI GEO</a>.
+                        </p>
+                        ${study.public_data.mirrors && study.public_data.mirrors.length ? `
+                        <p style="margin-top: 0.5rem;">Also re-hosted (harmonized, third-party) at:
+                            ${study.public_data.mirrors.map(m => `<a href="${m.url}" target="_blank" style="color: var(--royal-blue); text-decoration: underline;">${m.name}</a>`).join(', ')}
+                        </p>
+                        ` : ''}
+                        <p style="margin-top: 0.5rem; font-size: 0.875rem; color: var(--graphite);">${study.public_data.note}</p>
+                    </div>
+                </div>
+                ` : ''}
 
                 <div style="margin-bottom: 2rem;">
                     <h3>Research Outputs</h3>
