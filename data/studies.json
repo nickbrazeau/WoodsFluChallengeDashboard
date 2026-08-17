@@ -11,7 +11,19 @@
     "publications": 16,
     "assays_performed": 0,
     "samples_available": 6340,
-    "samples_transferred": 2653
+    "samples_transferred": 2653,
+    "public_data": {
+      "geo_accession": "GSE73072",
+      "geo_subset": "H3N2_DEE2",
+      "geo_url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE73072",
+      "mirrors": [
+        {
+          "name": "HR-VILAGE-3K3M (Hugging Face)",
+          "url": "https://huggingface.co/datasets/xuejun72/HR-VILAGE-3K3M/tree/main"
+        }
+      ],
+      "note": "Bulk gene-expression (microarray) data from this cohort is publicly available via NCBI GEO (GSE73072) and re-hosted in harmonized form by a third-party Hugging Face dataset. Sample-inventory, storage, and assay-tracking data in this dashboard are not part of that public release."
+    }
   },
   "DU09-06": {
     "code": "DU09-06",
@@ -25,7 +37,19 @@
     "publications": 6,
     "assays_performed": 0,
     "samples_available": 8004,
-    "samples_transferred": 2336
+    "samples_transferred": 2336,
+    "public_data": {
+      "geo_accession": "GSE73072",
+      "geo_subset": "H1N1_DEE3",
+      "geo_url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE73072",
+      "mirrors": [
+        {
+          "name": "HR-VILAGE-3K3M (Hugging Face)",
+          "url": "https://huggingface.co/datasets/xuejun72/HR-VILAGE-3K3M/tree/main"
+        }
+      ],
+      "note": "Bulk gene-expression (microarray) data from this cohort is publicly available via NCBI GEO (GSE73072) and re-hosted in harmonized form by a third-party Hugging Face dataset. Sample-inventory, storage, and assay-tracking data in this dashboard are not part of that public release."
+    }
   },
   "DU09-07": {
     "code": "DU09-07",
@@ -39,7 +63,19 @@
     "publications": 2,
     "assays_performed": 0,
     "samples_available": 17097,
-    "samples_transferred": 3664
+    "samples_transferred": 3664,
+    "public_data": {
+      "geo_accession": "GSE73072",
+      "geo_subset": "H1N1_DEE4",
+      "geo_url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE73072",
+      "mirrors": [
+        {
+          "name": "HR-VILAGE-3K3M (Hugging Face)",
+          "url": "https://huggingface.co/datasets/xuejun72/HR-VILAGE-3K3M/tree/main"
+        }
+      ],
+      "note": "Bulk gene-expression (microarray) data from this cohort is publicly available via NCBI GEO (GSE73072) and re-hosted in harmonized form by a third-party Hugging Face dataset. Sample-inventory, storage, and assay-tracking data in this dashboard are not part of that public release."
+    }
   },
   "DU11-02": {
     "code": "DU11-02",
@@ -53,7 +89,19 @@
     "publications": 6,
     "assays_performed": 0,
     "samples_available": 8715,
-    "samples_transferred": 612
+    "samples_transferred": 612,
+    "public_data": {
+      "geo_accession": "GSE73072",
+      "geo_subset": "H3N2_DEE5",
+      "geo_url": "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE73072",
+      "mirrors": [
+        {
+          "name": "HR-VILAGE-3K3M (Hugging Face)",
+          "url": "https://huggingface.co/datasets/xuejun72/HR-VILAGE-3K3M/tree/main"
+        }
+      ],
+      "note": "Bulk gene-expression (microarray) data from this cohort is publicly available via NCBI GEO (GSE73072) and re-hosted in harmonized form by a third-party Hugging Face dataset. Sample-inventory, storage, and assay-tracking data in this dashboard are not part of that public release."
+    }
   },
   "DU17-04": {
     "code": "DU17-04",
